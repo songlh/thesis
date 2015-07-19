@@ -1,0 +1,36 @@
+#!/usr/bin/python
+
+from optparse import OptionParser
+from os.path import dirname, join
+from subprocess import call
+from sys import stdout
+
+
+def main():
+    parser = OptionParser(usage='usage: %prog [options] xml-input-file')
+    parser.add_option('-l', '--limit', help='include only topmost COUNT predictors [default: all]', metavar='COUNT', type=int)
+    parser.add_option('-v', '--verbose', help='print the XSLT command being run', action='store_true')
+    parser.add_option('-o', '--output', help='write converted LaTeX code into FILENAME [default: stdout]', metavar='FILENAME')
+
+    options, args = parser.parse_args()
+    if len(args) < 1:
+        parser.error('too few positional arguments')
+    elif len(args) > 1:
+        parser.error('too many positional arguments')
+
+    stylesheet = join(dirname(__file__), 'convert.xsl')
+    command = ['xsltproc', '--nonet', '--novalid', stylesheet, args[0]]
+    if options.output:
+        command[1:1] = ['--output', options.output]
+    if options.limit is not None:
+        command[1:1] = ['--param', 'limit', str(options.limit)]
+
+    if options.verbose:
+        print ' '.join(command)
+
+    status = call(command)
+    exit(status)
+
+
+if __name__ == '__main__':
+    main()

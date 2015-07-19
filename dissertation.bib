@@ -1,0 +1,370 @@
+
+%wiki
+%begin
+
+@misc{ztest,
+  title = "Z-test",
+  author = "{Wikipedia}",
+  howpublished="http://en.wikipedia.org/wiki/Z-test"
+}
+
+%wiki
+%end
+
+
+%general bugs
+%begin
+
+@inproceedings{characteristics.asplos08,
+  author = {Shan Lu and Soyeon Park and Eunsoo Seo and Yuanyuan Zhou},
+  title = {Learning from mistakes -- A comprehensive study of real world concurrency bug
+    characteristics},
+  booktitle = "ASPLOS",
+  year = "2008"
+}
+
+@inproceedings{LiASID06,
+  author = {Zhenmin Li and Lin Tan and Xuanhui Wang and Shan Lu and Yuanyuan Zhou and Chengxiang Zhai},
+  title = {Have things changed now?: an empirical study of bug characteristics in modern open source software},
+  booktitle = {ASID},
+  year = {2006}
+}
+
+%general bugs
+%end
+
+
+
+%rule-based bug detection
+%begin
+
+@InProceedings{chouasplos00,
+  author = {Chou, Andy and Chelf, Benjamin and Engler, Dawson and Heinrich, Mark},
+  title = {Using Meta-level Compilation to Check FLASH Protocol Code},
+  booktitle = {Proceedings of the Ninth International Conference on Architectural Support for Programming Languages and Operating Systems},
+  series = {ASPLOS IX},
+  year = {2000},
+  isbn = {1-58113-317-0},
+  location = {Cambridge, Massachusetts, USA},
+  pages = {59--70},
+  numpages = {12},
+  url = {http://doi.acm.org/10.1145/378993.379002},
+  doi = {10.1145/378993.379002},
+  acmid = {379002},
+  publisher = {ACM},
+  address = {New York, NY, USA},
+}
+
+@article{billpugh,
+ author = {Hovemeyer, David and Pugh, William},
+ title = {Finding Bugs is Easy},
+ journal = {SIGPLAN Not.},
+ issue_date = {December 2004},
+ volume = {39},
+ number = {12},
+ month = dec,
+ year = {2004},
+ issn = {0362-1340},
+ pages = {92--106},
+ numpages = {15},
+ url = {http://doi.acm.org/10.1145/1052883.1052895},
+ doi = {10.1145/1052883.1052895},
+ acmid = {1052895},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+@inproceedings{PRMiner05,
+ author = {Li, Zhenmin and Zhou, Yuanyuan},
+ title = {PR-Miner: Automatically Extracting Implicit Programming Rules and Detecting Violations in Large Software Code},
+ booktitle = {Proceedings of the 10th European Software Engineering Conference Held Jointly with 13th ACM SIGSOFT International Symposium on Foundations of Software Engineering},
+ series = {ESEC/FSE-13},
+ year = {2005},
+ isbn = {1-59593-014-0},
+ location = {Lisbon, Portugal},
+ pages = {306--315},
+ numpages = {10},
+ url = {http://doi.acm.org/10.1145/1081706.1081755},
+ doi = {10.1145/1081706.1081755},
+ acmid = {1081755},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {automated specification generation, automated violation detection, data mining for software engineering, pattern recognition, programming rules, static analysis},
+}
+
+
+@article{semanticpatch,
+ author = {Muller, Gilles and Padioleau, Yoann and Lawall, Julia L. and Hansen, Ren{\'e} Rydhof},
+ title = {Semantic Patches Considered Helpful},
+ journal = {SIGOPS Oper. Syst. Rev.},
+ issue_date = {July 2006},
+ volume = {40},
+ number = {3},
+ month = jul,
+ year = {2006},
+ issn = {0163-5980},
+ pages = {90--92},
+ numpages = {3},
+ url = {http://doi.acm.org/10.1145/1151374.1151392},
+ doi = {10.1145/1151374.1151392},
+ acmid = {1151392},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+}
+
+@misc{fortify,
+  howpublished = "http://www8.hp.com/us/en/software-solutions/static-code-analysis-sast/",
+  title = {{HP Fortify Static Code Analyzer (SCA)}},
+  author = {Fortify}
+}
+
+@inproceedings{10yearlinux,
+ author = {Palix, Nicolas and Thomas, Ga\"{e}l and Saha, Suman and Calv\`{e}s, Christophe and Lawall, Julia and Muller, Gilles},
+ title = {Faults in Linux: Ten Years Later},
+ booktitle = {Proceedings of the Sixteenth International Conference on Architectural Support for Programming Languages and Operating Systems},
+ series = {ASPLOS XVI},
+ year = {2011},
+ isbn = {978-1-4503-0266-1},
+ location = {Newport Beach, California, USA},
+ pages = {305--318},
+ numpages = {14},
+ url = {http://doi.acm.org/10.1145/1950365.1950401},
+ doi = {10.1145/1950365.1950401},
+ acmid = {1950401},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {fault-finding tools, linux},
+}
+
+@inproceedings{s2e,
+  author = {Chipounov, Vitaly and Kuznetsov, Volodymyr and Candea, George},
+  title = {{S2E}: a platform for in-vivo multi-path analysis of software systems},
+  booktitle= {ASPLOS},
+  year = {2011}
+} 
+
+
+
+%rule-based bug detection
+%end
+
+
+%general diagnosis and debugging
+%begin
+
+@article{horwitz,
+  author = {Horwitz, Susan and Reps, Thomas and Binkley, David},
+  title = {Interprocedural Slicing Using Dependence Graphs},
+  journal = {ACM Trans. Program. Lang. Syst.},
+  issue_date = {Jan. 1990},
+  volume = {12},
+  number = {1},
+  month = jan,
+  year = {1990},
+  pages = {26--60}
+} 
+
+@inproceedings{xiangyu.ase05,
+  author = {Gupta, Neelam and He, Haifeng and Zhang, Xiangyu and Gupta, Rajiv},
+  title = {Locating Faulty Code Using Failure-inducing Chops},
+  booktitle = {ASE},
+  year = {2005}
+} 
+
+@inproceedings{delta,
+  author    = {Andreas Zeller},
+  title     = {Isolating cause-effect chains from computer programs.},
+  booktitle = {FSE},
+  year      = {2002}
+}
+
+@inproceedings{liblit03,
+    author =	 {Ben Liblit and Alex Aiken and Alice X. Zheng and
+                        Michael I. Jordan},
+    title =	 {Bug Isolation via Remote Program Sampling},
+    booktitle =	 {PLDI},
+    year = {2003}
+}
+
+@inproceedings{CCI,
+ author = {Jin, Guoliang and Thakur, Aditya and Liblit, Ben and Lu, Shan},
+ title = {Instrumentation and sampling strategies for cooperative concurrency bug isolation},
+ booktitle = {OOPSLA},
+ year = {2010},
+} 
+
+@inproceedings{tarantula1,
+ author = {Jones, James A. and Harrold, Mary Jean and Stasko, John},
+ title = {Visualization of Test Information to Assist Fault Localization},
+ booktitle = {ICSE},
+ year = {2002}
+} 
+
+@inproceedings{liblit05,
+ author = {Liblit, Ben and Naik, Mayur and Zheng, Alice X. and Aiken, Alex and Jordan, Michael I.},
+ title = {Scalable statistical bug isolation},
+ booktitle = {PLDI},
+ year = {2005},
+ 
+} 
+
+@inproceedings{joy.asplos13,
+ author = {Arulraj, Joy and Chang, Po-Chun and Jin, Guoliang and Lu, Shan},
+ title = {Production-run software failure diagnosis via hardware performance counters},
+ booktitle = {ASPLOS},
+ year = {2013},
+} 
+
+@inproceedings{Delta-LDA,
+ author = {Andrzejewski, David and Mulhern, Anne and Liblit, Ben and Zhu, Xiaojin},
+ title = {Statistical Debugging Using Latent Topic Models},
+ booktitle = {Proceedings of the 18th European conference on Machine Learning},
+ year = {2007},
+} 
+
+%general diagnosis and debugging
+%end
+
+
+%framework and tool
+%begin
+
+@inproceedings{llvm,
+ author = {Lattner, Chris and Adve, Vikram},
+ title = {LLVM: A Compilation Framework for Lifelong Program Analysis \& Transformation},
+ booktitle = {Proceedings of the International Symposium on Code Generation and Optimization: Feedback-directed and Runtime Optimization},
+ series = {CGO '04},
+ year = {2004},
+ isbn = {0-7695-2102-9},
+ location = {Palo Alto, California},
+ pages = {75--},
+ url = {http://dl.acm.org/citation.cfm?id=977395.977673},
+ acmid = {977673},
+ publisher = {IEEE Computer Society},
+ address = {Washington, DC, USA},
+}
+
+@misc{oprofile,
+  title= "{OProfile -- A System Profiler for Linux}",
+  author = "OProfile",
+  howpublished = "http://oprofile.sourceforge.net"
+}
+
+@misc{gprof,
+    howpublished={http://sourceware.org/binutils/docs/gprof/},
+}
+
+%framework and tool
+%end 
+
+%general performance 
+%begin
+
+@book{rily.perftest,
+  author	= {Ian Molyneaux},
+  title		= {The Art of Application Performance Testing: Help for Programmers and Quality Assurance},
+  year		= {2009},
+  publisher	= {O'Reilly Media},
+}
+
+@inproceedings{perfantipattern,
+  author = {Smith, Connie U. and Williams, Lloyd G.},
+  title = {Software performance antipatterns},
+  booktitle = {Proceedings of the 2nd international workshop on Software and performance},
+  year = {2000}
+}
+
+%general performance
+%end
+
+
+
+%performance diagnosis
+%begin
+
+@inproceedings{XRayOSDI,
+ author = {Attariyan, Mona and Chow, Michael and Flinn, Jason},
+ title = {X-ray: automating root-cause diagnosis of performance anomalies in production software},
+ booktitle = {OSDI},
+ year = {2012},
+} 
+
+@inproceedings{TaoAsplos2014,
+  author = {Xiao Yu and Shi Han and Dongmei Zhang and Tao Xie},
+  title = {Comprehending Performance from Real-World Execution Traces: A Device-Driver Case},
+  booktitle = {ASPLOS},
+  year = "2014"
+}
+
+@article{amertrace,
+  author    = {Amer Diwan and
+    Matthias Hauswirth and
+      Todd Mytkowicz and
+      Peter F. Sweeney},
+  title     = {TraceAnalyzer: a system for processing performance traces},
+  journal   = {Softw., Pract. Exper.},
+  volume    = {41},
+  number    = {3},
+  year      = {2011},
+  pages     = {267-282}
+}
+
+%performance diagnosis
+%end
+
+%performance bug detection
+%begin
+
+@inproceedings{Alabama,
+ author = {Nistor, Adrian and Song, Linhai and Marinov, Darko and Lu, Shan},
+ title = { Toddler: Detecting Performance Problems via Similar Memory-Access Patterns},
+ booktitle= {ICSE},
+ year = {2013}
+}
+
+@inproceedings{XuDataStructure,
+ author = {Xu, Guoqing and Mitchell, Nick and Arnold, Matthew and Rountev, Atanas and Schonberg, Edith and Sevitsky, Gary},
+ title = {Finding low-utility data structures},
+ booktitle = {PLDI},
+ year = {2010}
+} 
+
+@inproceedings{BloatFSE2008,
+ author = {Dufour, Bruno and Ryder, Barbara G. and Sevitsky, Gary},
+ title = {A scalable technique for characterizing the usage of temporaries in framework-intensive Java applications},
+ booktitle = {FSE},
+ year = {2008},
+}
+
+@inproceedings{XuBloatPLDI2009,
+ author = {Xu, Guoqing and Arnold, Matthew and Mitchell, Nick and Rountev, Atanas and Sevitsky, Gary},
+ title = {Go with the flow: profiling copies to find runtime bloat},
+ booktitle = {PLDI},
+ year = {2009},
+}
+
+@inproceedings{XuBloatPLDI2010,
+ author = {Xu, Guoqing and Rountev, Atanas},
+ title = {Detecting inefficiently-used containers to avoid bloat},
+ booktitle = {PLDI},
+ year = {2010},
+}
+
+@inproceedings{PerfBug,
+ author = {Jin, Guoliang and Song, Linhai and Shi, Xiaoming and Scherpelz, Joel and Lu, Shan},
+ title = {Understanding and detecting real-world performance bugs},
+ booktitle = {PLDI},
+ year = {2012}
+} 
+
+@inproceedings{perf.fse10,
+  author = {Killian, Charles and Nagaraj, Karthik and Pervez, Salman and Braud, Ryan and Anderson, James W. and Jhala, Ranjit},
+  title = {Finding latent performance bugs in systems implementations},
+  booktitle = {FSE},
+  year = {2010}
+}
+
+%performance bug detection
+%end
+
+

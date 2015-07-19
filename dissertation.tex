@@ -1,0 +1,225 @@
+%!TEX TS-program = pdflatex
+% dissertation.tex -- main dissertation file
+%
+% Wisconsin dissertation template
+% Copyright (c) 2008-2009 William C. Benton.  All rights reserved.
+%
+% This program can redistributed and/or modified under the terms
+% of the LaTeX Project Public License Distributed from CTAN
+% archives in directory macros/latex/base/lppl.txt; either
+% version 1 of the License, or (at your option) any later version.
+%
+% This program includes other software that is licensed under the
+% terms of the LPPL and the Perl Artistic License; see README for details.
+%
+% You, the user, still hold the copyright to any document you produce
+% with this software (like your dissertation).
+%
+
+%%% You'll want ``oneside'' for the deposit version, but probably not for any versions that don't need to meet the UW requirements
+\documentclass[11pt,oneside,letterpaper,oldfontcommands]{memoir}
+
+\usepackage{alltt}
+\usepackage{amsfonts} 
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{balance}
+\usepackage{bigstrut}
+\usepackage{booktabs}
+\usepackage{boxedminipage}
+\usepackage{colortbl}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{nicefrac}
+\usepackage{setspace}
+\usepackage{subfig}
+\usepackage{xcolor}
+\usepackage{xspace}
+
+\setsecnumdepth{subsubsection}
+
+\input{includes/preamble}
+\input{includes/defs}
+\input{includes/thesisdefs}
+\svnidlong{$LastChangedBy$}{$LastChangedRevision$}{$LastChangedDate$}{$HeadURL: http://freevariable.com/dissertation/branches/diss-template/dissertation.tex $} 
+
+
+\newenvironment{ParaEnum}[0]{\begin{inparaenum}[(1)]}{\end{inparaenum}}
+
+
+\newcommand{\TextArrow}[3]{\tikz[#1]{\draw[->, #2] (0, 0) to[#3] (.5, 0) {} ;}}
+\newcommand{\StraightSolidArrow}[0]{\TextArrow{baseline=-2pt}{}{}}
+\newcommand{\CrashArrow}[0]{\StraightSolidArrow}
+\newcommand{\CorruptArrow}[0]{\TextArrow{}{densely dotted}{bend right}}
+
+\newcommand{\TwoRowHeader}[2]{\multirow{-2}{*}{\setlength{\tabcolsep}{0pt}\begin{tabular}{r}#1\\#2\end{tabular}}}
+\newcommand{\nocaptionrule}{%
+  \@setflag \@caprule = \@false}
+
+\newcommand{\YesRank}[1]{\checkmark{} $#1$}
+%\newcommand{\Yes}[0]{\checkmark}
+%\newcommand{\No}[0]{-}
+\newcommand{\Code}[1]{\lstinline{#1}}
+
+
+
+
+\newsavebox{\Plus}
+\newsavebox{\Minus}
+\savebox{\Plus}{\scriptsize\textsf{+}}
+\savebox{\Minus}{\scriptsize\textsf{\textminus}}
+
+\renewcommand{\cite}[1]{%
+  \PackageError{natbib}{%
+    The \string\cite\space{} command is ambiguous; use
+    \string\citet\space{} or \string\citep\space{} instead}{}}
+
+\renewcommand{\autoref}[1]{%
+  \PackageError{cleveref}{%
+    Do not use \string\autoref.  Use \string\cref instead, or use
+    \string\crefrange for ranges of referenced items}}
+
+\renewcommand{\hline}[1]{%
+  \PackageError{booktabs}{%
+    Do not use \string\hline.  Use \string\toprule, \string\midrule,
+    or \string\bottomrule\space instead depending on where in the
+    table the line appears}}
+
+
+\crefname{figure}{Figure}{Figures}
+\crefname{section}{Section}{Sections}
+\crefname{chapter}{Chapter}{Chapters}
+\crefname{table}{Table}{Tables}
+\crefname{guideline}{guideline}{guidelines}
+
+\setcitestyle{comma,numbers,sort&compress,square}
+
+\hyphenation{Lite-Race}
+
+\widowpenalty10000
+\clubpenalty10000
+
+\lstdefinelanguage{example}{%
+  morekeywords={lock,unlock,reentrant_lock,reentrant_unlock},
+}
+
+\lstset{%
+  basicstyle=\sffamily,
+  columns=fullflexible,
+  showstringspaces=false,
+  upquote=true,
+  literate={"}{\textquotedbl}1,
+  language=C++,
+  escapeinside={/*@}{@*/},
+  mathescape,
+  numbersep=1ex,
+  keepspaces=true,
+}
+
+\usetikzlibrary{calc}
+\usetikzlibrary{chains}
+\usetikzlibrary{matrix}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes}
+
+\tikzset{%
+  node distance=1em,
+  >=stealth,
+  cfg/.style={%
+    minimum width=1em,
+    minimum height=1em,
+    rounded corners=2pt,
+    draw=black,
+  },
+  protected/.style={%
+    cfg,
+    fill=black!20,
+  },
+  ghost/.style={%
+    minimum width=0,
+    minimum height=0,
+    shape=coordinate,
+  },
+  mutex/.style={%
+    midway,
+    sloped,
+  },
+  interleaving/.style={%
+    matrix,
+    matrix of nodes,
+    column sep=4em,
+    row sep=2em,
+  },
+}
+
+\newcommand{\SignalSymbol}[0]{\Lightning}
+\DeclareRobustCommand\SignalText{\tikz \node [rotate=-90, inner sep=1pt] {\large\SignalSymbol} ;}
+\newcommand{\Signal}[0]{\contour{white}{\LARGE\SignalSymbol}}
+
+\newcommand{\code}[1]{\textsf{#1}}
+\newcommand{\codefamily}[0]{\sffamily}
+
+\newcommand{\codefig}[1]{%
+  \centering
+  \mbox{\lstinputlisting[basicstyle=\ttfamily\footnotesize ]{figures/#1.c}}}
+
+
+
+
+
+\clearpage\pagenumbering{roman}  % This makes the page numbers Roman (i, ii, etc)
+
+\title{Understanding, Detecting and Diagnosing Real-World Performance Bugs}
+\author{Linhai Song}
+\department{Computer Sciences}
+
+\date{2015}
+
+\begin{document}
+
+%%% Uncomment the following if your .bib contains references that you will not 
+%%% explicitly cite, but that should be in the final bibliography:
+% \nocite{*}
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.eps, .jpg}
+\fi
+
+\maketitle
+
+%% Add \part declarations if you want, but it's not necessary
+%\part{Preliminaries}
+
+\include{frontmatter/frontmatter}
+
+%% Now include the tex files for each chapter, like so (I put these in separate dirs): 
+\include{chapter-intro/main}
+\include{chapter-background/main}
+\include{chapter-detec/main}
+\include{chapter-sd/main}
+%\input{chapter-cci/main}
+%\input{chapter-afix/main}
+%\input{chapter-cfix/main}
+%\input{chapter-petri-net/main}
+%\input{chapter-conclusion/main}
+
+%% etc, etc.
+
+%% Do you have appendices?  If so, add them here, just like chapters.
+% \begin{appendices}
+% \include{backmatter/appendix1}
+% \end{appendices}
+
+%% Are you a big nerd with a colophon?  Add it here.
+%\begin{colophon}
+%\input{backmatter/colophon}
+%\end{colophon}
+
+%% McBride is a very nice style (some version is included in this distribution)
+\bibliographystyle{mcbride}
+\bibliography{dissertation}
+
+\end{document}

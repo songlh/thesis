@@ -1,0 +1,38 @@
+\begin{table}[h!]
+\centering
+{
+\begin{tabular}{l}
+%\hline
+\toprule
+\multicolumn{1}{>{\columncolor[gray]{0.8}}c}{\textbf Call Sequence Conditions}\\
+  %\hline
+  \midrule
+    function C::f() is invoked	\\
+    function f1 is always followed by f2	\\
+    function f1 is called once in each iteration of a loop\\
+%\hline
+\midrule
+\multicolumn{1}{>{\columncolor[gray]{0.8}}c}{\textbf Parameter/Return Conditions}\\
+%\hline
+\midrule
+     $n$th parameter of f1 equals K (constant) \\
+     $n$th parameter of f1 is the same variable as the return of f2\\
+     a param. of f1 and a param. of f2 point to the same object\\
+     the return of f1 is not used later	\\
+     the parameter of f1 is not modified within certain scope\\
+     the input is a long string \\
+%\hline
+\midrule
+\multicolumn{1}{>{\columncolor[gray]{0.8}}c}{\textbf Calling Context Conditions}\\
+%\hline
+\midrule
+     function f1 is only called by one thread \\
+     function f1 can be called simultaneously by multiple threads \\
+     function f1 is called many times during the execution \\
+%\hline
+\bottomrule
+\end{tabular}
+}
+\caption{Typical conditions in function rules}
+\label{tab:rule}
+\end{table}

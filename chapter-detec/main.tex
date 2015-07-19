@@ -1,0 +1,285 @@
+\chapter[Rule-Based Performance-Bug Detection]{Rule-Based Performance-Bug Detection}
+\label{chap:detec}
+
+\section{Introduction}
+
+%Automatic performance bug detection is important and challenging, as discussed
+%in Section~\ref{sec:lessons}.
+Rule-based detection approach is effective for discovering functional bugs
+and security vulnerabilities \citep{chouasplos00,billpugh,PRMiner05,semanticpatch,fortify}. 
+Many functional bugs can be identified by comparing against certain 
+function-call sequences that have to be followed in a program 
+for functional correctness and security.
+
+We hypothesize that rule-based bug detection is useful for detecting performance 
+bugs based on our characteristics study:
+
+%\begin{itemize}
+
+%\item 
+\emph{Efficiency rules should exist.} Those inefficient function-call sequences 
+studied in Section~\textcolor{red}{XX} could all become rules.
+%  procedure boundary!!
+For example, \Code{random()} should not be used by concurrent threads, and
+\Code{doTransact()} in loops should be replaced by \Code{aggregateTransact()}.
+
+%\item 
+\emph{Efficiency rules can be easily collected from patches,} as 
+%It is not difficult to collect rules from patches, because
+most patches are small and follow regular fixing strategies 
+(Section~\textcolor{red}{XX}).
+%It will not be difficult to examine them and extract efficiency rules.
+%TODO We did find 40 out of \allbugs bug patches containing rules.
+
+\emph{Efficiency rules could be widely applicable,} as 
+a misunderstanding of an API or workload could affect many places and
+lead to many bugs, considering how bugs are introduced 
+(Section~\textcolor{red}{XX}).
+
+%\end{itemize}
+
+This chapter will test our hypothesis and provide guidance for future work 
+on combating performance bugs.
+%\comment{
+%Specifically, to test our hypothesis, we will answer the
+%following questions:
+%%How effective is it?
+%%How applicable are efficiency rules;
+%{\bf Q0:\ } Can rule-based approach discover previously unknown performance
+%problems?
+%{\bf Q1:\ } When fixing one performance bug, how many similar bugs did 
+%developers miss? Will those bugs eventually get fixed?
+%{\bf Q2:\ } After correcting a mistake, will developers make this
+%mistake again?
+%{\bf Q3:\ } Can we apply rules extracted from one application for
+%another application?
+%{\bf Q4:\ } Is violating rules rare compared with following the 
+%rules?
+%}
+
+\section{Efficiency Rules in Patches}
+
+\paragraph{Terminology} {\emph Efficiency rules}, or {\emph rules}, include two 
+components: a {\emph transformation} and a {\emph condition} for applying the 
+transformation. Once a code region satisfies the condition, 
+the transformation can be applied to improve performance and preserve
+functionality. 
+
+We have manually checked all the 110 performance-bug patches.
+50 out of these 110 patches contain efficiency rules, coming
+from all five applications. 
+The other 110 do not contain rules, because they
+either target too specific program contexts or are too general to be useful
+for rule-based bug detection.
+
+\input chapter-detec/rule_tab.tex
+
+Most of these 50 rules, according to the {\it lift} correlation metric,
+are related to the {\it Uncoordinated Functions} root cause and the
+{\it Change Call Sequence} fix strategy. 
+The conditions for applying these rules are composed of
+conditions on function-call sequences,
+parameter/return variables,
+and calling contexts, as shown in Table~\ref{tab:rule}.
+For example, to apply the {\it Bookmark All} patch 
+in Figure~\ref{fig:uncoord2} elsewhere, one 
+needs to find places that call \Code{doTransact} inside a loop;
+%\Code{::DeleteObject()} is followed by 
+%\Code{::CreateRectRgn(,)} and the parameter of the former
+%is the same variable that holds the return value of 
+%the latter.
+to apply the patch in Figure~\ref{fig:emp} elsewhere, one needs to ensure
+that certain fields of the object pointed by the first parameter of 
+\Code{apr\_stat} is not used afterward.
+%\comment{
+%For example, the patch of
+%Apache48778 applies when \Code{DateFormat.getDateInstance()} is invoked by 
+%only one thread or the number of its 
+%invocation per thread outweighs the number of threads invoking it;
+%the patch of MySQL38941 applies when multiple \Code{random()} could
+%be called simultaneously by multiple threads. 
+%For example, \Code{::DeleteObject( )} followed by \Code{::CreateRectRgn(,)}
+%(Figure~\ref{fig:uncoord1}); \Code{doTransact()} is inside a loop,
+%(Figure~\ref{fig:uncoord2}).
+%}
+There are also non-function rules, 
+usually containing {\it Change Condition} transformation and other
+miscellaneous algorithm improvements. 
+%They do not have common templates.
+
+%TODO: workload
+%\comment{
+%These rules are all useful for bug detection and fixing throughout the
+%software. For 26 bugs in our study, developers applied similar
+%patches at various locations in the code, when fixing them.
+%%Note that these are {\bf not} copy-paste code regions.
+%%Instead, they are code regions affected by the same understanding of particular
+%%APIs or workload.
+%Developers also complained about the manual effort involved in searching
+%code regions that need similar patches in the discussion board.
+%%After patching the bug shown in Figure~\ref{fig:emp}, 
+%%a developer commented that
+%%{\it `I believe there are other places that these occur'}.
+%%Unfortunately, without tool support, the developers failed
+%%to find all similar buggy code regions and left many unfixed.
+%}
+
+\section{Building Rule Checkers}
+
+{\bf Selecting Statically Checkable Rules\ }
+Some rules' applying conditions are statically checkable, such as function f1 
+inside a loop; some are dynamically checkable, such as function f1 called by 
+multiple threads at the same time; some are related to
+workload, such as having many large input files. 
+%First in first out :S.
+
+We check three largest application suites in our study: Apache, MySQL, and Mozilla.
+We find that 40 bug patches from them contain rules.
+25 out of these 40 have applying conditions that are mostly statically
+checkable. Therefore, we have built checkers based on these {{\bf 25} 
+efficiency rules}.
+
+{\bf Checker Implementation\ }
+We build 25 checkers in total. 
+14 of them are built using LLVM compiler infrastructure \citep{llvm} for 
+rules from C/C++ applications. LLVM works well for C++ software that troubles 
+many other static analysis infrastructure \citep{10yearlinux}. 
+It also provides sufficient data type, data flow, and control 
+flow analysis support for our checking. The other 11 checkers are 
+written in Python for 11 rules from Java, JavaScript, and C\# applications.
+
+%We build 25 checkers in total. 14 of them are built using LLVM compiler
+%infrastructure \cite{llvm} for rules from
+%C/C++ applications. 
+%\comment{
+%LLVM works well for C++ 
+%software that troubles many other static analysis infrastructures
+%\cite{10yearlinux}. It also
+%provides sufficient data type, data flow, and control
+%flow analysis support for our checking.}
+%%The other 11 checkers are written in Python for 11 rules from 
+%%Java, JavaScript, and C\# applications.
+
+%%The checker implementation is straightforward, and mostly takes fewer
+%%than 50 lines of code. 
+%%Each checker goes through software bitcode, in case of LLVM checkers,
+%%or source code, in case of Python checkers, and look for places that
+%%satisfy the patch-applying condition.
+%%Object type checking, control-flow analysis, intra-procedural data-flow
+%%analysis, and loop identification are all used in our checkers.
+%%Due to the space limit, we omit the implementation details of our
+%%checkers.
+
+The checker implementation is mostly straightforward. Each checker goes through 
+software bitcode, in case of LLVM checkers, or source code, in case of Python 
+checkers, looking for places that satisfy the patch-applying condition. We
+briefly discuss how our checkers examine typical conditions for function rules in the following.
+
+Checking call-sequence conditions, exemplified in Table~\ref{tab:rule}, involve mainly three tasks: 
+(1) Differentiating functions with the same name but different classes; 
+(2) Collecting loop information (loop-head, loop-exit conditions, 
+loop-body boundaries, etc.); (3) Control flow analysis. 
+%For example, 
+%we need to check whether an invocation of f1 is post-dominated by 
+%an invocation of f2. 
+LLVM provides sufficient support for all these tasks. Checkers written in Python struggle from time to time.
+
+Checking parameter/return conditions, exemplified in Table~\ref{tab:rule}, 
+typically rely on data-flow analysis. In our current prototype, LLVM checkers 
+conduct intra-procedural data-flow analysis. This analysis is scalable, 
+but may lead to false positives and negatives. In practice, it works
+well as shown by our experimental results. Our current Python checkers can 
+extract parameters of particular function calls, but can only do preliminary data-flow analysis.
+
+%An example of a LLVM checker found be found at the following URL: https://...
+
+
+%TODO: rewrite to organize based on what type of analysis is needed?
+
+\section{Rule-Checking Methodology}
+\label{sec:detection_meth}
+
+We conduct all the experiments on an 8-core Intel Xeon
+machine running Linux version 2.6.18. 
+
+We apply every checker to the following software: 
+
+(1) The exact version of the software that the original patch was applied to, 
+which is referred to as {\it original version}; 
+
+(2) The latest version of 
+the software that the original patch was applied to, which is referred to as 
+{\it original software}; 
+
+(3) The latest versions of 
+software applications that are {\bf different} from the one that the original
+patch was applied to, which is referred to as {\it different software}. 
+This was applied to 13 checkers, whose rules are about {\it glibc} library
+functions, Java library functions, and some general algorithm tricks. 
+We will refer to this as {\it cross-application checking}.
+For example, a C/C++ checker from MySQL will be applied to
+Mozilla and Apache HTTPD for cross-application checking; a Java checker
+from Apache TomCat server will be applied to the 65 other Java applications
+in the Apache software suite\footnote{Development teams
+behind different Apache applications are different}.
+
+%Actually, the 13 checkers are applicable to {\it any} application that is 
+%written in a particular programming language.
+
+%\comment{
+%Our checkers were applied to
+%Mozilla (4.46 million lines of code, mainly C++), 
+%MySQL (1.25 million lines of code, C/C++),
+%Apache HTTPD (0.39 million lines of code, C), 
+%and 66 Java applications from Apache suites (10.2 million lines of code).
+%Note that developers behind different Apache applications are different.
+%}
+
+%As shown in Table~\ref{tab:category}, 
+The checking results are categorized into three types: 
+{\it PPPs}, {\it bad practices}, and {\it false positives}. 
+As discussed in Section~\ref{sec:con2}, a PPP is an inefficient code region that
+runs slower than its functionality-preserving alternate implied by
+the efficiency rule. A bad practice is a region prone to becoming
+inefficient in the future.
+%Due to time constraints, we were unable to report all PPPs we found to
+%developers.
+We reported some PPPs to developers.
+Among those reported, 14 PPPs detected by 6 different
+checkers have been confirmed and fixed by the developers. 
+Other reported PPPs are put on hold due to lack of
+bug-triggering input information, which is unfortunately out of the 
+scope of this work.
+
+Finally, we have also changed each checker slightly to report
+code regions that follow each efficiency rule. We refer to these regions as 
+{\it good practices}, the opposite of PPPs. 
+
+\section{Rule-Checking Results}
+\label{sec:detection_results}
+
+\input chapter-detec/detector_result_tab.tex
+
+{\bf Overall Results\ }
+%\subsubsection{Performance bugs}
+As shown in Table~\ref{tab:detect_result}, 125 PPPs are found in the {\it original 
+version} of software.
+Programmers missed them and failed to fix them together with the original bugs.
+
+%\underline{Answer to Q1, Q2}: 
+113 previously unknown PPPs are found in the latest versions of the 
+{\it original software}, including bugs inherited from the original version
+and bugs newly introduced. Figure \ref{fig:newbug} shows an example. 
+
+%\underline{Answer to Q3}: 
+219 previously unknown PPPs are found in the latest versions of
+{\it different software}. An example is shown in Figure \ref{fig:newbug}. 
+
+14 PPPs in the latest versions of Apache, Mozilla, and MySQL
+are already confirmed and fixed by developers based on our report.
+
+These results confirm that performance bugs widely 
+exist. Efficiency rules exist and are useful for finding
+performance problems.
+
+
