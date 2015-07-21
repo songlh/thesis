@@ -32,6 +32,8 @@
 \usepackage{graphicx}
 \usepackage{multirow}
 \usepackage{nicefrac}
+\usepackage{pdflscape}
+\usepackage{pifont}
 \usepackage{setspace}
 \usepackage{subfig}
 \usepackage{xcolor}
@@ -160,11 +162,14 @@
 \newcommand{\code}[1]{\textsf{#1}}
 \newcommand{\codefamily}[0]{\sffamily}
 
+\newcommand{\allbugs}{110\xspace}
+\newcommand{\heavybugs}{66\xspace}
+
 \newcommand{\codefig}[1]{%
   \centering
   \mbox{\lstinputlisting[basicstyle=\ttfamily\footnotesize ]{figures/#1.c}}}
 
-
+\newcommand{\Tool}{LDoctor\xspace}
 
 
 
@@ -198,8 +203,10 @@
 %% Now include the tex files for each chapter, like so (I put these in separate dirs): 
 \include{chapter-intro/main}
 \include{chapter-background/main}
+\include{chapter-study/main}
 \include{chapter-detec/main}
 \include{chapter-sd/main}
+\include{chapter-ldoctor/main}
 %\input{chapter-cci/main}
 %\input{chapter-afix/main}
 %\input{chapter-cfix/main}

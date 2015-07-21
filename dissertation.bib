@@ -1,6 +1,19 @@
 
-%wiki
+%wiki, news articles or articles in other areas
 %begin
+
+@article{LDA,
+ author = {Blei, David M. and Ng, Andrew Y. and Jordan, Michael I.},
+ title = {Latent Dirichlet Allocation},
+ journal = {J. Mach. Learn. Res.},
+ issue_date = {3/1/2003},
+ volume = {3},
+ month = mar,
+ year = {2003},
+ issn = {1532-4435},
+ pages = {993--1022}
+} 
+
 
 @misc{ztest,
   title = "Z-test",
@@ -8,7 +21,47 @@
   howpublished="http://en.wikipedia.org/wiki/Z-test"
 }
 
-%wiki
+@misc{ACA-health,
+  title = "Why is my state's ACA healthcare exchange site slow?",
+  author = "{Jyoti Bansal}",
+  howpublished="http://blog.appdynamics.com/news/why-is-my-states-aca-healthcare-exchange-site-slow/"
+}
+
+@misc{colorado,
+  author = "Glen Emerson Morris",
+  title = {Lessons from the Colorado Benefits Management System Disaster},
+  howpublished= {www.ad-mkt-review.com/publichtml/air/ai200411.html},
+  year = 2004,
+}
+
+@misc{uk,
+  title="1901 Census site still down after six months",
+  author = {Tim Richardson},
+  howpublished="http://www.theregister.co.uk/2002/07/03/ 1901\_census\_site\_still\_down/"
+}
+
+@misc{dicksites,
+  title		= "Identifying Dark Latency",
+  author	= {Richard L. Sites},
+  howpublished= ""
+}
+
+@misc{halloffame,
+  title="Top 10 Open Source Hall of Famers",
+  author="InfoWorld",
+  howpublished="http://www.infoworld.com/d/open-source/top-10-open-source-hall-famers-848"
+}
+
+
+@misc{apache45396,
+  title = "Bug 45396: There is no hint in the Javadocs",
+  author = "{Stefan Bodewig}",
+  howpublished="https://issues.apache.org/ bugzilla/show\_bug.cgi?id=45396\#c4"
+}
+
+
+
+%wiki, news articles or articles in other areas
 %end
 
 
@@ -28,6 +81,18 @@
   title = {Have things changed now?: an empirical study of bug characteristics in modern open source software},
   booktitle = {ASID},
   year = {2006}
+}
+
+@misc{msdnannot,
+  author = "{M}icrosoft",
+    title = "{MSDN} {SAL} annotations",
+    howpublished="http://msdn2.microsoft.com/en-us/library/ms235402.aspx"
+}
+
+@misc{linuxannot,
+  author = "L. Torvalds",
+  title="Sparse - A semantic parser for C.",
+  howpublished = "http://www.kernel.org/pub/software/devel/sparse/"
 }
 
 %general bugs
@@ -73,6 +138,15 @@
  publisher = {ACM},
  address = {New York, NY, USA},
 } 
+
+@InProceedings{   CPMiner04,
+  author        = "Zhenmin Li and Shan Lu and Suvda Myagmar and Yuanyuan
+                  Zhou",
+  title         = "{CP-Miner: A Tool for Finding Copy-paste and Related Bugs
+                  in Operating System Code}",
+  booktitle     = "OSDI",
+  year          = 2004
+}
 
 @inproceedings{PRMiner05,
  author = {Li, Zhenmin and Zhou, Yuanyuan},
@@ -136,6 +210,28 @@
  keywords = {fault-finding tools, linux},
 }
 
+
+@inproceedings{ engler01bugs,
+    author = "Dawson Engler and David Yu Chen and Seth Hallem and Andy Chou and Benjamin Chelf",
+    title = "Bugs as Deviant Behavior: A General Approach to Inferring Errors in Systems Code",
+    booktitle = "SOSP",
+    year = "2001"
+}
+
+@inproceedings{KLEE,
+  author={Cristian Cadar and Daniel Dunbar and Dawson Engler},
+  title ={KLEE: Unassisted and Automatic Generation of High-Coverage Tests for Complex Systems Programs},
+  booktitle={OSDI}, 
+  year="2008"
+}
+
+@inproceedings{dart,
+  author = {Godefroid, Patrice and Klarlund, Nils and Sen, Koushik},
+  title = {DART: directed automated random testing},
+  booktitle = {PLDI},
+  year = {2005}
+} 
+
 @inproceedings{s2e,
   author = {Chipounov, Vitaly and Kuznetsov, Volodymyr and Candea, George},
   title = {{S2E}: a platform for in-vivo multi-path analysis of software systems},
@@ -143,7 +239,20 @@
   year = {2011}
 } 
 
+@inproceedings{livshits05dynamine,
+  title = "DynaMine: Finding Common Error Patterns by Mining Software Revision Histories",
+  author = "V. Benjamin Livshits and Thomas Zimmermann",
+  year = "2005",
+  booktitle = "FSE",
+}
 
+
+@inproceedings{zhendong.oopsla10,
+  author = {Gabel, Mark and Yang, Junfeng and Yu, Yuan and Goldszmidt, Moises and Su, Zhendong},
+  title = {Scalable and systematic detection of buggy inconsistencies in source code},
+  booktitle = {OOPSLA},
+  year = {2010}
+} 
 
 %rule-based bug detection
 %end
@@ -186,20 +295,6 @@
     year = {2003}
 }
 
-@inproceedings{CCI,
- author = {Jin, Guoliang and Thakur, Aditya and Liblit, Ben and Lu, Shan},
- title = {Instrumentation and sampling strategies for cooperative concurrency bug isolation},
- booktitle = {OOPSLA},
- year = {2010},
-} 
-
-@inproceedings{tarantula1,
- author = {Jones, James A. and Harrold, Mary Jean and Stasko, John},
- title = {Visualization of Test Information to Assist Fault Localization},
- booktitle = {ICSE},
- year = {2002}
-} 
-
 @inproceedings{liblit05,
  author = {Liblit, Ben and Naik, Mayur and Zheng, Alice X. and Aiken, Alex and Jordan, Michael I.},
  title = {Scalable statistical bug isolation},
@@ -208,6 +303,45 @@
  
 } 
 
+@inproceedings{Delta-LDA,
+ author = {Andrzejewski, David and Mulhern, Anne and Liblit, Ben and Zhu, Xiaojin},
+ title = {Statistical Debugging Using Latent Topic Models},
+ booktitle = {Proceedings of the 18th European conference on Machine Learning},
+ year = {2007},
+} 
+ 
+
+@inproceedings{tarantula1,
+ author = {Jones, James A. and Harrold, Mary Jean and Stasko, John},
+ title = {Visualization of Test Information to Assist Fault Localization},
+ booktitle = {ICSE},
+ year = {2002}
+} 
+
+
+@inproceedings{tarantula2,
+ author = {Santelices, Raul and Jones, James A. and Yanbing Yu and Harrold, Mary Jean},
+ title = {Lightweight Fault-localization Using Multiple Coverage Types},
+ booktitle = {ICSE},
+ year = {2009}
+} 
+
+@inproceedings{tarantula.darko,
+      author = {Elton Alves and Milos Gligoric and Vilas Jagannath and Marcelo d'Amorim},
+      title = {Fault-localization using dynamic slicing and change impact analysis},
+      booktitle={ASE},
+      year = {2011}
+}
+
+
+@inproceedings{CCI,
+ author = {Jin, Guoliang and Thakur, Aditya and Liblit, Ben and Lu, Shan},
+ title = {Instrumentation and sampling strategies for cooperative concurrency bug isolation},
+ booktitle = {OOPSLA},
+ year = {2010},
+}
+
+
 @inproceedings{joy.asplos13,
  author = {Arulraj, Joy and Chang, Po-Chun and Jin, Guoliang and Lu, Shan},
  title = {Production-run software failure diagnosis via hardware performance counters},
@@ -215,12 +349,9 @@
  year = {2013},
 } 
 
-@inproceedings{Delta-LDA,
- author = {Andrzejewski, David and Mulhern, Anne and Liblit, Ben and Zhu, Xiaojin},
- title = {Statistical Debugging Using Latent Topic Models},
- booktitle = {Proceedings of the 18th European conference on Machine Learning},
- year = {2007},
-} 
+
+
+
 
 %general diagnosis and debugging
 %end
@@ -274,6 +405,41 @@
   year = {2000}
 }
 
+@inproceedings{perfassert1,
+  author = {Perl, Sharon E. and Weihl, William E.},
+  title = {Performance assertion checking},
+  booktitle = {SOSP},
+  year = {1993}
+}
+
+@inproceedings{perfassert2,
+  author = {Vetter, Jeffrey S. and Worley, Patrick H.},
+  title = {Asserting performance expectations},
+  booktitle = {Supercomputing},
+  year = {2002}
+}
+
+@inproceedings{gulwani.popl2009,
+  author = {Gulwani, Sumit and Mehra, Krishna K. and Chilimbi, Trishul},
+  title = {SPEED: precise and efficient static estimation of program computational complexity},
+  booktitle = {POPL},
+  year = {2009}
+} 
+
+@inproceedings{green.pldi10,
+  author = {Baek, Woongki and Chilimbi, Trishul M.},
+  title = {Green: a framework for supporting energy-conscious programming using controlled approximation},
+  booktitle = {PLDI},
+  year = {2010}
+}
+
+@inproceedings{asplos11karthik,
+  author = {Liu, Song and Pattabiraman, Karthik and Moscibroda, Thomas and Zorn, Benjamin G.},
+  title = {Flikker: saving {DRAM} refresh-power through critical data partitioning},
+  booktitle = {ASPLOS},
+  year = {2011}
+} 
+
 %general performance
 %end
 
@@ -309,6 +475,24 @@
   pages     = {267-282}
 }
 
+@inproceedings{SongOOPSLA2014,
+ author = {Song, Linhai and Lu, Shan},
+ title = {Statistical Debugging for Real-world Performance Problems},
+ booktitle = {Proceedings of the 2014 ACM International Conference on Object Oriented Programming Systems Languages and Applications},
+ series = {OOPSLA '14},
+ year = {2014},
+ isbn = {978-1-4503-2585-1},
+ location = {Portland, Oregon, USA},
+ pages = {561--578},
+ numpages = {18},
+ url = {http://doi.acm.org/10.1145/2660193.2660234},
+ doi = {10.1145/2660193.2660234},
+ acmid = {2660234},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {empirical study, performance bugs, performance diagnosis, statistical debugging},
+}
+
 %performance diagnosis
 %end
 
@@ -321,6 +505,14 @@
  booktitle= {ICSE},
  year = {2013}
 }
+
+
+@inproceedings{CARAMEL,
+ author = {Nistor, Adrian and Chang, Po-Chun and Radoi, Cosmin and Lu, Shan},
+ title = {CARAMEL: Detecting and Fixing Performance Problems That Have Non-Intrusive Fixes},
+ booktitle = {ICSE},
+ year = {2015},
+} 
 
 @inproceedings{XuDataStructure,
  author = {Xu, Guoqing and Mitchell, Nick and Arnold, Matthew and Rountev, Atanas and Schonberg, Edith and Sevitsky, Gary},
@@ -350,6 +542,24 @@
  year = {2010},
 }
 
+@inproceedings{Cachetor,
+ author = {Nguyen, Khanh and Xu, Guoqing},
+ title = {Cachetor: Detecting Cacheable Data to Remove Bloat},
+ booktitle = {Proceedings of the 2013 9th Joint Meeting on Foundations of Software Engineering},
+ series = {ESEC/FSE 2013},
+ year = {2013},
+ isbn = {978-1-4503-2237-9},
+ location = {Saint Petersburg, Russia},
+ pages = {268--278},
+ numpages = {11},
+ url = {http://doi.acm.org/10.1145/2491411.2491416},
+ doi = {10.1145/2491411.2491416},
+ acmid = {2491416},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {Runtime bloat, cacheable data, dynamic dependence analysis, performance optimization},
+} 
+
 @inproceedings{PerfBug,
  author = {Jin, Guoliang and Song, Linhai and Shi, Xiaoming and Scherpelz, Joel and Lu, Shan},
  title = {Understanding and detecting real-world performance bugs},
@@ -362,6 +572,14 @@
   title = {Finding latent performance bugs in systems implementations},
   booktitle = {FSE},
   year = {2010}
+}
+
+
+@INPROCEEDINGS{xiao13:context,
+    author = {Xusheng Xiao and Shi Han and Tao Xie and Dongmei Zhang},
+    title = {Context-Sensitive Delta Inference for Identifying Workload-Dependent Performance Bottlenecks},
+    booktitle = {ISSTA},
+    year = {2013}
 }
 
 %performance bug detection
