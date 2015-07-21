@@ -124,3 +124,73 @@ However, considering the preliminary support for
 combating performance bugs,
 it is time to pay more attention to them
 when we enter a new resource-constrained computing world.
+
+\section{Directions to Address the Functional Bug Problem}
+How to fight functional bugs~\footnote{Any software defects that lead to functional misbehavior,
+such as incorrect outputs, crashes, and hangs. They include
+semantic bugs, memory bugs, concurrency bugs, and others.} has been studied for decades.
+Many efforts are spent along one of the following lines:
+
+{\bf Functional bug avoidance:}
+Functional bug avoidance techniques aim to help developers write correct codes. Good programming languages,
+document tools and development environments can effectively reduce the number of mistakes made by developers
+and avoid introducing functional bugs into software.
+However, making mistakes is human nature,
+and it is infeasible to eliminate all mistakes during development.
+Techniques from other aspects are also needed to combat functional bugs.
+
+{\bf Functional bug detection:}
+The goal of bug detection is to identify previously
+unknown functional bugs inside programs.
+There are static and dynamic detection techniques,
+which examine codes or execution of the program respectively.
+
+{\bf Software testing:}
+During testing, the whole program or a separate program component
+is exercised under different setting to expose unknown functional bugs.
+Both bug detection and software testing can benefit from each other.
+On one hand, some bug detection techniques rely on testing to execute the program.
+One the other hand, good detection techniques can provide more accurate information
+to help judge whether a test fails.
+
+{\bf Functional failure diagnosis and fixing:}
+Failure diagnosis is to analyze failure-related information
+and to figure out the root cause for the failure.
+There are two diagnosis scenarios.
+When bugs can be repeated in-house based on users' reports, in-house diagnosis is conducted.
+If bugs cannot be repeated in-house,
+on-line diagnosis is conducted based on information collected during production runs.
+For both of these two cases,
+expected output are root causes for failure and fix suggestions for developers.
+After understanding root causes,
+developers need to design patches and fix bugs.
+There are also many automatic fixing techniques proposed recently.
+
+{\bf Functional bug understanding:}
+A good understanding of functional bugs is prerequisite
+to improve functional bug fighting techniques.
+There are many empirical studies conducted on functional bugs,
+and they have already provided guidance for research along above directions.
+
+\section{Dissertation Contribution}
+The philosophy behind this dissertation is to
+explore how to leverage existing functional bug fighting techniques
+to combat performance bugs. This idea is not trivial.
+For example, in order to build effective performance bug detection techniques,
+we need to have a good understanding of common root causes for performance bugs.
+Due to the poor understanding of real-world performance bugs,
+we do not know what are the common root causes.
+For example, many functional bug diagnosis techniques highly depend on failure symptoms, like crashes.
+We do not know what are failure symptoms for performance bugs.
+
+This dissertation works on three directions to address performance bug problems:
+real-world performance bug understanding,
+performance bug detection and performance failure diagnosis.
+All these parts reflect the above philosophy.
+For example, rule-based bug detection has been widely used to detect functional bugs.
+Our work demonstrate that rule-based bug detection is also promising for performance bugs.
+For example, we apply statistical debugging to performance failure diagnosis.
+Experimental results show that with right design points,
+statistical debugging can effectively diagnose performance bugs.
+In order to improve the diagnosis results, we design a new technique, named LDoctor,
+for inefficient loops.
