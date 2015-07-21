@@ -282,4 +282,296 @@ These results confirm that performance bugs widely
 exist. Efficiency rules exist and are useful for finding
 performance problems.
 
+\begin{figure*}[t!]
+\begin{center}
+\begin{minipage}{3.3in}
+\includegraphics[height=1.42in]{figures/mysql15811.eps}
+%\caption{\small PPP found in the same application}
+%\label{fig:my15811}
+\end{minipage}
+\begin{minipage}{3in}
+\includegraphics[height=1.42in]{figures/apache34464.eps}
+%\caption{\small PPP found in a different application}
+%\label{fig:ap34464}
+\end{minipage}
+\end{center}
+\caption{PPPs we found in latest versions of {\it original} and {\it
+different} software (the gray area shows how these two PPPs should be fixed)}
+\label{fig:newbug}
+\end{figure*}
+
+{\bf PPPs In Original Versions\ }
+17 out of 25 checkers found new PPPs, 125 in total, in the original versions
+of the buggy software.
+%that were missed by developers.
+
+Some developers clearly tried to find all similar bugs when
+fixing one bug, but did not succeed.
+For example, in MySQL14637, after two buggy code regions were 
+reported, developers found three more places that were similarly
+inefficient and fixed them altogether. Unfortunately,
+there were another 50 code regions that violated the same efficiency
+rule and skipped developers' checking, as shown in 
+Table~\ref{tab:result}. Similarly, MySQL developers found and fixed 3 places
+that had the inefficiency pattern shown in Figure~\ref{fig:newbug},
+but missed the other 15 places.
+
+113 out of these 125 PPPs exist in different files or even different 
+modules where the original bugs exist, which is probably why they were missed by
+developers. These PPPs end up in several ways:
+(1) 4 of them were fixed in later versions, which took 14--31 months;
+(2) 20 eventually disappeared, because the
+functions containing these PPPs were removed or re-implemented;
+(3) 101 still exist in the latest versions of the software, wasting
+computation resources 12--89 months after the original bugs were fixed.
+
+\underline{Lesson\ } 
+The above results show that developers do need support to systematically and 
+automatically find similar performance bugs and fix them all at 
+once.
+
+{\bf PPPs In The Latest Versions\ }
+2 of the 25 checkers are no longer applicable in the latest versions,
+because the functions involved in these checkers
+have been removed. The remaining 23 checkers are applied to
+the latest versions of corresponding software and find
+113 PPPs. Among them, 101 PPPs were
+inherited from the original buggy versions.
+The other 12 were introduced later. 
+
+\underline{Lesson\ }
+Developers cannot completely avoid the mistakes they made
+and corrected before, which is understandable considering the large number of bugs in
+software.
+Specification systems and automated checkers can prevent developers 
+from introducing old bugs into new code.
+%programmers are still making the old mistakes. 
+
+{\bf PPPs In Different Software Applications\ }
+An exciting result is that 8 out of 13 cross-application checkers 
+have successfully found previously unknown
+PPPs in the latest versions of applications that are different from
+where the rules came from.
+
+Most of these checkers reflect common pitfalls in using
+library functions. For example, Figure~\ref{fig:newbug} shows a pitfall
+of using \Code{String::indexof()}. Apache-Ant developers made this
+mistake, and we found Apache-Struts developers also made a similar mistake.
+
+Apache32546 checker presents an interesting case. In the original 
+bug report, developers from Apache-Slide recognized that
+a small buffer size would severely hurt the performance of 
+\Code{java.io.InputStream.read (byte buffer[])}
+for reasonably large input
+(e.g., larger than 50KB). Replacing their original
+2KB buffer with a 200KB buffer achieved {\bf 80 times} throughput 
+improvement in WebDav server. We first confirmed that this rule is
+still valid. Our checker then found 135 places
+in the latest versions of 36 software applications where similar mistakes were made.
+These places use small buffers (1KB -- 4KB) to read images or data
+files from disk or web, and are doomed to performance losses.
+
+Some checkers reflect algorithm improvements and are also applicable to
+many applications. For example, algorithm improvements for string operations 
+proposed by MySQL developers (MySQL14637 and MySQL49491) also apply for
+Mozilla and Apache HTTPD.
+
+
+Cross-application checking also helps validate efficiency rules.
+For example, by comparing how \Code{java.util.zip.Deflater.deflate()}
+is used across applications, we found that Ant developers'
+understanding of this API, reflected by their discussion, 
+was wrong. They fixed Apache45396 by coincidence.
+
+\underline{Lesson\ } 
+The above results show that there exist general inefficiency patterns that
+go beyond one application, just like that for functional
+bugs \citep{billpugh}. 
+Maintaining specifications and checkers for these general patterns can 
+significantly save developers' effort, and allow them
+to learn from other developers and other software. 
+We can even discover performance bugs in a software where no
+performance patch has ever been filed.
+%TODO: software project, software application, confusing term.
+
+\vspace{0.05in}
+{\bf Bad Practices\ } 
+Other than PPPs, some code regions identified by the 
+checkers are categorized as bad practices.
+For example, there are code regions very similar to
+the MySQL PPP shown in Figure~\ref{fig:newbug}, except that the calculation of
+\Code{end} is not completely useless as \Code{end} is used in places other than 
+the invocation of \Code{ismbchar}.
+Clearly this practice is more likely to cause performance problems
+in the future than directly using
+\Code{mysqlcs}$\rightarrow$\Code{mbmaxlen} as the parameter
+for \Code{ismbchar} function.
+
+\vspace{0.05in}
+{\bf Good Practices\ }
+Code regions that have well followed the efficiency rules are also identified
+by slightly changed checkers.
+For example, we found that in 13 places of various applications 
+developers do use 
+\Code{InputStream.read (byte buffer[])} in a performance efficient
+way: \Code{buffer} has a configurable size or 
+a large size that suits the workload (e.g., 64K in some Hadoop code).
+
+\underline{Lesson\ } Violations to efficiency rules are not 
+always rare comparing with good practices. 
+Previous techniques that use statistical analysis to
+infer functional rules \citep{PRMiner05,engler01bugs} 
+may not work for efficiency rules.
+
+{\bf False Positives\ }
+Our PPP detection is accurate. 
+On average, the false-positive-vs-PPP rate is 1:4.
+The false positives mainly come from three sources.
+
+First, Python checkers have no object-type information.
+Therefore, some rules are applied to functions
+with right function names but wrong classes
+(e.g., Mozilla490742 and 
+Apache32546). This is not a problem in LLVM checkers.
+
+Second, some non-function rules are difficult to 
+accurately express and check, which leads to false positives in
+MySQL14637.
+
+Third, accurately checking some efficiency rules requires run-time and/or 
+workload information, which inevitably leads to false positives in
+our static checkers. 
+%This includes
+%how many times a function is to be invoked, whether
+%multiple threads could invoke a function concurrently, what is the typical
+%length of an input, etc. 
+False positives in Apache44408 and Apache48778 mostly belong to this 
+category. These false positives can be largely eliminated by
+run-time checkers.
+
+{\bf Performance Results\ }
+Our checkers are efficient. Each Python checker finishes
+checking 10 million lines of code within 90 seconds.
+Our LLVM checkers are mainly applied to 
+MySQL, Mozilla Firefox, and Apache HTTPD.
+It takes 4 -- 1270 seconds for one LLVM
+checker to process one application.
+
+We tried unit testing on PPPs.
+The performance difference is significant. 
+For example, for programs that read images and files using
+\Code{InputStream.read}\Code{(byte buffer[])} with a 4KB-buffer parameter,
+we can stably get 3 times throughput improvement through a 40K-buffer parameter.
+When we feed the unit test with a 50MB file, which is a quite common image-file
+workload these days,
+the file operation time decreases from 0.87 second to 0.26 second,
+a definitely perceivable difference.
+As another example, the Struts code shown in Figure~\ref{fig:newbug}
+is from a utility function used for processing JSP files. 
+Our unit testing with a 15K JSP 
+file shows that the simple patch can decrease latency by 0.1 second, 
+a perceivable difference in interactive web applications.
+
+Whole system testing turns out to be difficult, as suggested by our
+characteristics study (Section~\ref{sec:char_exp}). 
+No PPP detected by our checkers belongs to the always-active category. 
+Future performance-oriented input-generation tools will significantly
+help performance testing and identify truly severe PPPs. Execution frequency
+information can also help future static performance-bug detectors to rank 
+the severity of PPPs.
+
+%TODO Our experience with developers. (1) If the patch is simple enough, 
+%developers would do it.
+
+
+\subsection{Discussions}
+
+%TODO 1. original tone is too negative; should we put this earlier
+%to lower the expectation?
+{\bf Effectiveness of rule-based performance-bug detection\ }
+
+{\it Effort saving\ } Rule-based detection not only identifies problems, but
+also suggests alternative implementations with better efficiency.
+These alternative implementations often
+have small sizes and regular patterns,
+as shown in Figure~\ref{fig:newbug}, 
+making PPP validation and fixing easy.
+It is also conceivable to enhance our checkers for automated PPP fixing. 
+
+{\it Improving performance\ }
+These PPPs showed 
+significant performance improvement than their alternative implementations
+in our unit testing. Without fixing these PPPs,
+these unit-level performance losses could aggregate into intolerable
+performance problems that are difficult to diagnose. 
+This is especially significant considering that many performance bugs are
+difficult to catch using other approaches.
+
+
+{\it Maintaining code readability\ }
+Like those 109 patches studied earlier, 
+most PPPs detected by us can be fixed through changes to a few lines of code,
+%and do not hurt code readability, 
+as shown in Figure~\ref{fig:newbug}.
+Even for the few complicated PPPs, wrapper-functions or 
+macros can easily address the patch-readability issue.
+%which is exactly what developers did in some of the patches we studied.
+
+{\it Other usage\ }
+Rules and checkers can serve as performance specifications for future 
+software
+development. They can aid in code maintenance when software evolves.
+Developers can also save PPPs to an inefficiency list for future performance 
+diagnosis.
+
+Of course, this is only a starting point for rule-based performance-bug
+detection. We expect our experience to motivate future work on 
+automatically generating rules, checkers, or even patches.
+
+%TODO you can automatically un-fix if you want
+%TODO PPP xx is different from premature over-optimization.
+
+\vspace{0.1in}
+{\bf Can these problems be detected by other tools?\ }
+
+{\it Copy-paste detectors\ } 
+Most PPPs that we found are {\bf not} from copy-paste code regions
+ and cannot be detected by text-matching tools
+\citep{zhendong.oopsla10,CPMiner04}, as we can see in
+Figure~\ref{fig:newbug}. Rule violations are not rare.
+When developers misunderstand an API,
+they tend to make mistakes whenever they use this API.
+As a result, these mistakes usually go beyond
+copy-paste code regions.
+
+{\it Compiler optimization\ }
+None of the bugs that provided the efficiency rules could be optimized
+away by compilers used in Apache, MySQL, and Mozilla. Many PPPs 
+involve library functions and algorithmic inefficiency, and
+are almost impossible for a compiler to optimize
+(Figure~\ref{fig:newbug}).
+Even for the few cases where compiler optimization might help
+(Figure~\ref{fig:emp}), 
+the required inter-procedural and points-to analyses are not scalable
+for real-world large software. 
+
+{\it General rule-based bug detectors\ }
+Ideas for detecting functional bugs can greatly benefit 
+and inspire future research on performance bug detection.
+However, many approaches cannot be directly applied.
+Tools that automatically infer functional correctness rules 
+\citep{engler01bugs,PRMiner05,livshits05dynamine} may not be suitable
+for efficiency rules, because rule violations are not rare,
+as shown in Table~\ref{tab:result}. In addition, many efficiency rules either
+involve only one function or discourage multiple functions to be used together, 
+making them unsuitable for tools that focus on function correlations. 
+
+
+%TODO: gunami work infer complexity, ras bodik: 
+
+
+%TODO: these are potential performance problems.
+% how to use them: they might conflict with productivity, readability
+% it could be better done by macro, wrapper, use for diagnosis
+
 

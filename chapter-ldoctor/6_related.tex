@@ -1,0 +1,125 @@
+\section{Related Works}
+\label{sec:related}
+
+\subsection{Performance Diagnosis}
+System developers always spend a lot of time in understanding software 
+performance problems. Many tools and techniques have been built before to
+help developers. 
+
+Profilers are the most commonly used tools that help developers understand
+performance.
+Progresses are still been made in this area.
+Some work helps associate complexity with bottleneck functions~\cite{Zaparanuks:2012:AP:2254064.2254074,Coppa:2012:IP:2254064.2254076};
+some improves the profiling of calling context trees~\cite{D'Elia:2011:MHC:1993498.1993559}, 
+some provides more precise profiling results~\cite{Mytkowicz:2010:EAJ:1806596.1806618}, and some targets new types of applications, 
+like asynchronous programs~\cite{Ravindranath:2012:AMA:2387880.2387891} and 
+interactive programs~\cite{Jovic:2011:CMY:2048066.2048081}.
+Different from our work, profiling aims to tell where 
+computation resources are spent, 
+not where and why computation resources are wasted. 
+The root cause code region of a performance problem often is not inside
+the top-ranked function in the profiling result \cite{SongOOPSLA2014}.
+Even if it is, developers still need to spend a lot of effort to understand
+whether and what kind of computation inefficiency exists.
+
+Recently, tools that go beyond profiling and provide more automated analysis
+have been proposed.
+IntroPerf~\cite{IntroPerf} helps automatically 
+infer function call latencies based on
+operating system tracers. StackMine~\cite{Han:2012:PDL:2337223.2337241} can
+identify slow call-stack patterns inside event handlers. The work by
+\citet{TaoAsplos2014} analyzes system traces to understand 
+performance impact propagation and 
+causality relationship among different system components. 
+X-ray~\cite{Attariyan:2012:XAR:2387880.2387910} helps identify inputs
+or configuration entries that are most responsible for performance problems.
+Although these techniques are all very useful, 
+they target different problems from \Tool. \Tool targets 
+the inefficient loop problem, a common type of 
+computation inefficiency problem that contributes to
+about two thirds of real-world user-perceived performance problems studied
+by previous work \cite{SongOOPSLA2014}, and tries to pin-point the exact
+root cause and provide fix-strategy suggestions.
+
+\Tool is most related to
+the recent statistical performance debugging work
+\citep{SongOOPSLA2014}, both trying to identify source-code level root causes
+for user-perceived performance problems. 
+This previous work can only identify which loop is most correlated with 
+a performance symptom through statistical analysis, 
+but cannot provide any information
+regarding what type of inefficiency this loop contains.
+\Tool complements it by
+providing detailed root cause information and fix strategy suggestions through
+program analysis. 
+
+\subsection{Performance Bug Detection}
+
+Bug detection finds previously unknown defects in programs that can
+lead to unnecessary performance degradation. 
+
+Many dynamic tools have been built to detect
+run-time bloat~\cite{Dufour:2008:STC:1453101.1453111, Xu:2009:GFP:1542476.1542523, Xu:2010:DIC:1806596.1806616}, 
+low-utility data structures~\cite{Xu:2010:FLD:1806596.1806617}, 
+cacheable data~\cite{Cachetor}, performance slowdown caused by false sharing in
+multi-thread programs~\cite{Liu:2011:SPD:2048066.2048070},
+inefficient nested loops~\cite{Alabama},
+input-dependent loops~\cite{xiao13:context}, and others. 
+Static tools have also been proposed. Some static tools identify loops 
+that are executing 
+unnecessary iterations and hence could have been sped up by some extra
+\texttt{break} statements
+~\cite{CARAMEL,IsilDillig.PLDI15}. 
+Some static tools \cite{PerfBug} identify performance defects that violate
+specific efficiency rules, often related to API usage. 
+
+As discussed in 
+Section \ref{sec:intro}, these tools are all useful in improving software
+performance, but are not suitable for performance diagnosis.
+With different design goals from \Tool, these bug detection tools are not 
+guided by any specific
+performance symptoms. Consequently, they take different coverage-accuracy
+trade-offs from \Tool. \Tool tries to cover a wide variety of root-cause 
+categories and is more aggressive in identifying root-cause categories, because
+it is only applied to a small number of loops that are known to be highly
+correlated with the specific performance symptom under study.
+Performance-bug detection tools has to be more conservative and tries hard
+to lower false positive rates, because it needs to apply its analysis to the
+whole program, instead of just a few loops. This requirement causes bug
+detection tools to each focus on a specific root-cause category.
+%In fact, most inefficient loops in our study are very difficult to be detected
+%by a generic performance bug detectors --- it is very difficult to prove them to
+%be inefficient without application-specific domain knowledge.
+%For example, only a couple of inefficient loops out of the 45 studied
+%in Table \ref{tab:root} can be detected by recent static inefficient
+%loop checkers
+%\cite{CARAMEL,IsilDillig.PLDI15}.
+Performance bug detection tools also do not aim to provide fix suggestions.
+For the few that do provide \cite{CARAMEL}, they only focus on very specific
+fix patterns, such as adding a break into the loop. 
+In addition, dynamic performance bug detectors do not try to achieve any
+performance goals. None of them has tried applying sampling to their
+bug detection and often leads to 10X slowdowns or more.
+
+\subsection{Other Techniques to Fight Performance Bugs}
+
+There are many test inputs generation techniques that help
+performance testing. 
+Wise~\cite{WISE} learns how to restrict conditional branches to get worst-case complexity from small inputs, 
+and uses the learned policy to generate worst-case complexity inputs with 
+larger size. 
+EventBreak~\cite{EventBreak} generates performance testing inputs 
+for web applications. 
+SpeedGun~\cite{SpeedGun} generates performance regression tests for 
+changed concurrent classes.
+
+Some techniques aim to improve the test selection or prioritization during 
+performance testing. 
+Forepost~\cite{Forepost} is a test selection framework toward exposing more performance bottlenecks. 
+It run applications under a small set of randomly selected test inputs to learn rules 
+about which types of inputs are more likely to trigger intensive computation. 
+Then it use learned rules to pick remaining test inputs in order to expose more performance bottlenecks. 
+\citet{Huang:2014:PRT:2568225.2568232} study 100 performance regression issues. Based on the studying results, 
+they design a performance risk analysis, which can help developers prioritize performance testing.  
+
+All these techniques combat performance bugs from different aspects from performance diagnosis.

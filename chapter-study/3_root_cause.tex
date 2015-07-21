@@ -1,0 +1,119 @@
+\subsection{Root Causes of Performance Bugs}
+\label{sec:taxonomy_howwaste}
+
+There are a large variety of potential root causes for inefficient code, 
+such as poorly designed algorithms, non-optimal data structures, cache-unfriendly data layouts, etc. 
+Our goal here is not to discover previously unheard-of root causes, 
+but to check whether there are common root-cause patterns among 
+real-world performance bugs that bug detection and diagnosis work can focus on.
+
+Our study shows that the majority of real-world performance bugs in our study are covered by only a couple of root-cause categories (Table~\ref{tab:root_cause}).
+
+\underline{\it Wrong Branch Selection} 
+A non-negligible portion of performance bugs are branch-related. 
+There are three scenarios in which bugs in this category are triggered. 
+In the first case, some slow code paths would be executed. 
+For example, when Mozilla231300 is triggered, 
+Firefox would use separate system calls to move files 
+in the same directory one by one instead of using one system call to move them altogether. 
+In the second case, some unnecessary work will be conducted. 
+For example, when Mozilla258793 is triggered, 
+Firefox will call draw functions for background figures, which do not exist. 
+In the last case, some desired functionalities will be realized in an inefficient way, 
+such as the {\it No Cache} example shown in Figure~\ref{fig:mysql26527}. 
+
+\underline{\it Workless} 
+Around one third of performance bugs are caused by workless codes. 
+Buggy codes rarely generate results whenever executed, 
+or they rarely generate results under bug-triggering inputs. 
+Bugs in this category can be divided along two dimensions: 
+according to different workless granularities, 
+workless bugs can be divided into loop-related bugs and not loop-related bugs; 
+based on whether semantic information is needed to judge whether codes are workless, 
+bugs in this category can be divided into semantic workless, and non-semantic workless.
+For example, inside the GC function, there is a loop to scan all heap objects 
+and free objects with reference number 0. 
+For the {\it Intensive GC} example in Figure~\ref{fig:moz515287}, this loop rarely deallocates objects. 
+{\it Intensive GC} example  is loop-related and non-semantic workless.
+{\it Transparent Draw} in Figure~\ref{fig:moz66461} is not loop-related, 
+and we need semantic information to know that drawing a transparent figure is workless.
+
+\underline{\it Redundancy} 
+Redundancy means repeated work. 
+Intuitively, we can remove repeated work and improve performance. 
+According to different code granularity to observe redundant work, 
+bugs in this category could be divided into redundant snippets, 
+cross-iteration redundancy, and cross-loop redundancy.  
+For example, in Chrome70153, 
+both software and GPU will render the same video redundantly, 
+and this bug is categorized as redundant snippets. 
+In the {\it Bookmark All} example shown in Figure~\ref{fig:uncoord2}, 
+Firefox will start, commit, and destroy a transaction for each tab in each iteration, 
+and there is a lot of redundant work across different iterations. 
+There are also bugs, for which redundant work is not inside one loop
+but across different execution of the same loop, like Mozilla35294. 
+
+
+\underline{\it Synchronization Issues}
+Unnecessary synchronization that intensifies thread competition 
+is also a common root cause, as shown in the {\it Slow Fast-Lock} bug (Figure~\ref{fig:mysql26527}). 
+These bugs are especially common in server applications, contributing to 3 out of 15 Apache server bugs and 6 out of 26 MySQL server bugs.
+
+
+\underline{\it Others}
+There are also bugs that do not fall into above categories. 
+For those bugs, developers find more efficient methods to optimize original codes. 
+For example, in order to accelerate the startup of GPU process, Chrome developers use one extra thread to collect expensive GPU information. 
+For MySQL14637, MySQL developers replace byte-wise parsing with four-byte-wise parsing to accelerate trimming blank characters from the end of a string. 
+
+\begin{table*}[tb!]
+\begin{adjustwidth}{-.5in}{-.5in}
+\scriptsize
+\centering
+{
+
+\begin{tabular}{lcccccc}
+\toprule
+\multicolumn{1}{c}{\bf Root Causes for Performance Bugs} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+\multicolumn{1}{l}{Wrong Branch Selection: wrong branch selection to cause performance loss}
+&2&0&1&6&7&16\\
+\midrule
+\multicolumn{1}{l}{Workless: not generate desired results}
+&4&4&3&18&9&38\\
+\midrule
+\multicolumn{1}{l}{Redundancy: repeated work causing performance loss}
+&13&3&3&6&2&27\\
+\midrule
+\multicolumn{1}{l}{Synchronization Issues: inefficient synchronization among threads}
+&5&0&0&1&6&12\\
+\midrule
+\multicolumn{1}{l}{Others: all the bugs not belonging to the above four categories}
+&4&3&4&6&7&24\\
+\bottomrule
+
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{Root cause categorization in Section~\ref{sec:taxonomy_howwaste}}
+\label{tab:root_cause}
+\end{table*}
+
+
+
+
+
+
+
+
+%\underline{\it Control Flow of Performance Bugs}
+%As we discussed earlier, there are performance bugs related to branch selection. 
+%There are also bugs related loops, including bugs caused by workless loops, cross-iteration redundant bugs, cross-loop redundant bugs, 
+%and some bugs categorized as Others. 
+%Detailed numbers of control flow categorization for performance bugs 
+%and user perceived performance bugs are shown in Table~\ref{tab:cfg} and Table~\ref{tab:cfg_user} respectively. 
+%There are more than 80\% of user perceived performance bugs either related to branches or related to loops.
+%Future performance bug diagnosis tools can focus on these two types of bugs.   
+
+
+

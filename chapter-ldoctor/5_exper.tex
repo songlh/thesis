@@ -1,0 +1,359 @@
+\section{Evaluation}
+\label{sec:experiment}
+
+\subsection{Methodology}
+\label{sec:result_meth}
+%Please discuss the potential usage scenarios of \Tool
+%How you will use it together with other tools 
+
+
+\begin{table}
+  \centering
+  \scriptsize
+  \newcommand{\Yes}[1]{\checkmark{}$_#1$}
+  \newcommand{\No}[0]{-}
+  \begin{tabular}{lcccc}
+    \toprule
+                         &      	   &                        & {\bf Root}   &          \\
+   {\bf BugID}           &  {\bf KLOC}     &  {\bf P. L.}           & {\bf Cause}  & {\bf Fix}\\
+   \midrule
+   Mozilla347306         & 88              & C                      &  0*1?        & C     \\
+   Mozilla416628         & 105             & C                      &  0*1?        & C     \\
+   Mozilla490742         & N/A             & JS                     &  C-I         & B       \\
+   Mozilla35294          & N/A             & C++                    &  C-L         & B        \\ 
+   Mozilla477564         & N/A             & JS                     &  C-L         & M       \\
+   \midrule 
+   MySQL27287            & 995             & C++                    &  0*1?,C-L        & C     \\
+   MySQL15811            & 1127            & C++                    &  C-L         & M \\ 
+   \midrule    
+   Apache32546           & N/A             & Java                   &  C-I         & B  \\
+   Apache37184           & N/A             & Java                   &  C-I         & M  \\
+   Apache29742           & N/A             & Java                   &  C-L         & B \\ 
+   Apache34464           & N/A             & Java                   &  C-L         & M  \\
+   Apache47223           & N/A             & Java                   &  C-L         & B \\
+   \midrule
+   GCC46401              & 5521            & C                      &  [0$|$1]*    & S   \\
+   GCC1687               & 2099            & C                      &  C-I         & M \\
+   GCC27733              & 3217            & C                      &  C-I         & M \\
+   GCC8805               & 2538            & C                      &  C-L         & B\\
+   GCC21430              & 3844            & C                      &  C-L         & M \\
+   GCC12322              & 2341            & C                      &  1*          & S\\
+\bottomrule
+   \end{tabular}
+  %\nocaptionrule
+  \caption{Benchmark information.
+  (N/A: we skip the size of benchmarks that are extracted from real-world applications.
+  Root cause ``C-I'' is short for cross-iteration redundancy.
+  Root cause ``C-L'' is short for cross-loop redundancy.
+  C, B, M, and S represent different fix strategies, as discussed in
+  Table \ref{tab:root}.
+  ) 
+ }
+  \label{tab:benchmarks}
+\end{table}
+
+\paragraph{Implementation and Platform}
+We implement \Tool in LLVM-3.4.2 \citep{llvm}, and conduct our
+%Our implementation consists of 17654 lines of C++ code, 
+%with 4748 for instrumenter, 674 for resultless analysis, 
+%5802 for redundancy analysis, 
+%and the remaining 6430 for common utilities. 
+experiments on a i7-960 machine, with Linux 3.11 kernel. 
+
+\paragraph{Benchmarks}
+We use 18 out of the 45 bugs listed in Table \ref{tab:root} as our 
+evaluation benchmarks. Among these 18, seven are extracted from Java or JavaScript
+programs and re-implemented in C++, as \Tool currently only handles C/C++
+programs; one is extracted from a very old version of Mozilla.
+%These 18 bugs include all the benchmarks used in the recent
+%statistical performance debugging work~\cite{SongOOPSLA2014}.
+The remaining bugs listed in Table \ref{tab:root} are much more difficult to
+use as benchmarks, 
+either because they depend on special hardware/software environment
+or because they involve too complex data structures to extract. 
+Overall, these 18 bugs cover a wide variety of performance root causes, as 
+shown in Table~\ref{tab:benchmarks}. 
+
+\paragraph{Metrics}
+Our experiments are designed to evaluate \Tool from three main aspects:
+\begin{itemize}
+\item Coverage. Given our benchmark suite that covers a wide variety
+of real-world root causes, can \Tool identify all those root causes?
+\vspace{-0.05in}
+
+\item Accuracy. 
+When analyzing non-buggy loops, will \Tool generate any false positives?
+\vspace{-0.05in}
+
+\item Performance. 
+What is the run-time overhead of \Tool?
+\end{itemize}
+
+\paragraph{Evaluation settings}
+The imagined usage scenario of \Tool is that one will apply \Tool to identify
+detailed root causes and provide fix-strategy suggestion for a small number of
+suspicious loops that are most correlated with the specific performance problem.
+
+Our evaluation uses existing statistical performance diagnosis
+tool \citep{SongOOPSLA2014} to process a performance problem and identify 
+one or a few suspicious loops for \Tool to analyze.
+For 14 out of the 18 benchmarks, statistical performance debugging identifies the
+real root-cause loop as the top ranked suspicious loop. For the remaining
+benchmarks, the real root-cause loops are ranked number 2, 2, 4, and 10.
+%Overall, we believe future tools can accurately identify the most one or a couple
+%of suspicious loops.
+
+\begin{table}
+  \centering
+  \scriptsize
+  \newcommand{\Yes}[0]{\checkmark}
+  \newcommand{\No}[0]{-}
+  \begin{tabular}{lcc}
+    \toprule
+                            	&  {\bf Reported}             &{\bf Fix }                     \\
+   {\bf BugID}                  &  {\bf Root Cause}           &{\bf Suggestion}             \\
+   \midrule
+   Mozilla347306                & \Yes                        & \Yes                                          \\
+   Mozilla416628                & \Yes                        & \Yes                                         \\
+   Mozilla490742$_a$            & \Yes                        & \Yes                                             \\
+   Mozilla35294$_a$             & \Yes                          & \Yes                                              \\ 
+   Mozilla477564$_a$            & \Yes                          & \Yes                                            \\
+   \midrule 
+   MySQL27287                   & \Yes                          & \ding{55}                                         \\
+   MySQL15811                   & \Yes                          & \Yes                                      \\ 
+   \midrule    
+   Apache32546                  & \Yes                          & \Yes                                      \\
+   Apache37184$_a$              & \Yes                          & \Yes                                        \\
+   Apache29742$_a$              & \Yes                          & \Yes                                       \\ 
+   Apache34464                  & \Yes                          & \Yes                                        \\
+   Apache47223                  & \Yes                          & \Yes                                       \\
+   \midrule
+   GCC46401                     & \Yes                     & \Yes                                      \\
+   GCC1687                      & \Yes                          & \Yes                                     \\
+   GCC27733$_a$                 & \Yes                          & \Yes                                     \\
+   GCC8805                      & \Yes                          & \Yes                                  \\
+   GCC21430                     & \Yes                          & \Yes                                     \\
+   GCC12322                     & \Yes                         & \ding{55}                                   \\
+   \bottomrule
+   \end{tabular}
+  %\nocaptionrule
+  \caption{Coverage Results.}
+  \label{tab:cover}
+\end{table}
+
+
+To evaluate the coverage, accuracy, and performance of \Tool, we mainly conduct
+three sets of evaluation. First, we apply \Tool to the real root-cause loop to
+see if \Tool can correctly identify the root-cause category and provide
+correct fix-strategy suggestion. Second, we apply
+statistical performance debugging \citep{SongOOPSLA2014} to all our benchmarks
+and apply \Tool to the top 5 ranked loops\footnote{Some extracted benchmarks
+have fewer than 5 loops. We simply apply \Tool to all loops in these cases.}
+to see how accurate \Tool is. Third, we evaluate the run-time performance of
+applying \Tool to the real root-cause loop. 
+ 
+For all benchmarks we use, real-world
+users have provided at least one problem-triggering input in their on-line 
+bug bugs. We use these inputs in our run-time analysis.
+
+As discussed in Section \ref{sec:design}, our analysis contains 
+several configurable thresholds. In our evaluation,
+we use 0.001 as the \textit{resultless rate} threshold for identifying
+0*1? loops, 0.01 as the \textit{resultless rate} threshold for identifying 
+[0$|$1]* loops, 0.5 as the \textit{cross-loop redundancy rate}, and 
+2 as the \textit{cross-iteration redundancy rate} (i.e., 
+the number of distinct iterations is less than half of the total iterations).
+
+All the analysis and performance results presented below regarding
+cross-loop analysis is obtained using $1/100$ sampling rate; all the
+results regarding cross-iteration analysis is obtained using $1/1000$ sampling
+rate. We use sparser sampling rate in the latter case, because there tend to
+be more loop iterations than loop instances.
+All our diagnosis results require only \textbf{one} run under the 
+problem-triggering input.
+
+\subsection{Coverage Results}
+\label{sec:coverage}
+Overall, \Tool provides good diagnosis coverage, as shown in Table~\ref{tab:cover}. 
+\Tool identifies the correct root cause for \textbf{all} 18 benchmarks, and 
+suggests fix strategies that exactly match what developers took in practice
+for 16 out of 18 cases. There are only two cases where \Tool fails to suggest
+the fix strategy that developers used. For MySQL27287, the root-cause loop
+is both cross-loop redundant and 0*1? inefficient. \Tool suggests both changing
+data structures and memoization as fix strategies. In practice, the developers
+find a new data structure that can eliminate both root causes.
+For GCC12322, \Tool correctly tells that the loop under study
+does not contain any form of inefficiency and produce results in every 
+iteration, and hence fails to suggest any fix strategy. In practice, GCC
+developers decide to skip the loop, which will cause some programs compiled by
+GCC
+to be less performance-optimal than before. However, GCC developers feel
+that it is worthwhile considering the performance impact of the original loop
+to the GCC compilation process.
+Providing this type of
+fix strategy suggestion goes beyond the capability of \Tool.
+
+\subsection{Accuracy Results}
+\label{sec:result_acc}
+
+\begin{table}
+  \centering
+  \scriptsize
+  \newcommand{\Yes}[0]{\checkmark}
+  \newcommand{\No}[0]{-}
+  \begin{tabular}{lcccccc}
+    \toprule
+   {\bf BugID}           &  {\bf 0*1?}          &  {\bf [0$|$1]*}             &{\bf C-I$_b$}            &{\bf C-I$_m$}          &   {\bf C-L}     & {\bf Total}  \\
+   \midrule
+   Mozilla347306         &   -                  & -                           & -                       & -                     &   -             & -\\
+   Mozilla416628         &   -                  & -                           & -                       & -                     &   -             & -\\
+   Mozilla490742$_a$     &   -                  & -                           & -                       & -                     &   -             & -\\
+   Mozilla35294$_a$      &   -                  & -                           & -                       & -                     &   -             & -\\ 
+   Mozilla477564$_a$     &   -                  & -                           & -                       & -                     &   -             & -\\
+   \midrule 
+   MySQL27287            &   -                  & 0$_1$                       & -                       & -                     &   -             & 0$_1$\\
+   MySQL15811            &   -                  & -                           & -                       & -                     &   -             & -\\ 
+   \midrule    
+   Apache32546           &   -                  & -                           & -                       & -                     &   -             & -\\
+   Apache37184$_a$       &   -                  & -                           & -                       & -                     &   -             & -\\
+   Apache29742$_a$       &   -                  & -                           & -                       & -                     &   -             & -\\ 
+   Apache34464           &   -                  & -                           & -                       & -                     &   -             & -\\
+   Apache47223           &   -                  & -                           & -                       & -                     &   -             & -\\
+   \midrule
+   GCC46401              &   -                  & 0$_1$                       & -                       & -                     &   -             & 0$_1$\\
+   GCC1687               &   -                  & -                           & -                       & -                     &   -             & -\\
+   GCC27733$_a$          &   -                  & -                           & -                       & -                     &   -             & - \\
+   GCC8805               &   -                  & 0$_2$                       & -                       & -                     &   -             & 0$_2$\\
+   GCC21430              &   0$_1$              & 0$_3$                       & -                       & 0$_1$                 &   0$_1$         & 0$_6$\\
+   GCC12322              &   0$_1$              & 0$_1$                       & -                       & 0$_1$                 &   0$_1$         & 0$_4$\\
+\bottomrule
+   \end{tabular}
+  %\nocaptionrule
+  \caption{False positives of \Tool, when applying to top 5 loops reported by 
+    statistical performance diagnosis for each benchmark. `-' represents zero false positive.
+    Other cells report real false positives and benign false positives, which is in the
+    subscript.
+}
+  \label{tab:top5}
+\end{table}
+
+As shown in Table \ref{tab:top5}, \Tool is accurate, having 0 real
+false positive and 14 benign false positives for all the top 5 loops.
+
+Here, benign false positives mean that the \Tool analysis result is true ---
+some loops are indeed cross-iteration/loop redundant or indeed producing
+results in only a small portion of all the iterations. However, those
+problems are \textit{not} fixed by developers in their performance patches. 
+
+There are several reasons for these benign performance problems. 
+The main reason is that they are not the main contributor to the 
+performance problem perceived by the users. This happens to 12 out of the
+14 benign cases. In fact, this is not really a problem for \Tool in 
+real usage scenarios, because statistical debugging can accurately
+tell that these loops are not top contributors to the performance
+problems.
+The remaining two cases happen when fixing the 
+identified redundant/resultless problems
+are very difficult and hence developers decide not to fix them.
+
+The accuracy of \Tool benefits from its run-time analysis.
+For example, 4 benchmarks contain loops that only generate side-effect
+in the last iteration among their top 5 suspicious loops. However,
+these loops are actually not inefficient because the portion of
+resultless iterations is small. 
+
+The good accuracy of \Tool can actually help improving the accuracy of
+identifying which loop is the root cause loop.
+For example, the real root-cause loop of Apache34464 and GCC 46401 both
+rank number two by the statistical performance diagnosis tool.
+\Tool can tell that the number one loops in both cases do not contain
+any form of inefficiency, resultless or redundancy. This result can
+potentially used to improve the accuracy of identifying root cause loops.
+
+
+\subsection{Performance}
+\label{sec:result_perf}
+
+\begin{table}
+  \centering
+  \scriptsize
+  \newcommand{\Yes}[1]{\checkmark{}$_#1$}
+  \newcommand{\No}[0]{-}
+  \begin{tabular}{lccccc}
+    \toprule
+	    & \multicolumn{3}{c}{\Tool} & \multicolumn{2}{c}{w/o optimization} \\
+     \cmidrule(lr){2-4}
+     \cmidrule(lr){5-6}
+     {\bf BugID}  & {\bf Resultless}  &  {\bf C-L R. } & {\bf C-I R. }  & {\bf C-L R.}  & {\bf C-I R. } \\
+    \midrule
+    Mozilla347306 &  1.07\%           &  22.40\%       &  10.17\%       & 304.37{\bf X} & 468.74{\bf X} \\ 
+    Mozilla416628 &  0.80\%           &  4.10\%        &  2.99\%        & 567.51{\bf X} & 85.6{\bf X} \\
+    \midrule
+     MySQL27287   & $\sim$0           &   1.66\%       &   -            & 109.55{\bf X} & 352.07{\bf X} \\
+     MySQL15811   &  -                &   0.03\%       &   -            & 227.04{\bf X} & 424.44{\bf X} \\
+    \midrule
+      GCC46401    & 3.12\%         & 3.80\%            &  5.95\%        & 21.07{\bf X}  & 38.44{\bf X}\\ 
+      GCC1687     & -              & /                 &  $\sim$0       &   /           & 142.29{\bf X} \\
+      GCC27733$_a$    & $\sim$0        & /                 &  4.73\%        &   /           & 17.41{\bf X}     \\
+      GCC8805     & -              & $\sim$0           & $\sim$0        & 2.22{\bf X}   &  3.52{\bf X}\\
+      GCC21430    & -              & 5.46\%            &   0.69\%       & 107.20{\bf X} & 159.89{\bf X} \\
+      GCC12322    & -              & 1.75\%            &  $\sim$0       & 21.07{\bf X}  & 38.44{\bf X} \\
+   \bottomrule
+   \end{tabular}
+  %\nocaptionrule
+  \caption{Run-time overhead of applying \Tool to the buggy loop, with and
+    without optimizations. 
+    Only results from non-extracted benchmarks are shown. 
+  -: static analysis can figure out the results and hence no dynamic analysis is conducted.
+  /: not applicable. }
+  \label{tab:performance}
+\end{table}
+
+
+
+
+As shown in Table \ref{tab:performance}, 
+the performance of \Tool is good. The overhead is consistently under or around 5\% 
+except for one benchmark, Mozilla347306. We believe \Tool is promising for potential production
+run usage. Of course, if we apply \Tool to multiple loops simultaneously,
+the overhead will be higher. However, the current results are obtained by running the
+program only \textbf{once} under the problem-triggering workload. The sampling nature
+of \Tool will allow us to keep the overhead low at the exchange of running the program for
+a couple of more times, if needed.
+
+As we can also see from the table, our performance optimization discussed in 
+Section \ref{sec:inst} and \ref{sec:perf} has contributed
+a lot to the good performance of \Tool.
+
+Without sampling, while still applying our static optimization, our redundancy
+analysis would lead to over 100X slowdown for five benchmarks.
+
+The buggy loops of MySQL\#27287 and MySQL\#15811 access arrays. 
+After changing to tracking the initial and ending memory-access addresses
+of the array, instead of the content of the whole array accesses,
+the overhead is reduced from 11.77\% to 1.66\% for MySQL\#27287, 
+and from 20.46\% to 0.03\% for MySQL\#15811 respectively 
+(sampling is conducted consistently here). 
+
+The side-effect of the buggy loop for MySQL15811 is to calculate the length of a string. 
+The variable representing the length is an induction variable. 
+The side-effect of the buggy loop for MySQL27287 is to calculate the index of a searched target, 
+and the variable representing the index is also an induction variable. 
+We can reply on static analysis to figure out that these two loops are not cross-iteration redundant.
+
+We also tried sampling with different sampling rates.
+For cross-loop redundancy, we also conduct experiments under sampling rate 1
+out of 1000. 
+Both run-time overhead and collected sample will be reduced. Mozilla347306 
+is still the benchmark with largest overhead, but the overhead is reduced to 0.49\%. For two benchmarks, GCC8805 and GCC12322, we cannot sample 
+more than 10 loop instances and hence cannot draw strong conclusion
+about their root-cause type. For all other benchmarks, we can 
+still have more than 10 loop instances and get exactly the same 
+root-cause analysis results presented above.
+
+We also conduct cross-iteration redundant experiment under different sampling rates. When the sampling rate is 1 out of 100, there are two benchmarks, whose runtime overhead is larger than 30\%. The overhead for Mozilla347306 is 59.57\%, 
+and the overhead of GCC21430 is 30.65\%. When changing sampling rate to 1
+out of 10000, Mozilla347306 has the largest overhead, which is 4.47\%. And mozilla347306 is the only one whose overhead is larger than 2\%. Except for 
+GCC12322, all other benchmarks will have more than 100 iterations sampled, under the sample rate is 1 out of 10000. Consequently, the same root-cause
+analysis results will be reported for these benchmarks as the ones presented
+above.

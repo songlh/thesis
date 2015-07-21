@@ -107,7 +107,7 @@ do not report any good inputs, we will use completely random inputs to produce
 success-run profiles.
 
 \paragraph{Tool implementation}
-To sample return predicates, we directly use CBI \cite{liblit03,liblit05}.
+To sample return predicates, we directly use CBI \citep{liblit03,liblit05}.
 CBI instruments program source code to conduct sampling.
 Specifically, CBI instrumentation keeps a global countdown to decide how many 
 predicates can be skipped before next sample. 
@@ -119,7 +119,7 @@ To sample branch predicates, we directly use CBI for benchmarks written in
 C. For all MySQL and some Mozilla benchmarks that are written in C++, since
 CBI does not work for C++ code, we conduct sampling through
 hardware performance counters following the
-methodology described in previous work \cite{joy.asplos13}.
+methodology described in previous work \citep{joy.asplos13}.
 Specifically, hardware performance
 counters are configured so that an interrupt will be triggered every $N$
 occurrences of a particular performance event (e.g, branch-taken event), with no changes to the program.
@@ -172,7 +172,7 @@ useful diagnosis results in our sampling-based evaluation.
 
 \begin{table}[h!]
   \centering
-  \small
+  \scriptsize
   \newcommand{\Yes}[1]{\checkmark{}$_#1$}
   \newcommand{\No}[0]{-}
   \begin{tabular}{lccccc}
@@ -209,7 +209,7 @@ useful diagnosis results in our sampling-based evaluation.
 
     \bottomrule
    \end{tabular}
-  \nocaptionrule
+  %\nocaptionrule
   \caption{Run-time overhead and diagnosis capability evaluated with the default sampling rate (1 out of 10000); 10, 100, 500, 1000 represents the different numbers of success/failure runs used for diagnosis.}
   \label{tab:LBR}
 \end{table}
@@ -218,9 +218,11 @@ useful diagnosis results in our sampling-based evaluation.
 
 \begin{table*}
   \centering
-  \footnotesize
+  \scriptsize
   \newcommand{\Yes}[1]{\checkmark{}$_#1$}
   \newcommand{\No}[0]{-}
+  \begin{adjustwidth}{-.9in}{-.9in}
+  {
   \begin{tabular}{lcccccccccccc}
     \toprule     
    {\bf BugID} & \multicolumn{4}{c}{ Diagnosis Capability} &\multicolumn{4}{c}{Overhead} & \multicolumn{4}{c}{Avg. \# of sampled predicates} \\
@@ -257,7 +259,9 @@ useful diagnosis results in our sampling-based evaluation.
 
     \bottomrule
    \end{tabular}
-  \nocaptionrule
+  }
+  \end{adjustwidth}
+  %\nocaptionrule
   \caption{Diagnosis capability, overhead, and average number of samples in each run under different sampling rates by using 1000 success/failure runs 
   (*: no results are available, because
    hardware-based sampling cannot be as frequent as $1/100$ and software-based
@@ -304,12 +308,12 @@ sampling rate.
 \paragraph{Diagnosis latency}
 Diagnosis latency versus run-time overhead and diagnosis capability 
 is a fundamental trade-off facing
-sampling-based statistical debugging for functional bugs \cite{liblit03,liblit05,CCI}.
+sampling-based statistical debugging for functional bugs \citep{liblit03,liblit05,CCI}.
 With sampling, intuitively, more failure runs are needed
 to collect sufficient diagnosis information. This is \textbf{not} a problem for widely
 deployed software projects. In those projects, the same failure tends to quickly occur
 for many times on many users' machines
-\cite{hunt.sosp09}. However, this is a problem
+\citep{hunt.sosp09}. However, this is a problem
 for software that is not widely deployed.
 
 We quantitatively measured the impact of sampling to diagnosis latency in 
@@ -356,53 +360,5 @@ which
 is likely part of the reason why users perceived the performance problems. 
 Consequently, the negative impact of sampling on diagnosis latency is
 alleviated.
-
-\comment{
-\begin{table}[h!]
-  \centering
-  \small
-  \newcommand{\Yes}[1]{\checkmark{}$_#1$}
-  \newcommand{\No}[0]{-}
-  \begin{tabular}{lccc}
-    \toprule     
-   {\bf BugID} & \multicolumn{3}{c}{Sampling Rate} \\
-                           
-   \cmidrule(lr){2-4}
-
-                        &  1/10 & 1/100 & 1/1000                     \\
-    \midrule 
-
-    Mozilla258793       & \Yes{1}    &  \Yes{1}      &  \Yes{1}    \\
-    Mozilla299742       & \Yes{1}    &  \Yes{1}      &  \Yes{2}       \\
-    Mozilla347306       & \Yes{1}    &  \Yes{1}      &  \Yes{1}      \\
-    Mozilla416628       & \Yes{1}    &  \Yes{1}      &  \Yes{1}       \\
-    \midrule
-    MySQL15811          &  \Yes{1}   &  \Yes{1}      &  \Yes{1}      \\
-    MySQL26527          &  \Yes{1}   &  \Yes{1}      &  \No      \\
-    MySQL27287          &  \Yes{1}   &  \Yes{1}      &  \Yes{1}       \\
-    MySQL40337          &            &     &        \\
-    MySQL42649          &  \Yes{1}   &  \Yes{1}      &  \No        \\
-    MySQL44723          &  \Yes{1}   &  \Yes{1}      &  \Yes{1}       \\
-    \midrule
-    Apache3278          & \Yes{1}    &  \Yes{1}      &   \No    \\
-    Apache34464         & \Yes{1}    &  \Yes{1}      &   \Yes{1}    \\
-    Apache47223         & \Yes{1}    &  \Yes{1}      &   \Yes{1}     \\
-    Apache32546         & \Yes{1}    &  \Yes{1}      &   \Yes{1}     \\
-    \midrule
-    GCC1687             & \Yes{1}    &  \Yes{1}      &   \Yes{1}      \\
-    GCC8805             & \No        &  \No          &   \No       \\
-    GCC15209            & \Yes{1}    &  \Yes{1}      &   \Yes{1}      \\
-    GCC21430            & \Yes{1}    &  \Yes{1}      &   \Yes{1}     \\
-    GCC46401            & \Yes{2}    &  \Yes{2}      &   \Yes{2}     \\
-    GCC12322            &     &     &        \\
-
-    \bottomrule
-   \end{tabular}
-  \nocaptionrule
-  \caption{Diagnosis capability under different sampling rates}
-  \label{tab:rate}
-\end{table}
-}
-
 
 

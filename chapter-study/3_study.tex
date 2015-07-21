@@ -1,0 +1,775 @@
+\section{Introduction}
+\label{sec:study}
+
+This section describes the characteristics study we conduct on performance bugs.
+We firstly discuss the methodology of our study in Section~\ref{sec:meth}, 
+and then we use five motivating examples from our bug set 
+to demonstrate the feasibility 
+and potential of our study in Section~\ref{lab:case}. 
+The findings and implications of our study are discussed 
+from Section~\ref{sec:taxonomy_howwaste} to Section~\ref{sec:char_life}.
+
+Our study is performed on the following aspects for real-world 
+performance bugs, following their life stages and different ways to
+combat them.
+
+1. What are the root causes of performance bugs? This study will provide a
+basic understanding of real-world performance bugs and
+give guidance to bug detection and diagnosis research.
+
+2. How are performance bugs introduced? This study will shed light on
+how to avoid introducing performance bugs.
+
+3. How are performance bugs exposed and perceived? This study can help
+design effective testing techniques to expose performance bugs, and can help developers
+trigger performance bugs reported by users.
+
+4. How are performance bugs fixed?
+Answers to this question will help improve the patching process.
+
+
+\section{Methodology}
+\label{sec:meth}
+
+This section describes how we collect performance bugs from the real-world. 
+Our characteristics study is conducted on these performance bugs, and 
+these bugs also drive the design of our performance bug detection and diagnosis techniques. 
+
+{\bf Applications}
+We chose five open-source software suites to examine: Apache, Chrome, GCC, 
+Mozilla, and MySQL. These popular, award-winning software suites 
+\citep{halloffame} are all large-scale and mature, with millions of lines of 
+source code and well maintained bug databases.
+
+\begin{table}[h!]
+\centering
+\scriptsize
+\begin{tabular}{@{\hspace{3pt}}l@{\hspace{3pt}}@{\hspace{3pt}}c@{\hspace{3pt}}@{\hspace{3pt}}c@{\hspace{3pt}}}
+\toprule
+                                         &    Bug            & User-perceived  \\
+Application Suite Description (language) &    Number         &   Bug Number \\
+\midrule                            
+{\bf Apache Suite} 	& 25 & 16\\
+%\cline{1-1}
+{HTTPD:	Web Server (C)	}& \\
+{TomCat:  Web Application Server (Java)}& \\
+{Ant:	Build management utility (Java)}& \\
+%\hline
+%JMeter	& Load test utility (Java) & \\
+\midrule                            
+{\bf Chromium Suite} Google Chrome browser (C/C++)&  10 & 5\\
+\midrule
+%\multicolumn{2}{|l|}
+{\bf GCC Suite}  GCC \& G++ Compiler (C/C++)   & 11  & 9\\
+\midrule
+{\bf Mozilla Suite} & 36 & 19\\
+%\cline{1-1}
+{Firefox: Web Browser (C++, JavaScript)}& 	\\
+{Thunderbird: Email Client (C++, JavaScript)}& \\
+\midrule
+{\bf MySQL Suite}    & 28 & 17	\\
+%\cline{1-1}
+{Server: Database Server (C/C++)}&  	\\
+%\cline{1}
+{Connector: DB Client Libraries (C/C++/Java/.Net)}&  	\\
+\midrule
+{\bf Total}	  & \allbugs & \heavybugs \\
+\bottomrule
+\end{tabular}
+\caption{Applications and bugs used in the study}
+\label{tab:app_bug1}
+\end{table}
+
+As shown in Table \ref{tab:app_bug1},
+these five suites provide a good coverage of various types of software, 
+such as interactive GUI 
+applications, server software, command-line utilities, compilers,
+and libraries.
+They are primarily written in C/C++ and Java. 
+Although they are all open-source software, Chrome is 
+backed up by Google
+and MySQL was acquired by Sun/Oracle in 2008.
+Furthermore, the Chrome browser was first released
+in 2008, while the other four
+have had 10--15 years of bug reporting history.
+From these applications, we can observe both traditions and new software
+trends such as web applications.
+
+{\bf Bug Collection}
+GCC, Mozilla, and MySQL developers {\it explicitly} mark certain reports in
+their bug databases as performance bugs using special tags, which are 
+{\it compile-time-hog}, {\it perf}, and {\it S5} respectively.
+Apache and Chrome developers do not use any special tag to mark performance 
+bugs. Therefore, we searched their bug databases using
+a set of performance-related keywords 
+(`slow', `performance', `latency', 
+`throughput', etc.).
+
+From these sources, we {\it randomly} sampled \allbugs fixed bugs that
+have sufficient documentation.
+Among these bugs, 44 were reported after 2008, 39 were
+reported between 2004 and 2007, and 27 were reported before 2004.
+41 bugs came from server applications and 69 bugs came
+from client applications. 
+The details are shown in Table~\ref{tab:app_bug1}.
+For each bug, we also check whether its bug report contains descriptions 
+for its performance impact, and differentiate performance bugs with user-perceived performance impact from others. 
+Bugs without performance descriptions are mainly reported by developers during their code inspections.
+The number of bugs with user-perceived performance impact is also shown in Table~\ref{tab:app_bug1}.
+
+%We differ performance bugs with user-perceived performance 
+%impact from those without user-perceived performance impact. 
+%We read bug reports carefully, and when performance descriptions 
+%fall into one of the following situations, 
+%we categorize bugs as having user-perceived performance impact: 
+%(1) performance impact is emphasized by adjective words, 
+%(2) performance impact is supported by concrete numbers, 
+%and (3) programs work incorrectly because of performance bugs, 
+%like ``hang'', ``frozen'', or ``failing some internal checking''. 
+%The details for user-perceived performance bugs are also shown in Table~\ref{tab:app_bug}.
+
+
+{\bf Caveats}
+Our findings need to be taken with the methodology in mind. 
+The applications in our study cover representative and important software 
+categories, workload, development background, and programming languages.
+Of course, there are still uncovered categories, such as scientific
+computing software and distributed systems.
+
+The bugs in our study are collected from five bug databases without bias. 
+We have followed the decisions made by developers about what are performance 
+bugs,
+and have not intentionally ignored any aspect of performance problems in bug
+databases. Of course, some
+performance problems may never be reported to the bug databases and some 
+reported problems may never be fixed by developers.
+Unfortunately, there is no conceivable way to study these unreported or
+unfixed performance problems.
+We believe the bugs in our study provide a representative sample of 
+the reported and fixed performance bugs in these representative applications. 
+
+We have spent more than one year to study all sources of information related
+to each bug, including forum discussions, patches, source code repositories, 
+and others. Each bug is studied by at least two people and
+the whole process consists of several rounds of bug (re-)study, 
+bug (re-)categorization, cross checking, etc. 
+
+Finally, we do not emphasize any quantitative characteristic results, and
+most of the characteristics we found are consistent across
+all examined applications.
+
+
+\section{Case Studies}
+\label{lab:case}
+We will discuss five motivating examples in this part of our proposal, and 
+we will answer the following questions by using these five examples. 
+
+(1) Are performance bugs too different from traditional bugs to study along
+the traditional bug-fighting process (i.e.,
+bug avoidance, testing, detection, and fixing)?
+
+(2) If they are not too different, are they too similar to be worthy of 
+a study?
+
+(3) If developers were more careful, do we still need research and tool 
+support to combat performance bugs?
+
+
+{\bf Transparent Draw (Figure~\ref{fig:moz66461})\ } 
+Mozilla developers implemented a procedure nsImage::Draw for
+figure scaling, compositing, and rendering, which is 
+a waste of time for transparent figures. This problem did not catch 
+developers' attention until two years later when 1 pixel by 1 pixel 
+transparent GIFs became general purpose spacers widely used by Web
+developers to work around certain idiosyncrasies in HTML 4.
+The patch of this bug skips
+nsImage::Draw when the function input is a transparent figure.
+
+{\bf Intensive GC (Figure~\ref{fig:moz515287})\ }
+Users reported that Firefox cost 10 times more CPU than Safari on
+some popular Web pages, such as gmail.com.
+Lengthy profiling and code investigation revealed that
+Firefox conducted an expensive
+garbage collection (GC) process at the end of {\it every}
+XMLHttpRequest, which is too frequent.
+A developer then recalled that GC was added there
+five years ago when
+XHRs were infrequent, and each XHR replaced substantial portions of the 
+DOM in JavaScript. However, things have changed in modern Web pages.
+As a primary feature enabling Web 2.0, 
+XHRs are much more common 
+than they were five years ago.
+%As a result, GC after every XHR became a performance bug. 
+This bug is fixed by removing the call to GC.
+
+
+{\bf Bookmark All (Figure~\ref{fig:uncoord2})\ }
+Users reported that Firefox hung when they clicked `bookmark all (tabs)'
+with 20 open tabs.
+Investigation revealed that Firefox used $N$ database transactions to bookmark
+$N$ tabs, which is very time-consuming comparing with batching all bookmark
+tasks into a single transaction.
+Discussion among developers revealed that the database service library of 
+Firefox
+did not provide interface for aggregating tasks into one transaction, because
+there was almost no batchable database task in Firefox a few years back.  
+The addition of batchable
+functionalities, such as `bookmark all (tabs)' exposed this inefficiency
+problem.
+After replacing $N$ invocations of 
+doTransact with a single doAggregateTransact, the hang disappears.
+During patch review, developers found two more places
+with similar problems and fixed them by doAggregateTransact.
+
+{\bf Slow Fast-Lock (Figure~\ref{fig:mysql38941})\ }
+MySQL synchronization-library developers implemented a fastmutex\_lock
+for fast locking. Unfortunately, users' unit test showed that 
+fastmutex\_lock could be 40 times slower than normal locks.
+It turns out that 
+library function random actually contains a lock.
+This lock serializes every threads that invoke random.
+Developers fixed this bug by replacing random with a 
+non-synchronized random number generator.
+
+
+{\bf No Cache (Figure~\ref{fig:mysql26527})\ }
+Users reported MySQL cost 20 times more execution 
+time when loading data from a file into a partitioned table 
+than when loading data into an unpartitioned table. 
+The slowness comes from the fact that MySQL does not use cache when loading data into partitioned tables. 
+It is the wrong branch selection highlighted 
+in the Figure~\ref{fig:mysql26527} that causes cache not to be allocated. 
+From the information provided with the patch for this bug, we know that when callers 
+of start\_bulk\_insert uses 
+0 as parameter, they actually do want some cache, but they do not 
+care about the size. But when the buggy branch is taken, no cache will be allocated. 
+The patch is to change the branch selection when using 0 as parameter. 
+
+These five bugs can help us answer the questions asked earlier.
+
+(1) They have similarity with traditional bugs.
+For example, they are either related to usage rules of functions/APIs or related to programs' control flow,
+both of which are well studied by previous work on detecting and diagnosing functional 
+bugs \citep{PRMiner05,livshits05dynamine,liblit05}.
+
+
+(2) They also have interesting differences compared to traditional bugs.
+For example, the code snippets in Figure 
+\ref{fig:moz66461}--\ref{fig:uncoord2}
+turned buggy (or buggier) long after they were written,
+which is rare for functional bugs.
+As another example, testing designed for functional bugs
+cannot effectively expose bugs like {\it Bookmark All}. 
+Once the program has tried the `bookmark all (tab)' button with one or two open tabs,
+bookmarking more tabs will not improve the statement or branch coverage and
+will be skipped by functional testing.
+
+(3) Developers cannot fight these bugs by themselves.
+They cannot predict future workload
+or code changes to avoid bugs like {\it Transparent Draw}, 
+{\it Intensive GC}, and
+{\it Bookmark All}. Even experts
+who implemented synchronization libraries
+could not avoid bugs like {\it Slow Fast-Lock}, 
+given opaque APIs with unexpected performance features.
+Research and tool support are needed here.
+
+Of course, it is premature to draw any conclusion based on five bugs.
+Next, we will comprehensively study \allbugs performance bugs.
+
+
+\begin{figure}[t!]
+\begin{center}
+\includegraphics[width=3in]{figures/moz664614}
+\caption{A Mozilla bug drawing transparent figures}
+\label{fig:moz66461}
+\end{center}
+\end{figure}
+
+\begin{figure}[t!]
+\begin{center}
+\includegraphics[width=3in]{figures/moz515287}
+\caption{ {A Mozilla bug doing intensive GCs}}
+\label{fig:moz515287}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=3in]{figures/moz490742}
+\caption{A Mozilla bug with un-batched DB operations}
+\label{fig:uncoord2}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{figures/mysql38941}
+\vspace{0.1in}
+\caption{A MySQL bug with over synchronization}
+\label{fig:mysql38941}
+\end{figure}
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{figures/mysql26527}
+\vspace{0.1in}
+\caption{A MySQL bug without using cache}
+\label{fig:mysql26527}
+\end{figure}
+
+
+\input{chapter-study/3_root_cause.tex}
+
+
+\section{How Performance Bugs Are Introduced}
+\label{sec:char_introduce}
+
+\begin{table*}[tb!]
+\begin{adjustwidth}{-.5in}{-.5in}
+\scriptsize
+\centering
+{
+\begin{tabular}{lcccccc}
+\toprule
+\multicolumn{1}{c}{\bf How Performance Bugs Are Introduced} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+\multicolumn{1}{l}{Workload Issues: {developers' workload assumption is wrong or out-dated}}
+&13&2&5&14&7&41\\
+\midrule
+\multicolumn{1}{l}{API Issues: {misunderstand performance features of functions/APIs}}
+&6&3&1&13&8&31\\
+\midrule
+\multicolumn{1}{l}{Others: all the bugs not belonging to the above two categories}
+&6&5&5&10&13&39\\
+\bottomrule
+
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{How performance bugs are introduced in Sections~\ref{sec:char_introduce}}
+\label{tab:intro}
+\end{table*}
+
+We have studied the discussion among developers in bug databases and checked the 
+source code of different software versions to understand how bugs are introduced. 
+Our study has particularly focused on the challenges faced by developers in writing 
+efficient software, and features of modern software that affect the introduction
+of performance bugs. 
+
+Our study shows that developers are in a great need of tools that can help them 
+avoid the following mistakes.
+
+\underline{\it Workload Mismatch\ }
+Performance bugs are most frequently introduced when 
+developers' workload understanding does not match with the reality.
+
+Our further investigation shows that the following challenges
+are responsible for most workload mismatches.
+
+Firstly, the input paradigm could shift {\it after}
+code implementation. For example, the HTML standard change and new trends in 
+web-page content led to {\it Transparent Draw} and
+{\it Intensive GC}, shown
+in Figure~\ref{fig:moz66461} and Figure~\ref{fig:moz515287}.
+
+Secondly, software workload has become much more diverse and complex than 
+before.
+A single program, such as Mozilla, may face various types of workload issues:
+the popularity of transparent figures on web pages led
+to {\it Transparent Draw} 
+in Figure \ref{fig:moz66461}; the high frequency of XMLHttpRequest led to
+{\it Intensive GC}
+in Figure \ref{fig:moz515287}; users' habit of not changing the default
+configuration setting led to Mozilla110555. 
+
+The increasingly dynamic and diverse workload of modern software will lead
+to more performance bugs in the future.
+
+\underline{\it API Misunderstanding\ }
+The second most common reason is that
+developers misunderstand the performance feature of certain
+functions. This occurs for 31 bugs in our study.
+
+Sometimes, the performance of a function is sensitive to the value of a
+particular parameter, and developers happen to use performance-hurting values. 
+
+Sometimes, developers use a function to perform task $i$, and are unaware of
+an irrelevant task $j$ 
+conducted by this function that hurts performance but not functionality. 
+For example, MySQL developers did not know the synchronization inside
+random and introduced the {\it Slow Fast-Lock} bug shown in 
+Figure~\ref{fig:mysql38941}. 
+
+Code encapsulation in modern software leads to many APIs with poorly 
+documented performance features. 
+We have seen developers explicitly complain about this issue 
+\citep{apache45396}. It will lead to more performance bugs in the future.
+
+\underline{\it Others\ }
+Apart from workload issues and API issues, there are also other reasons behind
+performance bugs. Interestingly,
+some performance bugs are side-effects of functional bugs. For example, 
+in Mozilla196994,
+developers forgot to reset a busy-flag. This semantic bug causes an event 
+handler to be constantly busy. As a result, a performance loss is the only 
+externally visible 
+symptom of this bug.
+
+\underline{\it When a bug was not buggy\ }
+An interesting trend is that 29 out of \allbugs bugs were not born buggy.
+They became inefficient long after they were written due to workload shift,
+such as that in {\it Transparent Draw} and {\it Intensive GC}
+(Figures~\ref{fig:moz66461} and \ref{fig:moz515287}), 
+and code changes in other part of the software, such as
+that in Figure XX.
+In Chrome70153, when GPU accelerator became available, software
+rendering code became redundant.
+Many of these bugs went through regression testing without being caught.
+
+
+
+\section{How Performance Bugs Are Exposed And Perceived}
+\label{sec:char_exp}
+
+
+\begin{table*}[tb!]
+\begin{adjustwidth}{-.5in}{-.5in}
+\scriptsize
+\centering
+{
+\begin{tabular}{lcccccc}
+\toprule
+\multicolumn{1}{c}{\bf How Performance Bugs Are Exposed} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+\multicolumn{1}{l}{Always Active: almost every input on every platform can trigger this bug}
+&2&3&0&6&4&15\\
+\midrule
+\multicolumn{1}{l}{Special Feature: need special-value inputs to cover specific code regions}
+&19&6&11&22&18&76\\
+\midrule
+\multicolumn{1}{l}{Special Scale: need large-scale inputs to execute a code region many times}
+&17&2&10&23&19&71\\
+\midrule
+\multicolumn{1}{l}{Feature+Scale: the intersection of Special Feature and Special Scale}
+&13&1&10&15&13&52\\
+\bottomrule
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{How performance bugs are exposed in Section~\ref{sec:char_exp}}
+\label{tab:exp}
+\end{table*}
+
+ 
+
+{\bf How to Expose Performance Bugs?} We define exposing a performance bug as causing a perceivably negative performance impact, 
+following the convention used in most bug reports. Our study demonstrates several unique challenges for performance testing.
+
+\underline{\it Always Active Bugs\ } 
+A non-negligible portion of performance bugs are almost always active.
+They are located at the start-up phase, the shutdown phase, or other places 
+that are exercised by almost all inputs. 
+They could be very harmful in the long term, because
+they waste performance at every deployment site during every run of a program.
+Many of these bugs were caught during comparison with other software
+(e.g., Chrome vs. Mozilla vs. Safari).
+
+Judging whether performance bugs have manifested is a unique challenge in 
+performance testing.
+
+\underline{\it Input Feature \& Scale Conditions\ } 
+About two thirds of performance bugs need inputs with special features
+to manifest. Otherwise, the buggy code units cannot be touched.
+Unfortunately, this is not what black-box testing is good at.
+Much manual effort will be needed to design test inputs, a problem
+well studied by past research in functional testing \citep{KLEE,s2e}.
+
+
+About two thirds of performance bugs need large-scale inputs to manifest in
+a perceivable way. These bugs cannot be effectively exposed if 
+software testing executes each buggy code unit only once,
+which unfortunately is the goal of most functional testing.
+
+Almost half of the bugs need inputs that have special features {\bf and} 
+large scales to manifest. 
+For example, to trigger the bug shown in Figure~\ref{fig:uncoord2}, the user
+has to click `bookmark all' button (i.e., special feature) with many open
+tabs (i.e., large scale).
+
+
+
+
+\begin{table*}[tb!]
+\begin{adjustwidth}{-.5in}{-.5in}
+\scriptsize
+\centering
+{
+\begin{tabular}{lcccccc}
+\toprule
+\multicolumn{1}{c}{\bf How Performance Bugs Are Perceived} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+\multicolumn{1}{l}{Comparison in one code base}
+&9&3&6&7&12&37\\
+\midrule
+\multicolumn{1}{l}{Comparison between different code bases}
+&7&3&8&5&4&27\\
+\midrule
+\multicolumn{1}{l}{Not using comparison-based methods}
+&3&1&1&9&2&16\\
+\bottomrule
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{How performance bugs are perceived in Section~\ref{sec:char_exp}}
+\label{tab:cmp}
+\end{table*}
+
+{\bf How to Perceive Performance Bugs?}
+The majority of user-perceived performance bugs are noticed and reported by comparison-based methods. 
+Comparison can be divided into comparison within one code base
+and comparison between different code bases. 
+It is possible that one bug is reported by more than one comparison-based methods. 
+
+\underline{\it One Code Base} In this case, users use at least one good and one bad input 
+to run the same program, compare the performance, and notice performance loss. 
+Comparison in this category involves comparison between different input sizes, 
+comparison between different execution environments, 
+and comparison between similar inputs. 
+
+\underline{\it Different Code Bases} 
+Users use one input.
+Performance difference between different software versions or different applications exposes performance problems to users. 
+Examples for different types of comparison are shown in Table~\ref{tab:example}.
+
+\underline{\it Not Using Comparison-based Methods}
+Users directly describe performance impact for these bugs, 
+such as ``froze to crawl'' for Mozilla299742 and ``It’s very slow'' for Mozilla227361. 
+
+
+
+
+\begin{table*}[tb!]
+\scriptsize
+\centering
+{
+\begin{tabular}{ll}
+\toprule
+{\bf Comparison} & {\bf Example}\\
+\midrule 
+\multirow{3}{0.8in}{Applications} & {\bf Mozilla515287:} ``When running several Gmail instances in open tabs on my laptop (OS X), the \\
+& CPU utilization is 15-20\% even while just idling. This has been tested with a blank profile, and no \\
+& extensions. On Safari, the same open windows are at ~1.5\% CPU utilization."\\
+\midrule
+\multirow{3}{0.8in}{Versions} & {\bf GCC12322:} ``The GCC-3.4 development snapshots take 5x or 6x as long to compile the \\
+& computed-goto heavy core\_ops\_cg.c in Parrot. GCC-3.3 compiles this file in about five or six \\
+& minutes on my slow  machine - GCC-3.4 takes 30 or more minutes."\\
+\midrule
+\multirow{2}{0.8in}{Environments} & {\bf MySQL48429:} The performance of some sql with "group by" on partitioned table is very bad.\\
+&Users provide the query time on partitioned table and unpartitioned table. \\
+\midrule
+\multirow{2}{0.8in}{Sizes} & {\bf Mozilla104328:} ``On my windows machine my accumulated ~250 bookmarks takes about 2.5\% of  \\
+&my normal 6 second startup. With a 1111 bookmark file my startup takes 42 seconds."\\
+\midrule
+\multirow{2}{0.8in}{Similar Inputs} & {\bf Mozilla336944:} ``Happens on https://bugzilla.mozilla.org/ ... hogging the CPU the whole time\\
+& (2-3 minutes or more instead of ~30 seconds for http://tinyurl.com/msj4y).'' \\
+\bottomrule
+\end{tabular}
+%\caption{Examples for Different Types of Comparison(this table needs to be changed)}
+\caption{Examples of different types of comparison}
+\label{tab:example}
+}
+\end{table*}
+
+\input{chapter-study/3_fix}
+
+
+
+
+
+\section{Other Characteristics}
+\label{sec:char_life}
+{\bf Life Time\ } We chose Mozilla to investigate the life time of performance bugs, 
+due to its convenient CVS query interface.
+We consider a bug's life to have started when its buggy code
+was first written. The 36 Mozilla bugs in our study
+took 935 days on average to get discovered, and another 140 days on average
+to be fixed.
+For comparison, we randomly sampled 36 functional bugs from Mozilla.
+These bugs took 252 days on average to be discovered, which is much shorter 
+than that of performance bugs in Mozilla.
+These bugs took another 117
+days on average to be fixed, which is a similar amount of time with those
+performance bugs.
+
+{\bf Location\ } For each bug, we studied the location of its
+minimum unit of inefficiency. We found that 
+over three quarters of bugs are
+located inside either an input-dependent loop or an input-event handler. 
+For example, the buggy code in Figure~\ref{fig:moz515287}
+is executed at every XHR completion.
+The bug in Figure~\ref{fig:moz66461} wastes performance
+for every transparent image on a web page.
+In addition, about half performance bugs involve I/Os or 
+other time-consuming system calls. 
+There are a few bugs whose buggy code units only execute once or twice
+during each program execution. For example, the Mozilla110555 bug wastes
+performance while processing exactly two fixed-size
+default configuration files,
+userChrome.css and userContent.css, during the startup of a browser.
+
+{\bf Correlation Among Categories}
+Following previous empirical studies \citep{LiASID06}, we use a statistical 
+metric {\it lift} to study the correlation among characteristic categories.
+The {\it lift} of category A and category B, denoted as {\it lift(AB)}, 
+    is calculated 
+as $\frac{P(AB)}{P(A)P(B)}$, where P(AB) is the probability of a bug belonging 
+to both categories A and B. When {\it lift(AB)} equals 1,   
+category A and category B are independent of each other.
+When {\it lift(AB)} is greater than 1, categories A and B are 
+positively correlated: when a bug belongs to A, it likely
+also belongs to B. The larger the {\it lift} is, the more positively A and B
+are correlated.
+When {\it lift(AB)} is smaller than 1, A and B are negatively
+correlated: when a bug belongs to A, it likely does not belong to B.
+The smaller the {\it lift} is, the more negatively A and B are correlated.
+
+Root cause categories are highly correlated with fix strategies. 
+Among all correlations, the redundant root cause and the memorization fix strategy are 
+the most positively correlated with a 3.62. 
+The wrong branch selection root cause is strongly correlated with the change condition 
+fix strategy with a 2.48 lift. The redundant root cause and the batch fix strategy are the third 
+most positively correlated pair with a 2.32 lift. 
+On the other hand, the wrong branch selection root cause has the most negative correlation 
+with in-place call Change, memorization and batch bug-fix strategies. 
+Their lifts are all 0. 
+Among all other correlations, the workload mismatch introducing reason and the batch fix strategy 
+are positively correlated with a 1.91 lift.
+
+
+{\bf Server Bugs vs. Client Bugs}
+Our study includes 41 bugs from server applications and 69 bugs from client 
+applications. To understand whether these two types of bugs have different 
+characteristics, we apply chi-square test
+\citep{chisquared} to each
+category listed in Table~\ref{tab:root_cause}, Table~\ref{tab:intro}, Table~\ref{tab:exp} and Table~\ref{tab:fix}.
+We choose 0.01 as the significance level of our chi-square test. 
+Under this setting, if we conclude that server and client bugs have different
+probabilities of falling into a particular characteristic category, 
+this conclusion only has a 1\% probability to be wrong. 
+
+We find that, among all the categories listed in Table~\ref{tab:root_cause}, Table~\ref{tab:intro}, Table~\ref{tab:exp} and Table~\ref{tab:fix},
+only the synchronization issues category
+is significantly different between server bugs 
+and client bugs ---
+synchronization issues have caused 22\% of server bugs and only 
+4.3\% of client bugs.
+
+
+%\subsection{Lessons from Our Study}
+%\label{sec:lessons}
+
+\section{Guidance for My Thesis Work}
+
+
+{\bf Bug Detection}
+Our study provides several motivation for our rule-based bug detection work, 
+which will be discussed in detail in Section~\ref{sec:detect}. 
+Most performance bugs loss performance at function-call sites (Section~\ref{sec:char_fix}), 
+and more than one fourth of performance bugs are introduced by misunderstanding API (Section~\ref{sec:char_introduce}). 
+We could detect similar inefficient call usage to find new bugs. 
+Because some performance bugs are always active (Section~\ref{sec:char_exp}), 
+performance bugs cannot be modeled as rare events.
+Automatically inferring efficiency rules may not be feasible for performance bugs. 
+Patches for performance bugs are simple (Section~\ref{sec:char_fix}), and they follow limited fix strategies. It is feasible to extract efficiency rules from these patches. 
+
+{\bf Bug Diagnosis}
+Our study also provides guidance for our comparison-based performance 
+bug diagnosis work (Section~\ref{sec:inhouse}). 
+Users use comparison-based methods to notice performance loss (Section~\ref{sec:char_exp}), 
+and we could borrow the same philosophy in designing our diagnosis systems. 
+Most performance loss happens at function boundaries (Section~\ref{sec:char_fix}), 
+and we could utilize this information to infer root causes for performance bugs. 
+The patch for performance bugs follow limited fix strategies (Section~\ref{sec:char_fix}), 
+and these strategies are highly related to root causes (Section~\ref{sec:char_life}). 
+It is feasible for our diagnosis systems to give out fix suggestions to developers automatically. 
+
+
+
+\section{Guidance for Future Work}
+
+{\bf Comparison with Functional Bugs\ }
+There are several interesting comparisons between performance and functional
+bugs. (1)
+The distribution of performance-failure rates over software life time
+follows neither the bathtub model of
+hardware errors nor the gradually maturing model of functional bugs, because
+performance bugs have long hiding periods (Section \ref{sec:char_life}) 
+and can emerge from non-buggy 
+places when software evolves (Section \ref{sec:char_introduce}).
+(2) Unlike functional bugs, performance bugs cannot always be modeled as 
+rare events, because some of them are always active 
+(Section \ref{sec:char_exp}).
+(3) The percentage of synchronization problems among
+performance bugs in our study is higher than the percentage of synchronization
+problems among functional bugs in a previous study for
+a similar set of applications~\citep{LiASID06} (Section \ref{sec:taxonomy_howwaste}).
+
+{\bf Annotation Systems\ }
+Annotation systems are used in many software development environments
+\citep{msdnannot,linuxannot}. Unfortunately, they mainly communicate
+functionality information.%, but not performance-related information.
+
+Our study calls for performance-aware annotation systems
+\citep{perfassert1,perfassert2}
+that help developers maintain and communicate APIs' performance features
+and workload assumptions (Section \ref{sec:char_introduce}).
+%Therefore, developers can make informed decisions when they face large and 
+%varied APIs. 
+Simple support such as warning about the existence of locks in
+a library function, specifying the complexity of a function, and
+indicating the desired range of a performance-sensitive parameter
+%or specifying the complexity of an API 
+can go a long way in avoiding performance bugs.
+Recent work that automatically calculates function complexity is
+also promising \citep{gulwani.popl2009}.
+
+{\bf Testing\ }
+Regression testing and change-impact analysis have to
+consider workload changes and performance impacts, because new performance bugs
+may emerge from old code
+(Section \ref{sec:char_introduce}).
+
+Performance testing can be improved if its input
+design combines smart input-generation techniques used in functional testing
+\citep{KLEE, dart} with an emphasis on large scale
+(Section~\ref{sec:char_exp}).
+
+Expressing performance oracles and judging whether performance bugs have 
+occurred are critical challenges in performance testing 
+(Section~\ref{sec:char_exp}). Techniques that can smartly compare performance
+numbers across inputs and automatically discover the existence of 
+performance problems are 
+desired.
+
+{\bf Future Directions}
+One might argue that performance sometimes needs
+to be sacrificed for better productivity and functional correctness. However,
+the fact that we can often achieve significant performance improvement through
+only a few lines of code change motivates future research to pay more
+attention to performance bugs (Section~\ref{sec:char_fix}).
+Our study suggests 
+that the workload trend and API features of modern software will lead
+to more performance bugs in the future (Section~\ref{sec:char_introduce}).
+In addition, our study observes a significant portion of synchronization-related
+performance bugs in multi-threaded software. There will be more bugs of this
+type in the multi-core era. Beyond research discussed in this proposal, we think 
+that there are still several potential directions to combat performance bugs.
+
+Finally, our observations have been consistent across old software and new 
+software (Chrome), old bugs (27 pre-2004 bugs) and new bugs (44 post-2008 bugs).
+Therefore, we are confident that these lessons will be useful at least 
+for the near
+future.
+

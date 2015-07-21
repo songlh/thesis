@@ -96,9 +96,11 @@ predicates.
 
 \begin{table*}
   \centering
-  \small
+  \scriptsize
   \newcommand{\Yes}[1]{\checkmark{}$_#1$}
   \newcommand{\No}[0]{-}
+  \begin{adjustwidth}{-.15in}{-.15in}
+  {
   \begin{tabular}{lccccccc}
     \toprule
               &          &         & \multicolumn{3}{c}{\bf Static \# of predicates}& {\bf Static \# of} & {\bf Reported Inputs}\\
@@ -130,7 +132,9 @@ predicates.
     GCC12322         & 2341        & C                &  177098 & 284484 & 3750912 & 6563     & 1/0            \\
     \bottomrule
    \end{tabular}
-  \nocaptionrule
+   }
+   \end{adjustwidth}
+  %\nocaptionrule
   \caption{Benchmark information. (N/A: since our statistical debugging tools 
       only work for C/C++ programs, we have 
 	reimplemented the four Java benchmarks in C programs. *: we have no
@@ -168,7 +172,7 @@ To cover both classes of statistical models for performance diagnosis, our
 study will look at two models: a
 \emph{basic} model proposed by CBI work \citep{liblit03,liblit05} that belongs
 to the first class discussed above 
-and a $\Delta$LDA model proposed by \citet{Delta-LDA} that belongs
+and a $\Delta$LDA model proposed by \citep{Delta-LDA} that belongs
 to the second class discussed above. 
 We leave investigating other existing statistical
 models and designing new models to future work. Since our evaluation will use
@@ -391,13 +395,14 @@ unless specified otherwise.
 %mark the distance as
 %$.$. 
 
+\begin{landscape}
 \begin{table*}
   \centering
-  \footnotesize
+  \scriptsize
   \newcommand{\Yes}[1]{\checkmark{}$_#1$}
   \newcommand{\Yess}[0]{\checkmark{}}
   \newcommand{\No}[0]{-}
-  \begin{adjustwidth}{-.25in}{-.25in}
+  %\begin{adjustwidth}{-1.4in}{-1.4in}
   {
   \begin{tabular}{lcccccccccccl}
     \toprule
@@ -434,8 +439,8 @@ unless specified otherwise.
     \bottomrule
    \end{tabular}
   }
-  \end{adjustwidth}
-  \nocaptionrule
+  %\end{adjustwidth}
+  %\nocaptionrule
   \caption{Experimental results for in-house diagnosis 
     (\Yes{x}(y): the $x$-th ranked failure predictor is highly
      related to the root
@@ -452,7 +457,7 @@ unless specified otherwise.
      threshold of the statistical model.).}
   \label{tab:in-house}
 \end{table*}
-
+\end{landscape}
 
 \subsubsection{Results for basic model}
 \label{sec:inhousebasic}
@@ -499,21 +504,32 @@ This problem can be fixed by moving \texttt{notified=false;} earlier.
 
 
 \begin{figure}
-\centering
-\lstinputlisting[basicstyle=\ttfamily\footnotesize,numbers=left]{figures/Apache3278.c}
+\codefig{Apache3278}
 \caption{An Apache bug diagnosed by Return}
 \label{fig:Apache3278}
 \end{figure}
 
-
-
+%\begin{figure}
+%\centering
+%\lstinputlisting[basicstyle=\ttfamily\footnotesize,numbers=left]{figures/Apache3278.c}
+%\caption{An Apache bug diagnosed by Return}
+%\label{fig:Apache3278}
+%\end{figure}
 
 \begin{figure}
-\centering
-\lstinputlisting[basicstyle=\ttfamily\footnotesize,numbers=left]{figures/MySQL44723.c}
+\codefig{MySQL44723}
 \caption{A MySQL bug diagnosed by Branch}
 \label{fig:MySQL44723}
 \end{figure}
+
+
+%\begin{figure}
+%\centering
+%\lstinputlisting[basicstyle=\ttfamily\footnotesize,numbers=left]{figures/MySQL44723.c}
+%\caption{A MySQL bug diagnosed by Branch}
+%\label{fig:MySQL44723}
+%\end{figure}
+
 
 In most cases, the failure predictor
 is very close to the final patch of the performance problem (within 10 lines
@@ -553,7 +569,7 @@ out of thousands or even hundreds of thousands of candidate predicates.
 
 \begin{table*}[tb!]
 \begin{adjustwidth}{-.5in}{-.5in}
-\small
+\scriptsize
 \centering
 {
 \begin{tabular}{lcccccc}
@@ -562,25 +578,25 @@ out of thousands or even hundreds of thousands of candidate predicates.
 \midrule
 Total \# of bugs  & 16 & 5 & 9 & 19 & 16 & 65 \\
 \midrule
-\multicolumn{7}{|c|}{\bf \# of bugs the default CBI model can help}\\
-\multicolumn{1}{|l}{{ Branches} }
+\multicolumn{7}{c}{\bf \# of bugs the default CBI model can help}\\
+\multicolumn{1}{l}{{ Branches} }
 &1&0&2&5&5&13\\
-\multicolumn{1}{|l}{{ Returns} }
+\multicolumn{1}{l}{{ Returns} }
 &1&0&0&0&1&2\\
-\multicolumn{1}{|l}{{ Scalar-Pairs} }
+\multicolumn{1}{l}{{ Scalar-Pairs} }
  &0&0&0&0&0&0\\
 \midrule
-\multicolumn{7}{|c|}{\bf \# of bugs $\Delta$LDA model can help}\\
-\multicolumn{1}{|l}{{ Branches$_{\text{loop}}$} }
+\multicolumn{7}{c}{\bf \# of bugs $\Delta$LDA model can help}\\
+\multicolumn{1}{l}{{ Branches$_{\text{loop}}$} }
 &10&4&7&12&10&43\\
-\multicolumn{1}{|l}{{ Returns} }
+\multicolumn{1}{l}{{ Returns} }
 %\multicolumn{1}{|l}{{ Returns$>$Branches} }
 &0 &0&0& 0&0&0\\
 %\multicolumn{1}{|l}{{ Returns$==$Branches} }
 %&9&2&4&5&5&25\\
 %\multicolumn{1}{|l}{{ Returns$<$Branches} }
 %&1&2&1&6&3&13\\
-\multicolumn{1}{|l}{{ Scalar-Pairs} }
+\multicolumn{1}{l}{{ Scalar-Pairs} }
 %\multicolumn{1}{|l}{{ Scalar-Pairs$>$Branches} }
 &0 &0&0&0 &0&0\\
 %\multicolumn{1}{|l}{{ Scalar-Pairs$==$Branches} }
@@ -588,8 +604,8 @@ Total \# of bugs  & 16 & 5 & 9 & 19 & 16 & 65 \\
 %\multicolumn{1}{|l}{{ Scalar-Pairs$<$Branches} }
 %&1&0&2&0&0&3\\
 \midrule
-\multicolumn{7}{|c|}{\bf \# of bugs above designs cannot help}\\
-\multicolumn{1}{|l}{{ } }
+\multicolumn{7}{c}{\bf \# of bugs above designs cannot help}\\
+\multicolumn{1}{l}{{ } }
 &4&1&0&2&0&7 \\
 \bottomrule
 \end{tabular}
@@ -637,8 +653,6 @@ the fix affects the return value of the corresponding function.
 
 
 \input{chapter-sd/5_delta-lda}
-
-
 
 
 \subsection{Manual inspection}

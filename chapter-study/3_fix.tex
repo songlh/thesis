@@ -1,0 +1,108 @@
+\subsection{How Performance Bugs Are Fixed}
+\label{sec:char_fix}
+
+\begin{table*}[tb!]
+\begin{adjustwidth}{-.5in}{-.5in}
+\scriptsize
+\centering
+{
+
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\toprule
+\multicolumn{1}{|c|}{\bf Granularity for Performance Bugs} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+\multicolumn{1}{|l|}{Performance bugs happening at function boundaries}
+&22&8&4&29&18&81\\
+\midrule
+\multicolumn{1}{|l|}{Performance bugs not happening at function boundaries}
+&3&2&7&7&10&29\\
+\bottomrule
+
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{Granularity categorization for performance bugs in Section~\ref{sec:char_fix}}
+\label{tab:location}
+\end{table*}
+
+We find that most performance bugs happen at call sites, and they are fixed by changing the usage of function calls, 
+such as replacing old call sequences with new call sequences, conditionally or unconditionally skipping buggy functions or changing parameters, and so on. 
+For example, {\it Transparent Draw} (Figure~\ref{fig:moz66461}), {\it Intensive GC} (Figure~\ref{fig:moz515287}), 
+{\it Bookmark All} (Figure~\ref{fig:uncoord2}), and
+{\it Slow Fast-Lock} (Figure~\ref{fig:mysql38941}) are all fixed by changing function call usage.
+This is probably because developers and compilers have already done a good job in optimizing code within each procedure. 
+Therefore, future work to detect, diagnose and fix performance bugs should allocate more effort at call sites and procedure boundaries. 
+
+There are also 29 bugs not fixed by changing function call usage. 
+These bugs mainly arise from two scenarios. 
+In one scenario, the buggy code unit itself does not directly waste performance. 
+Instead, its impact propagates to other places in the software and causes performance loss there. 
+For example, the {\it No Cache} (Figure~\ref{fig:mysql26527}) 
+bug happens when MySQL mistakenly does not allocate cache. 
+This operation itself does not take time, but it causes performance loss later. 
+The second scenario is to optimize code units inside functions, like MySQL14637, whose patch replaces byte-wise parsing with
+four-byte-wise parsing to accelerate trimming blank characters from the end of a string.
+
+
+\begin{table*}[tb!]
+\begin{adjustwidth}{-.5in}{-.5in}
+\scriptsize
+\centering
+{
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\toprule
+\multicolumn{1}{|c|}{\bf How to Fix Performance Bugs} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+\multicolumn{1}{|l|}{Change Condition: {a condition is added or modified} }
+&1&4&7&14&10&36\\
+\midrule
+\multicolumn{1}{|l|}{In-place Call Change: {replace call sequences in the exact same place} }
+&9&1&1&8&8&27\\
+\midrule
+\multicolumn{1}{|l|}{Memorization: {reuse results from previous computation}}
+&9&0&3&3&3&18\\
+\midrule
+ \multicolumn{1}{|l|}{Batch: {batch computation to eliminate  redundancy}}
+&4&3&0&6&1&14\\
+\midrule
+\multicolumn{1}{|l|}{Others: all the bugs not belonging to the above four categories}
+&2&2&1&5&6&16\\
+\bottomrule
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{How to fix performance bugs in Section~\ref{sec:char_fix}}
+\label{tab:fix}
+\end{table*}
+
+
+There are four common strategies in fixing performance bugs, as shown in Table~\ref{tab:fix}.
+
+\underline{\it Change Condition} The most common fix strategy is {\it Change Condition}. 
+It is used in 36 patches, in which code units that do not always generate useful 
+results are conditionally skipped, 
+a fast path is changed to be executed, or the same functionality is realized in a more efficient way. 
+For example, Draw is conditionally skipped to fix {\it Transparent Draw} (Figure~\ref{fig:moz66461}), 
+and cache will be used to fix {\it No Cache} (Figure~\ref{fig:mysql26527} ).
+
+\underline{\it In-place Call Change} The second most common strategy is {\it In-place Call Change}. 
+In this strategy, developers replace or reorganize the call sequence in the exact same place. 
+The performance gain can be achieved whenever changed codes are executed. 
+For example, in order to fix Mozilla103330, 
+developers replace the setLength and Append call combination with Assign.
+
+\underline{\it Memorization} fixes 18 bugs by reusing results 
+from previous calculations. 
+For example, in order to fix Mozilla409961, 
+developers move do\_QueryInterface outside the buggy loop, instead of calling it in each iteration.  
+
+\underline{\it Batch} strategy is used in 14 patches. 
+For example, {\it Bookmark All} in Figure~\ref{fig:uncoord2} is fixed by this strategy.   
+
+\underline{\it Are patches complicated?}
+Most performance bugs in our study can be fixed through simple changes. 
+In fact, 42 out of 110 bug patches contain five or fewer lines of code changes. 
+The median patch size for all examined bugs is 8 lines of code.
+The small patch size is a result of the above fixing strategies.
+Many change condition patches are small. Most in-place call change, memorization, and batch patches do not require implementing new function calls.
+

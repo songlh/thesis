@@ -1,5 +1,126 @@
 \chapter[Introduction]{Introduction}
 \label{chap:introduction}
-ToDo
+
+We all want software to run fast and efficiently. 
+Software performance severely affects usability of software system 
+and is one of the most important problems in computer science research. 
+Performance bugs are one major source of software's slowness and inefficiency. 
+Due to their non fail-stop symptoms, 
+performance bugs are easy to escape from in-house testing and difficult to be diagnosed. 
+Nowadays, the urgency to address performance bugs is becoming even more important 
+with new hardware and software trends and increasing concerns about energy constraints. 
+
+Facing the challenge of performance bugs, 
+this dissertation proposes effective performance bug detection 
+and performance bug diagnosis approaches based on a 
+comprehensive characteristics study of real-world performance bugs.
+
+\section{Motivation}
+%TODO add dick site's talk. Google's need for pattern. Solve 99% tail
+%worth millions of dollars; finding a couple of perf bugs in the late stage
+% of development needs several months of several experts' time!
+Slow and inefficient software can easily frustrate users and
+cause financial losses.
+%\cite{responsetimeibm}.
+Although researchers have devoted decades to
+transparently improving software performance,
+{\it performance bugs} continue to pervasively
+degrade performance
+and waste computation resources in the field~\citep{rily.perftest}.
+%developers still frequently use inefficient code sequences, which
+%could be fixed by simple patches, that cause significant 
+%performance degradation and computation waste in the field
+%(i.e., {\bf performance bugs}). 
+Meanwhile, current support for combating performance bugs is preliminary due
+to the poor understanding of real-world performance bugs.
+%To address this problem, an improved understanding of real-world 
+%performance bugs is sorely needed.
+
+Following the convention of developers and researchers 
+on this topic~\citep{s2e,perf.fse10,rily.perftest,perfantipattern},
+we refer to performance bugs as software defects where
+relatively simple {\it source-code} changes can significantly speed up
+software, while preserving functionality.
+These defects can{\bf not} be optimized away by state-of-practice compilers,
+thus bothering end users.
+
+\begin{figure}
+\codefig{Apache45464}
+\caption{A performance bug from Apache-HTTPD
+  {(`+' and `-' denote the 
+    code added and deleted to fix this bug)}}
+\label{fig:Apache45464}
+\end{figure}
 
 
+Figure~\ref{fig:Apache45464} shows an example of a real-world performance bug. 
+Apache HTTPD developers forgot to change a parameter of API \Code{apr_stat} after an API upgrade. 
+This mistake causes \Code{apr_stat} to retrieve more than necessary information 
+from the file system and leads to more than ten times slowdown in Apache server. 
+After changing to \Code{APR_FINFO_TYPE}, \Code{apr_stat} will retrieve exactly what 
+developers originally needed through \Code{APR_FINFO_NORM}. 
+
+
+Performance bugs exist widely in released software. 
+For example, Mozilla developers have fixed 5--60 performance bugs
+reported by users {\it every month} over the past 10 years.
+The prevalence of performance bugs is inevitable because
+little work has been done to help developers avoid
+performance-related mistakes. In addition,
+performance testing mainly relies on ineffective black-box random 
+testing and manual input design, which allows the majority of performance bugs
+to escape~\citep{rily.perftest}.
+
+Performance bugs lead to reduced throughput, increased latency, and 
+wasted resources in the field. 
+In the past, they have caused several 
+highly publicized failures, causing hundred-million dollar software 
+projects to be abandoned~\citep{colorado,uk}.
+
+Worse still, performance problems are costly to 
+diagnose due to their non fail-stop symptoms.
+Software companies may need several months of effort by experts
+to find a couple of performance bugs that cause a few 
+hundred-millisecond delay in
+the 99th percentile latency of their service~\citep{dicksites}.
+
+The following trends will make the performance-bug problem more critical
+in the future:
+
+%They have not been well studied before and worth our research attention.
+
+{\bf Hardware:} For many years, 
+  %the single threaded interpretation of 
+  Moore's law ensured that hardware would make software faster over time 
+  with no software
+  development effort. In the multi-core era, when each core is unlikely to 
+  become faster, performance bugs are particularly harmful.
+
+{\bf Software:} The increasing complexity of software systems and rapidly 
+changing workloads provide new opportunities for performance waste and
+new challenges in diagnosis
+%Development practices such as code reuse and framework based software
+%are making things even worse
+\citep{BloatFSE2008}.
+Facing the increasing pressure on productivity, 
+developers cannnot combat performance bugs without automated tool support. 
+
+{\bf Energy efficiency:} 
+Increasing energy costs provide a powerful economic 
+argument for avoiding performance bugs. 
+%Generating power to run data centers is
+%expensive. Storing power for use in mobile devices is also costly. 
+When one is willing to sacrifice the service quality to reduce 
+energy consumption~\citep{green.pldi10,asplos11karthik}, 
+ignoring performance bugs is unforgivable.
+For example, by fixing bugs that have doubled the
+execution time,
+one may potentially
+halve the carbon footprint of buying and operating computers.
+
+Performance bugs may not have been reported as often as functional bugs, because 
+they do not cause fail-stop failures.
+However, considering the preliminary support for
+combating performance bugs,
+it is time to pay more attention to them
+when we enter a new resource-constrained computing world.

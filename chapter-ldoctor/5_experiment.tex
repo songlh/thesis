@@ -1,0 +1,370 @@
+\section{Experiment}
+\label{sec:experiment}
+
+\subsection{Methodology}
+
+
+\begin{table}
+  \centering
+  \small
+  \newcommand{\Yes}[1]{\checkmark{}$_#1$}
+  \newcommand{\No}[0]{-}
+  \begin{tabular}{lccccl}
+    \toprule
+                    &      	   &                        &{\bf Loop }  &  {\bf  \# of}   & {\bf Root}  \\
+   {\bf BugID}      &  {\bf KLOC}  &  {\bf P. L.}           &{\bf Ranks}  &  {\bf  Loops}   & {\bf Cause} \\
+   \midrule
+   Mozilla347306    & 88           & C                      & 1               & 5               &  W. 0*1?     \\
+   Mozilla416628    & 105          & C                      & 1               & 5               &  W. 0*1?     \\
+   Mozilla490742    & N/A          & JS                     & 1               & 1               &  C-I. R.       \\
+   Mozilla35294     & N/A          & C++                    & 1               & 2               &  C-L. R.        \\ 
+   Mozilla477564    & N/A          & JS                     & 1               & 2               &  C-L. R.       \\
+   \midrule 
+   MySQL27287       & 995          & C++                    & 1               & 5               &  W. 0*1?     \\
+   MySQL15811       & 1127         & C++                    & 1               & 5               &  W. 1* \\ 
+   \midrule    
+   Apache32546      & N/A          & Java                   & 1               & 1               &  C-I. R.  \\
+   Apache37184      & N/A          & Java                   & 1               & 1               &  C-I. R.  \\
+   Apache29742      & N/A          & Java                   & 1               & 2               &  C-L. R. \\ 
+   Apache34464      & N/A          & Java                   & 2               & 3               &  C-L. R.  \\
+   Apache47223      & N/A          & Java                   & 1               & 2               &  C-L. R. \\
+   \midrule
+   GCC46401         & 5521         & C                      & 2               &   5             &  W. [0$|$1]*   \\
+   GCC1687          & 2099         & C                      & 1               &   5             &  C-I. R. \\
+   GCC27733         & 3217         & C                      & 1               &   5             &  C-I. R. \\
+   GCC8805          & 2538         & C                      & 4               &   5             &  C-L. R.\\
+   GCC21430         & 3844         & C                      & 1               &   5             &  C-L. R. \\
+   GCC12322         & 2341         & C                      & $>5$            &   5             &  Other\\
+\bottomrule
+   \end{tabular}
+  %\nocaptionrule
+  \caption{Benchmark Information. (Loop Ranks: buggy loop ranking in results from the statistical model.
+  \# of Loops: the number of loops we analyze for each benchmark. 
+  N/A: we re-implement benchmarks not in C/C++, or depending on very old libraries and operating systems. 
+  W. is short for Resultless, R. is short for Redundancy, C-I. is short for cross-iteration, and C-L. is short for cross-loop. )}
+  \label{tab:benchmarks}
+\end{table}
+
+{\bf Implementation and Platform}
+We implement our analysis in LLVM-3.4.2. 
+Our analysis consists of 17654 lines of C++ code, 
+with 4748 for instrumenter, 674 for resultless analysis, 
+5802 for redundancy analysis, 
+and the remaining 6430 for common utilities. 
+All our experiments are conducted on a i7-960 machine, with Linux 3.11 kernel. 
+
+{\bf Benchmark Selection}
+Beside all loop-related performance bugs used in~\cite{SongOOPSLA2014}, 
+we install one new bug GCC27733, and re-implement 5 bugs. 
+We fail to install or extract other bugs, 
+either because they depend on some special platforms or very old libraries, 
+or because they involve very complex data structures. 
+In total, we use 18 benchmarks in our experiments. 
+For all real bugs, we follow their default building setting. For all re-implemented bugs,
+we build them by using ``-O0 -g''. 
+Detailed benchmark information is shown in Table~\ref{tab:benchmarks}. 
+For all bugs used in~\cite{SongOOPSLA2014} and the new bug we install (GCC27733), 
+we follow the same methodology discussed in~\cite{SongOOPSLA2014} to run the statistical model. 
+We run our analysis on top 5 loops, 
+when there are more than 5 loops reported by the statistical model, 
+or all loops, when there are less than 5 loops reported. 
+For bugs we re-implement, we run our analysis on all executed loops, 
+except loops bounded by constant iteration numbers.
+We rank all these loops by their total iteration number. 
+The total number of loop we analyze is 64.   
+
+{\bf Experiment Input} 
+For all benchmarks we use, 
+users provided at least one bad input when reporting the bugs. 
+When collecting dynamic information, 
+we run instrumented programs by using the bad inputs provided by users.  
+
+\subsection{Evaluation Results}
+
+\begin{table*}
+  \centering
+  \tiny
+  \newcommand{\Yes}[1]{\checkmark{}$_#1$}
+  \newcommand{\No}[0]{-}
+  \begin{tabular}{lccccccccccccccc}
+    \toprule
+              &  \multicolumn{5}{c}{\bf Static Resultless Type} & \multicolumn{5}{c}{\bf Dynamic Information} & \multicolumn{5}{c}{\bf Overhead}\\
+\cmidrule(lr){2-6} \cmidrule(lr){7-11} \cmidrule(lr){12-16}
+   {\bf BugID}      & Loop0 & Loop1 &  Loop2 &   Loop3 &   Loop4 & Loop0     &   Loop1 &   Loop2 &  Loop3 &   Loop4 &   Loop0 & Loop1 &   Loop2 &  Loop3 &  Loop4 \\
+    \midrule
+    Mozilla347306   & 0*1?          & \No   & \No    &   \No          & \No     & $2.00*10^4$ & /       & /       &  /     &  /      &   1.07\%   &   /   &   /     &  /      &  /\\
+    Mozilla416628   & 0*1?          & \No   & \No    & \No            &   \No   & $1.82*10^3$ & /       & /       &  /     &  /      &   0.65\%   &   /   &   /     &  /       &  /\\
+    Mozilla490742   & \No           & /     & /      & /              &   /     & /           & /       & /       &  /     &  /      &   /        &   /   &   /     &  /       &  /\\
+    Mozilla35294    & \No           & \No   & /      & /              &   /     & /           & /       & /       &  /     &  /      &   /        &   /   &   /     &  /       &  /\\
+    Mozilla477564   & [0$|$1]*(\No) & \No   & /      & /              &   /     & 0.99        & /       & /       &  /     &  /      &   1.32\%   &   /   &   /     &  /       &  /\\
+    \midrule
+    MySQL27287      & 0*1?          & \No   & \No    & [0$|$1]*(\No)   &   \No  & $6.55*10^4$ & /       & /        &  0(\No)  &  /         &  $\sim$0    &   /      &   /  &  $\sim$0 &  /\\
+    MySQL15811      & \No           & \No   & \No    & \No      &   \No   & /        & /      & /       &  /       &  /       &   /      &   /      &   /      &  /       &  /\\
+    \midrule
+    Apache32546     & \No      & /        & /        & /        &   /     & /        & /        & /           &  /       &  /       &   /      &   /      &   /      &  /       &  /\\
+    Apache37184     & \No      & /        & /        & /        &   /     & /        & /        & /           &  /       &  /       &   /      &   /      &   /      &  /       &  /\\
+    Apache29743     & \No      & \No      & /        & /        &   /     & /        & /        & /           &  /       &  /       &   /      &   /      &   /      &  /       &  /\\
+    Apache34464     & \No      & 0*1?(\No)& \No      & /        &   /     & /        & 51.05    & /           &  /       &  /       &   /      &   $\sim$0&   /      &  /       &  /\\
+    Apache47223     & \No      & \No      & /        & /        &   /     & /        & /        & /           &  /       &  /       &   /      &   /      &   /      &  /       &  /\\
+    \midrule
+    GCC46401        & \No      & [0$|$1]*   & [0$|$1]*(\No)   & [0$|$1]*(\No)   & [0$|$1]*(\No)     & /        & 0     & 0.99     &  0(\No)       &  0.99 &   /    &  $\sim$0  & $\sim$0   & $\sim$0  & $\sim$0  \\ 
+    GCC1687         & \No      & \No      &   0*1?(\No)     & \No      &   \No   & /        & /        & 41.84    &  /       &  /           &   /      &   /      & $\sim$0  &  /       &  /\\
+    GCC27733        & 0*1?(\No)& \No      &   0*1?(\No)     & \No      &   \No   & 35.60    & /        & 27.62    &  /       &  /           & $\sim$0         &   /      &  $\sim$0         &  /     &  /\\
+    GCC8805         & 0*1?(\No)& [0$|$1]*(\No)& [0$|$1]*(\No)& \No     &   \No   & $3.29*10^2$         & 0(\No)   & 0(\No)  &  /            & /       & 0.91\% &   0.02\% &  $\sim$0 &  /  &   /\\
+    GCC21430        & \No      & [0$|$1]*(\No)& [0$|$1]*(\No)& 0*1?(\No)& [0$|$1]*(\No) & /            & 0(\No)   & 0(\No)  & $5.00*10^3$(\No)     &  0    &   /      &   $\sim$0 &   $\sim$0 &   $\sim$0 &  $\sim$0 \\
+    GCC12322        & [0$|$1]*(\No)& 0*1?(\No)& 0*1?(\No)   & [0$|$1]*(\No) &   \No   & 0  & 157.74 & $3.31*10^3$(\No)   &  0.22     &  /     &  5.98\%        & $\sim$0     & $\sim$0      &  2.01\%   &  /\\
+  \bottomrule
+   \end{tabular}
+  %\nocaptionrule
+  \caption{Experimental Results for Resultless Analysis. 
+  ( (\No) means false positives. 
+   In the dynamic part, we report average iteration number for 
+  0*1?, and ratio of working iteration number for [0$|$1]*.)}
+  \label{tab:workless}
+\end{table*}
+
+In this section, we run our analysis on all 64 loops. 
+We will discuss the effectiveness and performance for each of our techniques. 
+
+\underline{\textit{Resultless Analysis}}
+The results for resultless analysis is shown in Table~\ref{tab:workless}.
+3 benchmarks are caused by 0*1?, and 1 benchmark is caused by [0$|$1]*. 
+They are all identified by related static analysis. Our static analysis does not have false negatives. 
+Besides these 4 loops, there are other 20 loops identified as either 0*1? or [0$|$1]*. 
+We manually check these 20 loops, and we find that our static analysis does not make any mistakes. 
+Since these 20 loops are not related to root causes, we still consider them as false positives. 
+Without dynamic information, static resultless analysis will have a large false positive number. 
+
+We consider average iteration number larger than 1000 is 0*1?, and ratio of iterations generating results less than 0.01 is [0$|$1]*. 
+There are 8 false positives after we combine static analysis with dynamic information. 
+One more heuristic we can apply is when a loop is identified as resultless loop, 
+we will not consider resultless loops with lower ranks. After this, we will have 3 false positives, 
+which are the second loop for GCC\#8805 and GCC\#21430, and the third loop for GCC\#12322. We will not have any false negatives. 
+
+Collecting dynamic resultless information does not incur a large overhead. The largest overhead is 5.98\%, and for all other cases, the overhead is less than 3\%. 
+
+
+\begin{table}
+  \centering
+  \small
+  \newcommand{\Yes}[1]{\checkmark{}$_#1$}
+  \newcommand{\No}[0]{-}
+  \begin{tabular}{lccccc}
+    \toprule
+   {\bf BugID}        & {\bf L0}   &  {\bf L1}  & {\bf L2}            & {\bf L3} &  {\bf L4} \\
+    \midrule
+    Mozilla347306     & \No        &  \No       & \No                 & \No       & \No     \\
+    Mozilla416628     & \No        &  \No       & \No                 & \No       & \No      \\
+    Mozilla490742     & \checkmark &  /         & /                   & /         & /       \\
+    Mozilla35294      & \No        &  \No       & /                   & /         & /      \\
+    Mozilla477564     & \No        &  \No       & /                   & /         & /      \\
+    \midrule
+    MySQL27287       & \No         &  \No       &  \No                & \No      & \No       \\ 
+    MySQL15811       & \No         &  \No       &  \No                & \No      & \No       \\
+    \midrule
+    Apache32546      & \checkmark  &  /         &  /                  & /        & /           \\
+    Apache37184      & \No         &  /         &  /                  & /        & /           \\
+    Apache29743      & \No        &  \No        &  /                  & /        & /           \\
+    Apache34464      & \No        &  \No        &  \No                & /        & /           \\
+    Apache47223      & \No        & \No         & /                   & /        & /           \\
+    \midrule
+    GCC46401          & \No        & \No        & \No                 & \No      & \No           \\
+    GCC1687          & \No        & \No        & \No                 & \No      & \No        \\
+    GCC27733         & \No        & \No        & \No                 & \No      & \No       \\
+    GCC8805         & \No        & \No        & \No                 & \No      & \No        \\
+    GCC21430         & \No        & \No        & \No                 & \No      & \No        \\
+    GCC12322         & \No        & \No        & \No                 & \No      & \No         \\
+    \bottomrule
+   \end{tabular}
+  %\nocaptionrule
+  \caption{Experimental Results for System Call Checking. }
+  \label{tab:sys}
+\end{table}
+
+\underline{\textit{Batchable System Call}}
+The results for static batchable system call analysis is shown in Table~\ref{tab:sys}. 
+Our static analysis does point out the two loops caused by batchable system calls, and it does not bring any false positives. 
+
+\begin{table*}
+  \centering
+  \scriptsize
+  \newcommand{\Yes}[1]{\checkmark{}$_#1$}
+  \newcommand{\No}[0]{-}
+  \begin{tabular}{lcccccccccc}
+    \toprule
+              &  \multicolumn{5}{c}{\bf Redundant-pair/Total-pair} & \multicolumn{5}{c}{\bf Overhead} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-11} 
+   {\bf BugID}      & Loop0 & Loop1 &  Loop2 &   Loop3 &   Loop4 & Loop0     &   Loop1   &   Loop2 &  Loop3 &   Loop4   \\
+    \midrule
+    Mozilla347306   & 0     & 0     &  0     &   0     &   0     &  22.4\%   &   55.24\% & 0.03\%  &$\sim$0 &  $\sim$0   \\
+    Mozilla416628   & 0     & 0     &  0     &   0     &   0     &  2.74\%   &   0.07\%  & $\sim$0 &  0.03\%&  $\sim$0    \\
+    Mozilla490742   & /     & /     & /      & /       &   /     & /         & /         & /       &  /     &  /      \\
+    Mozilla35294    & 1     & /     & /      & /       &   /     & 19.32\%   & /   & /       &  /     &  /      \\
+    Mozilla477564   & 1     & /     & /      & /       &   /     & 6.6\%     & /         & /       &  /     &  /    \\
+    \midrule
+    MySQL27287      & 1(\No) & 0     & 0      & 0      &   0     &           &     &        &   &        \\
+    MySQL15811      & 0.98(\No) & 0  & 0      & 0      & 0       &           &         &           &       &         \\
+    \midrule
+    Apache32546     & /     & /     & /      & /       &   /     & /        & /        & /           &  /       &  /       \\
+    Apache37184     & /     & /     & /      & /       &   /     & /        & /        & /           &  /       &  /       \\
+    Apache29743     & 0.97  & /     & /      & /       &   /     & $\sim$0  & /        & /           &  /       &  /       \\
+    Apache34464     & 0     & 1     & /      & /       &   /     & 23.81\%  & 21.35\%  & /           &  /       &  /      \\
+    Apache47223     & 0.97  & /     & /      & /       &   /     & 21.05\%  & /        & /           &  /       &  /       \\
+    \midrule
+    GCC46401        & 0     & 0     & 0      & 0       &   0     & 34.43\%  & $\sim$0  &  0.14\%     & $\sim$0  &  $\sim$0  \\ 
+    GCC1687         & /     & 0     & 0      & 0       &   0     & /        & $\sim$0  & $\sim$0     & 0.07\%   &  1.71\%   \\
+    GCC27733        & /     & 0     & 0      & 0       &   0     & /        & $\sim$0  & $\sim$0     & $\sim$0  & $\sim$0    \\
+    GCC8805         & 0     & 0     & 0      & 1       &   0     & 10.15\%  & $\sim$0  & $\sim$0     & $\sim$0  & $\sim$0        \\
+    GCC21430        & 0.99  & /     & /      & 1(\No)       &   0     & 5.46\%   &  /       &  /          & $\sim$0  & $\sim$0        \\
+    GCC12322        & 0     & 0     & 0      & /       &   1(\No)     & 2.57\%   & $\sim$0  & $\sim$0     &  /       & $\sim$0 \\
+  \bottomrule
+   \end{tabular}
+  %\nocaptionrule
+  \caption{Experimental Results for Cross-loop Redundancy Analysis.}
+  \label{tab:CL-Results}
+\end{table*}
+
+
+\underline{\textit{Cross-loop Redundancy}}
+As we discussed in Section~\ref{sec:cal}, we skip consecutive loop instance pairs, where two instances are both too short, 
+or one instance is too short compared with the other. The concrete threshold we use in our experiment is that we skip pairs, 
+where two instances are both less than 100 iterations, 
+or the shorter one is less than 100 iterations and less than half of the longer instance's iterations. 
+
+The result for cross-loop redundancy analysis under sampling rate 1/100 is shown in Table~\ref{tab:CL-Results}.  
+We skip loops without outer loop, and loop recursively call the function containing itself.
+All 7 buggy cross-loop redundant loops are identified. 
+We have 4 false positives. 
+We do not check whether the loop generates results or not, 
+when we conduct cross-loop redundancy checking. We identify the first loop of MySQL\#27287 as cross-loop redundancy, which actually is a resultless loop.
+The reason for the other 3 false positives is that there are repetitive data inside the input provided by the user. 
+For example, the MYSQL\#15811 is triggered when loading a table from a file into database. The table contains 16384 records, and all of these records are identical string `1234567890'. 
+Another example is GCC\#21430. The bad input provided by the user contain 4 nested macro definition, 
+and after macro expansion, there will be 10000 identical lines of codes. 
+
+There are two heuristics we could apply to cut false positives. Firstly, when a loop has already been identified as resultless, 
+we will not consider it as redundancy. Secondly, when a loop with higher rank has been identified as redundancy, 
+we will not consider loops with lower ranks as redundancy. 
+After applying these two heuristics, we will have 2 false positives, which is the first loop for MySQL\#15811, and the 5th loop for GCC\#12322.
+
+The overhead for cross-loop instrumentation is quite large. There are two loops, whose overhead is larger than 30\%.
+ The reason is that each instance of these two loops only contain 1 or 2 iterations. 
+ We may consider skip loops with small average iteration number before we conduct cross-loop instrumentation.  
+
+\begin{table*}
+  \centering
+  \scriptsize
+  \newcommand{\Yes}[1]{\checkmark{}$_#1$}
+  \newcommand{\No}[0]{-}
+  \begin{tabular}{lcccccccccc}
+    \toprule
+              &  \multicolumn{5}{c}{\bf Total-iteration/Distinct-iteration} & \multicolumn{5}{c}{\bf Overhead} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-11} 
+   {\bf BugID}      & Loop0 & Loop1 &  Loop2 &   Loop3 &   Loop4 & Loop0     &   Loop1 &   Loop2 &  Loop3 &   Loop4   \\
+    \midrule
+    Mozilla347306   &   1   &  1    &   1    &   1     &    1    &   10.17\% & -        & -      & $\sim$0& -    \\
+    Mozilla416628   &   1   &  1    &   1    &   1     &    1    &   2.50\%  & 1.88\%   & 1.86\% & -        &  -     \\
+    Mozilla490742   &   0   &  /    &   /    &   /     &    /    &   $\sim$0 & /        & /      &  /     &  /      \\
+    Mozilla35294    &   1   &  1    & /      & /       &   /     &   -       & -        & /      &  /     &  /      \\
+    Mozilla477564   &   1   &  1    & /      & /       &   /     &   $\sim$0 & 0.99\%   & /      &  /     &  /    \\
+    \midrule
+    MySQL27287      &   1   &  1    &  1     &   1     &   1     &    -      &          &        &  -      &        \\
+    MySQL15811      &   1   &  1    &  1     &   1     &   1     &    -      &          &   -    &  -      &         \\
+    \midrule
+    Apache32546     &  47.45(\No) & /     & /      & /       &   /    & 3.85\%  & /        & /           &  /       &  /       \\
+    Apache37184     &  3     & /     & /      & /       &   /         &  $\sim$0         & /        & /           &  /       &  /       \\
+    Apache29743     &  1    & 1     & /      & /       &   /     &   0.14\%  &   $\sim$0       & /          &  /       &  /       \\
+    Apache34464     &  1    & 1     & 1      & /       &   /     &    -      &          &            &  /       &  /      \\
+    Apache47223     &  1    & 1     & /      & /       &   /     &    -      &  1.94\%   & /           &  /       &  /       \\
+    \midrule
+    GCC46401        &  1    & 1     & 1      & 1       &   1     &   38.30\%  & $\sim$0    & $\sim$0 & $\sim$0   & $\sim$0  \\ 
+    GCC1687         & 1957.18 & 1   & 1      & 1       &   1     &  $\sim$0   & -         &  -       & -         & -         \\
+    GCC27733        & 4.59    & 1   & 1      & 1       &   1     &  3.48\%    & $\sim$0   & 0.80\%   & -         & -         \\
+    GCC8805         &  1    &  1    & 1      & 1       &   1     &  5.68\%    & 0.12\%    & $\sim$0  & $\sim$0   & -       \\
+    GCC21430        &  1    & 1     & 191(\No)    & 1       &   1     &  0.69\%    & $\sim$0   & $\sim$0  & -         & -       \\
+    GCC12322        & 1     & 1     &  1     & 3.30(\No) &   1     &  $\sim$0 & $\sim$0   & $\sim$0  & $\sim$0   & $\sim$0        \\
+  \bottomrule
+   \end{tabular}
+  %\nocaptionrule
+  \caption{Experimental Results for Cross-iteration Redundancy Analysis. (- in Overhead part means we get the result based on static analysis.) }
+  \label{tab:CI-Results}
+\end{table*}
+
+The results for cross-iteration redundancy is shown in Table~\ref{tab:CI-Results}. 
+The experiment is conducted under sampling rate 1/1000. 
+The iteration number for the buggy loop of Mozilla\#490472 is only 50, and we do not have any sample for that bug.
+
+We have 3 benchmarks caused by cross-iteration redundancy, and they are all identified by our analysis. 
+There are 3 false positives reported by our analysis. We identify 
+Apache\#32546 as cross-iteration redundancy, because we just monitored the parameter for IO functions, 
+and we do not monitor the content of the buffer used by these IOs. 
+The reason for the other 2 false positives is that there are repetitive data inside the input provided by the user. 
+
+For many loops, side-effect instructions depend on induction variables, 
+and we do not need dynamic analysis to know that there is no cross-iteration redundancy.   
+
+
+\subsection{Analysis Combination}
+
+\begin{table}
+  \centering
+  \small
+  \newcommand{\Yes}[1]{\checkmark{}$_#1$}
+  \newcommand{\No}[0]{-}
+  \begin{tabular}{lcccc}
+    \toprule
+                    &{\bf Loop }   & {\bf Root}   & {\bf Diagnosis} & {\bf Diagnosis} \\
+   {\bf BugID}      & {\bf Ranks}    & {\bf Cause}  & {\bf Rank }    & {\bf Result }   \\
+   \midrule
+   Mozilla347306    & 1            &  W. 0*1?     & 1             &  W. 0*1? \\
+   Mozilla416628    & 1            &  W. 0*1?     & 1             &  W. 0*1?\\
+   Mozilla490742    & 1            &  C-I. R.(B)  & 1             &  C-I. R.(B)\\
+   Mozilla35294     & 1            &  C-L. R.     & 1             &  C-L. R.   \\ 
+   Mozilla477564    & 1            &  C-L. R.     & 1             &  C-L. R.   \\
+   \midrule 
+   MySQL27287       & 1            &  W. 0*1?     & 1             &  W. 0*1? \\
+   MySQL15811       & 1            &  W. 1*       & 1             &  C-L. R.\\ 
+   \midrule    
+   Apache32546      & 1            &  C-I. R.(B)  & 1             &  C-I. R.(B)\\
+   Apache37184      & 1            &  C-I. R.     & 1             &  C-I. R.\\
+   Apache29742      & 1            &  C-L. R.     & 1            &  C-L. R. \\ 
+   Apache34464      & 2            &  C-L. R.     & 2            &  C-L. R.\\
+   Apache47223      & 1            &  C-L. R.     & 1            &  C-L. R.\\
+   \midrule
+   GCC46401         & 2              &  W. [0$|$1]* & 2              &  W. [0$|$1]*  \\
+   GCC1687          & 1              &  C-I. R.    & 1              &  C-I. R.\\
+   GCC27733         & 1              &  C-I. R.    & 1              &  C-I. R.\\
+   GCC8805          & 4              &  C-L. R.    & 4              &  C-L. R.\\
+   GCC21430         & 1              &  C-L. R.    & 1              &  C-L. R.\\
+   GCC12322         & $>5$           &  Other      & 4              &  C-I. R. \\
+\bottomrule
+   \end{tabular}
+  %\nocaptionrule
+  \caption{Combined results. Diagnosis Rank: the rank of the loop identified as root cause loop by our technique. 
+  Diagnosis Result: the reason for performance loss our diagnosis tool report.}
+  \label{tab:final}
+\end{table}
+
+In this section, we will discuss whether our techniques can enhance statistical fault localization for performance bugs. 
+
+The first thing we need to do is to combine results from our different types of analysis. 
+Our static analysis for batchable system call is very precise. 
+If a loop is identified as batchable system call, 
+we consider that loop is the buggy loop, and the root cause is batchable system call. 
+Since we do not consider whether a loop generating results when we conduct redundant analysis, 
+when a loop is identified as both redundancy and resultless, we will consider it as resultless. 
+When a loop is identified by resultless, we will not consider resultless loops with lower rank. 
+The same rule is also applied to redundancy. 
+We think that resultless could be side-effect of redundancy, 
+if there is a loop identifies as redundancy in top 5 loops, 
+we will consider the root cause as redundancy.  
+
+The combined result is shown in Table~\ref{tab:final}. 
+We do not have correct diagnosis results for two bugs, 
+MySQL\#15811 and GCC\#12322. The root cause for MySQL\#15811 is 1*, 
+and we identify the buggy loop as cross-loop redundancy. The buggy loop for GCC\#12322 is not within top 5.  
+Our tool report GCC\#12322 is caused by cross-iteration redundancy, and the buggy loop is the 4th loop. 
+
+Compared with statistical debugging, our technique does not make results worse for all benchmarks. 
+We improve the results for 3 benchmarks. We cut 1 false positives for Apache\#34464, 1 false positives for GCC\#46401, and 3 false positives for GCC\#8805.
+Except MySQL\#15811, our technique can report the precise root cause when the buggy loop is ranked as 1st loop by the statistical model. 

@@ -1,0 +1,30 @@
+Writing efficient software is difficult.
+Design and implementation defects can easily cause performance problems, 
+leading to severe performance 
+degradation in production runs. These problems annoy end users
+and waste a huge amount of energy. Techniques that help
+diagnose and fix performance problems are desired.
+
+Unfortunately, existing performance diagnosis techniques are still preliminary,
+failing to provide the desired diagnosis coverage, accuracy, and performance. 
+Existing performance-bug detectors can accurately identify specific type
+of inefficient computation, but are not ideal for performance diagnosis
+in term of coverage and performance. 
+Profiling tools cannot identify
+the code regions that \textit{waste} the most resources, not to mention
+explain why some resources are wasted, failing
+both coverage and accuracy.
+Recent work on statistical performance diagnosis can
+identify coarse-grained root causes, such as which loop
+is the root cause of a performance problem. However, it cannot provide 
+fine-grained root cause information, such as why a loop is inefficient and
+how developers might fix the problem.
+
+In this paper, we first conduct an empirical study to understand what are
+fine-grained performance problem root causes in real world. 
+We then design a series of static-dynamic hybrid analysis routines that can
+help identify accurate fine-grained performance root cause information.
+We further use sampling techniques to lower our diagnosis overhead without
+hurting diagnosis accuracy or latency. Evaluation using real-world performance
+problems show that our tool can provide better coverage and accuracy than
+existing performance diagnosis tools, with small run time overhead.

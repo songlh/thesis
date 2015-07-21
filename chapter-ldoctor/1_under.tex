@@ -1,0 +1,419 @@
+\section{Root-Cause Taxonomy}
+\label{sec:study}
+
+The first task we are facing is to figure out a root-cause taxonomy for
+real-world inefficient loops. 
+Our taxonomy design is guided by checking a benchmark suite of real-world
+inefficient loops, collected by previous work \citep{SongOOPSLA2014,PerfBug}. 
+We also try to satisfy three requirements in our design.
+(1) Coverage: covering
+a big portion of real-world inefficient loop problems; 
+(2) Actionability: each root-cause category should be informative enough 
+to help developers
+decide how to fix a performance problem; 
+(3) Generality: too application-specific root causes will not work, as we
+need to build diagnosis tools to automatically identify these root causes 
+without developers' help.
+In this section, we will first present our taxonomy, together with real-world
+examples, followed by our empirical study about how a suite of real-world 
+inefficient
+loop problems fall into our root-cause categories.
+
+We should note that we are definitely not the first one who tries to categorize
+the root-cause patterns of performance problems. We are also not the first
+to identify many of the root-cause categories below. Instead, guided by
+previous work and our empirical study, we try to figure out our own taxonomy 
+that satisfy the above three requirements and can
+work well with the diagnosis tool that we will build later.
+
+\subsection{Taxonomy}
+\label{sec:study_tax}
+Our taxonomy contains two major root cause categories,
+\textit{resultless} and \textit{redundancy}, and several sub-categories, 
+as below.
+
+\underline{\textit{\textbf{Resultless}}}
+Resultless loops spend a lot of time in computation that does not 
+produce any results that will be used after the loop.
+Depending on when such resultless computation is conducted, we further
+consider four sub-categories.
+
+{\textbf{0*}}: 
+This type of loops never produce any results in any iteration.
+This type of loops should be rare in mature software systems.
+They should simply be deleted from the program.
+%Question: dynamic or static?
+
+\begin{figure}
+\codefig{Mozilla347306}
+\caption{A resultless 0*1? bug in Mozilla}
+\label{fig:Mozilla347306}
+\end{figure}
+
+
+%\begin{figure}[h]
+%\centering
+%\lstset{basicstyle=\ttfamily\fontsize{8}{8}\selectfont,
+%     morekeywords={+},keepspaces=true}
+%  \mbox{\lstinputlisting[mathescape,boxpos=t]{figures/Mozilla347306.c}}
+%\caption{A resultless 0*1? bug in Mozilla}
+%\label{fig:Mozilla347306}
+%\end{figure}
+
+{\textbf{0*1?}}:
+This type of loops only produce results in the last iteration, if any. 
+They are often related to search: they check a sequence of elements one
+by one until the right one is found.
+Not all loops of this type are inefficient. If they are, they are often
+fixed by data-structure changes.
+Figure~\ref{fig:Mozilla347306} shows an example from Mozilla
+JavaScript engine. 
+The loop searches through an array containing source code information for the input \texttt{pc}. 
+In practice, this loop needs to execute more than 10000 iterations for 
+many long JavaScript encountered by users, which leads to huge 
+performance problems --- web browsers freeze. To fix this problem, 
+developers simply replace array with hash table when processing long
+JavaScript files.
+% This improve the performance by 52.60{\bf X}.
+
+%\comment{
+%This loop searches through xxx for xxx.
+%When xx, this loop often needs to execute xx iterations, which is very
+%time consuming.
+%The developers simply change the data-structure of xx from xx to a hash
+%table, which eliminates this loop and improving the performance by xxx.}
+%%Linhai, you have to describe examples using words people can understand
+%%and you have to provide useful information, such as what is the purpose
+%% of the loop. What is the loop searching for? What is the bug-triggering
+%%workload; how bad the performance (throughput or latency) was; how good
+%%is the fixed version in terms of performance.
+%\comment{
+%\textcolor{red}{
+%MySQL\#27287 is caused by linear backward searching for parent node during XML string parsing. 
+%In each iteration of the buggy loop, one previous sibling will be skipped, 
+%and in the last iteration, parent node will be returned. 
+%The patch applies a stack-like data structure to keep all parent nodes who have unparsed children to avoid the linear backward searching.
+%} } 
+%Linhai, I have no idea what you are talking about here for mysql27287
+
+%TOADD: performance diagnosis is different from bug detection%
+%in many cases, there is no absolutely ``bad'' cases. performance problems are
+%often a trade-off between code simplicity, performance, xxx.
+%treating it like bug detection will inevitably lead to false positives
+%we are providing information to developers
+
+
+
+\begin{figure}
+\codefig{GCC46401}
+\caption{A resultless [0$|$1]* bug in GCC}
+\label{fig:GCC46401}
+\end{figure}
+
+%\begin{figure}[h]
+%\centering
+%\lstset{basicstyle=\ttfamily\fontsize{8}{8}\selectfont,
+%     morekeywords={+},keepspaces=true}
+%  \mbox{\lstinputlisting[mathescape,boxpos=t]{figures/GCC46401.c}}
+%\caption{A resultless [0$|$1]* bug in GCC }
+%\label{fig:GCC46401}
+%\end{figure}
+
+
+{\textbf{[0$|$1]*}}:
+Every iteration in this type of loops may or may not produce results.
+Under certain workload, the majority of the loop iterations do not produce
+any results and lead to performance problems perceived by end users.
+The inefficiency problem caused by this type of loops can often be solved
+by adding extra conditions to skip the loop under certain contexts.
+Figure~\ref{fig:GCC46401} shows such an example from GCC.
+%how users perceive this problem
+%explain how every iteration may or may not produce any results
+%explain the fix
+Only when the if branch executed,
+one iteration will generate results. 
+The bug happens when GCC checks violation of sequence point rule. 
+The user notice severe performance degradation when enabling the checking. 
+The buggy loop is super-linear inefficient in terms of the number of operands
+in one expression. The buggy input contains an expression, which is long and special. 
+The loop takes a lot of iterations during bad run, but none of the iterations will 
+generate results. 
+The patch is to add extra checking before processing each operand. When it also has
+the special feature like the bad input, the loop will be skipped. 
+
+
+
+{\textbf{[1]*}}:
+Loops in this category always generate results in almost all iterations. 
+They are inefficient, because the results generated could be useless due to
+some high-level semantic reasons.
+Understanding and fixing this type of inefficiency problems often require
+deep understanding of the program and are difficult to automate.
+For example, several Mozilla performance problems are caused by 
+loops that contain intensive GUI operations.
+Although every iteration of these loops produce side effects, 
+the performance problem forced developers to change the program 
+and batch/skip some GUI operations.
+
+
+\begin{figure}
+\codefig{Mozilla477564}
+\caption{A cross-loop redundant bug in Mozilla}
+\label{fig:Mozilla477564}
+\end{figure}
+
+%\begin{figure}[h]
+%\centering
+%\lstset{basicstyle=\ttfamily\fontsize{8}{8}\selectfont,
+%     morekeywords={+},keepspaces=true}
+%  \mbox{\lstinputlisting[mathescape,boxpos=t]{figures/Mozilla477564.js}}
+%\caption{A cross-loop redundant bug in Mozilla }
+%\label{fig:Mozilla477564}
+%\end{figure}
+
+\underline{\textit{\textbf{Redundant}}}
+Redundant loops spend a lot of time in repeating computation that is already
+conducted.
+Depending on the unit of the redundant computation, we further consider 
+two sub-categories.
+
+%\begin{figure}[h]
+%\centering
+%\lstset{basicstyle=\ttfamily\fontsize{8}{8}\selectfont,
+%     morekeywords={+},keepspaces=true}
+%  \mbox{\lstinputlisting[mathescape,boxpos=t]{figures/GCC1687.c}}
+%\caption{A cross-iteration redundant bug in GCC 
+% (\texttt{walk\_tree} will call itself recursively inside the loop, 
+% and during buggy run, many iterations are doing exactly the same thing.)  }
+%\label{fig:GCC1687}
+%\end{figure}
+
+\begin{figure}
+\codefig{Mozilla490742}
+\caption{A cross-iteration redundant bug in Mozilla}
+\label{fig:Mozilla490742}
+\end{figure}
+
+
+%\begin{figure}[h]
+%\centering
+%\lstset{basicstyle=\ttfamily\fontsize{8}{8}\selectfont,
+%     morekeywords={+},keepspaces=true}
+%  \mbox{\lstinputlisting[mathescape,boxpos=t]{figures/Mozilla490742.js}}
+%\caption{A cross-iteration redundant bug in Mozilla }
+%\label{fig:Mozilla490742}
+%\end{figure}
+
+{\textbf{Cross-iteration Redundancy}}:
+Loop iteration is the redundancy unit here:
+one iteration repeats
+repeating what was already done by an earlier iteration of the same loop.
+Here, we consider recursive function calls as a loop, treating one function 
+call instance as one loop iteration. 
+This type of inefficiency is often fixed by memoization or batching, depending
+on whether the redundancy involves I/O operations.
+For example, GCC\#27733 shown in Figure~\ref{fig:GCC27733} 
+is fixed by better memoization. 
+%Another bug similar to GCC\#27733 is shown in Figure~\ref{fig:GCC1687}. 
+%This bug is fixed by using a hash table to avoid visiting the same sub-tree twice.
+Mozilla\#490742 in Figure~\ref{fig:Mozilla490742} represents a slightly different type of cross-iteration
+redundancy. The inefficient loop in this case saves one URL into the ``Favorite
+Links'' database in each iteration. One database transaction in each iteration
+turns out to be to time consuming, with too much redundant work across
+iterations. At the end, developers decide to batch all database updates into 
+one big transaction, which speeds up some workload like 
+bookmarking 50 tabs 
+from popping up timeout windows to not blocking.
+%xxx from several minutes
+%to a couple of seconds.
+
+{\textbf{Cross-loop Redundancy}}:
+A whole loop is the redundancy unit here:
+one dynamic instance of a loop spends a big chunk, if not all, of its
+computation in repeating the work already done by an
+earlier instance of the same loop.
+Developers often fix this type of inefficiency problems through memoization:
+caching the earlier computation results and skip following redundant loops.
+Mozilla\#477564 shown in Figure~\ref{fig:Mozilla477564} is an example for this type of bugs. 
+The buggy loop is to count how many previous siblings of the input \texttt{aNode} have the same name and URI. 
+There is an outer loop for the buggy one, and the outer loop will update \texttt{aNode} by using its next siblings. 
+The bug is fixed by saving the calculated count for each node. 
+A new count value is calculated by adding one to the saved count value of the nearest previous sibling with the same name and URI.
+
+
+\subsection{Empirical study}
+\label{sec:tax_study}
+Having presented our taxonomy above, we will see how it works for a set of
+real-world inefficient loop problems collected by previous work
+\citep{SongOOPSLA2014,PerfBug}. Specifically, we want to check the 
+coverage and the actionability of our taxonomy presented above:
+(1) How common are real-world performance problems caused by the 
+patterns discussed above?
+(2) How are real-world problems fixed by developers? Can we predict their
+fix strategies based on the root-cause pattern?
+
+\subsubsection{Methodology}
+\begin{table}[h!]
+\scriptsize
+\centering
+\begin{tabular}{@{\hspace{3pt}}l@{\hspace{3pt}}@{\hspace{3pt}}c@{\hspace{3pt}}}
+\toprule
+Application Suite Description (language) & \# Bugs \\
+\midrule                            
+{\bf Apache Suite} 	 & 11\\
+%\cline{1-1}
+{HTTPD:	Web Server (C)	}& \\
+{TomCat:  Web Application Server (Java)}& \\
+{Ant:	Build management utility (Java)}& \\
+%\hline
+%JMeter	& Load test utility (Java) & \\
+\midrule                            
+{\bf Chromium Suite} Google Chrome browser (C/C++) & 4\\
+\midrule
+%\multicolumn{2}{|l|}
+{\bf GCC Suite}  GCC \& G++ Compiler (C/C++)     & 8\\
+\midrule
+{\bf Mozilla Suite}  & 12\\
+%\cline{1-1}
+{Firefox: Web Browser (C++, JavaScript)}& 	\\
+{Thunderbird: Email Client (C++, JavaScript)}& \\
+\midrule
+{\bf MySQL Suite}     & 10	\\
+%\cline{1-1}
+{Server: Database Server (C/C++)}&  	\\
+%\cline{1}
+{Connector: DB Client Libraries (C/C++/Java/.Net)} &  	\\
+\midrule
+{\bf Total}	   & 45 \\
+\bottomrule
+\end{tabular}
+\caption{Applications and bugs used in the study}
+\label{tab:app_bug}
+\end{table}
+
+Previous work \citep{PerfBug,SongOOPSLA2014} studied the on-line bug
+databases of five representative open-source software projects, as 
+shown in Table \ref{tab:app_bug}. Through a mix of random sampling and 
+manual inspection, they 
+found 65 performance problems that are perceived and reported by users. 
+Among these 65 problems, 45 problems are related to inefficient loops and 
+hence are the target of the study 
+here\footnote{The definition of ``loop-related'' in this paper is a little
+bit broader than earlier paper~\citep{SongOOPSLA2014}, which only considers
+43 problems as loop-related. }.
+More details can be found in the original papers that collect
+these bugs. 
+
+\subsubsection{Observations}
+\label{sec:study_ob}
+\begin{table*}[tb!]
+\begin{adjustwidth}{-.5in}{-.5in}
+\scriptsize
+\centering
+{
+\begin{tabular}{lccccccl}
+\toprule
+&Apache&Chrome&GCC&Mozilla&MySQL&Total&Fix Strategy\\
+\midrule
+Total \# of loop-related bugs & 11 & 4 & 8 & 12 & 10 & 45 &  \\
+\midrule
+\multicolumn{8}{c}{\# of {\textit {Resultless}} bugs}\\
+\multicolumn{1}{l}{ {\bf 0*} }
+&0&0&0&0&0&0&\\
+\multicolumn{1}{l}{ {\bf 0*1?} }
+&0&0&0&2&3&5&C(4)$|$S(1)\\
+\multicolumn{1}{l}{{\bf [0$|$1]*}}
+&0&1&1&1&1&4&S(4)\\
+\multicolumn{1}{l}{{\bf 1*}}
+&1&2&3&6&3&15& B(4)$|$S(4)$|$O(7)\\
+%&0&2&0&5&0&7&B(4)$|$S(3)\\
+%&1&0&3&1&3&8&\\
+\midrule
+\multicolumn{8}{c}{ \# of {\textit {Redundant}} bugs}\\
+\multicolumn{1}{l}{Cross-{\bf iteration} redundancy}
+&7&1&2&1&1&12&B(4)$|$M(7)$|$O(1)\\
+\multicolumn{1}{l}{ Cross-{\bf loop} redundancy}
+&3&0&2&2&2&9&B(4)$|$M(5)\\
+  %MySQL15811 is moved from 1* to here; consider it as fixed by M
+%\hline
+%\multicolumn{8}{|c|}{ \# of {\textit {Other}} bugs}\\
+%\multicolumn{1}{|l}{Not in above categories}
+\bottomrule
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{Number of bugs in each root-cause category. 
+B, M, S, C, and O represent different fix strategies:
+B(atching),  
+M(emoization), 
+S(kipping the loop),
+C(hange the data structure), and O(thers). The numbers in the 
+parentheses denote the number of problems that are fixed using specific
+fix strategies.}
+\label{tab:root}
+\end{table*}
+
+
+
+\underline{Are the root-causes in our taxonomy common?}
+The answer is \textit{yes}.
+Resultless loops are about as common as redundant loops
+(24 vs. 21).
+Intuitively, 0* loops, where no iteration produces any results,
+are rare in mature software. In fact, no bugs in this
+benchmark suite belong to this category.
+All other root-cause sub-categories are well represented.
+
+
+\underline{How are real-world performance bugs fixed?}
+Overall, the fix strategies are well aligned with root-cause patterns.
+For example, 
+all inefficient loops with resultless [0$|$1]* are
+fixed by skipping the loop under certain contexts,
+and almost all inefficient loops with redundant root causes are fixed either by 
+memoization or batching the computation. 
+In fact, as we will discuss later, simple analysis can tell whether 
+memoization or batching should be used to fix a problem.
+The only problem is that there are no silver bullets for 1* loops.
+%all inefficient loops with xx root cause are fixed by xxx.
+%xxx
+
+\paragraph{Implications}
+As we can see, resultless loops and redundant loops are both common reasons
+that cause user-perceived performance problems in practice. The root-cause
+categories discussed above also match with developers' fix strategy well ---
+with a little bit amount of extra analysis, one can pretty much predict the fix strategy based on the root-cause pattern.
+Consequently, tools that cover these root causes will have high
+chances to satisfy the coverage and accuracy requirements of performance 
+diagnosis.
+
+%TODO even for the other, there are things we could do ...
+
+\subsubsection{Caveats} 
+Just as previous empirical study work, 
+our empirical study above needs to be interpreted with our methodology in mind. 
+The performance bugs examined above cover a variety of applications, workload, 
+development environments and programming languages. 
+However, there are still uncovered cases, like distributed systems, 
+and scientific computation. 
+
+Previous work~\citep{PerfBug, SongOOPSLA2014} uses developers tagging and
+on-line developer/user discussion to judge whether a bug report is about
+performance problems and whether 
+the performance problem under discussion is noticed and reported by users
+or not.
+We follow the methodology used in previous work~\citep{SongOOPSLA2014} to judge 
+whether the root-cause of a performance problem is related to loops or not.
+We do not intentionally ignore any aspect of loop-related performance problems. 
+Some loop-related performance problems may never be noticed by end users
+or never be fixed by developers, and hence skip our study. However,
+there are no conceivable ways to study them. 
+
+We believe that the bugs in our study provide a representative sample of the 
+well-documented and
+fixed performance bugs that are user-perceived and loop-related in the studied 
+applications. 
+Since we did not set up the root-cause taxonomy to fit particular
+bugs in this bug benchmark suite, we believe our taxonomy and diagnosis
+framework presented below will go beyond these sampled performance bugs. 
+
