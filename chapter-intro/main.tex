@@ -173,24 +173,104 @@ There are many empirical studies conducted on functional bugs,
 and they have already provided guidance for research along above directions.
 
 \section{Dissertation Contribution}
-The philosophy behind this dissertation is to
-explore how to leverage existing functional bug fighting techniques
-to combat performance bugs. This idea is not trivial.
+The philosophy behind this dissertation is to leverage existing functional bug fighting 
+techniques to combat performance bugs. This is not trivial.
 For example, in order to build effective performance bug detection techniques,
-we need to have a good understanding of common root causes for performance bugs.
-Due to the poor understanding of real-world performance bugs,
-we do not know what are the common root causes.
-For example, many functional bug diagnosis techniques highly depend on failure symptoms, like crashes.
-We do not know what are failure symptoms for performance bugs.
+we need to have a good understanding of common root causes for performance bugs, 
+which is not obvious, due to the poor understanding of real-world performance bugs.
+For example, many functional bug diagnosis techniques highly depend on failure symptoms, like crashes. 
+Unfortunately, performance bugs have non fail-stop symptoms, and it is even unclear how to identify failure runs for performance bugs. 
 
 This dissertation works on three directions to address performance bug problems:
-real-world performance bug understanding,
-performance bug detection and performance failure diagnosis.
-All these parts reflect the above philosophy.
-For example, rule-based bug detection has been widely used to detect functional bugs.
-Our work demonstrate that rule-based bug detection is also promising for performance bugs.
-For example, we apply statistical debugging to performance failure diagnosis.
-Experimental results show that with right design points,
-statistical debugging can effectively diagnose performance bugs.
-In order to improve the diagnosis results, we design a new technique, named LDoctor,
-for inefficient loops.
+real-world performance bug understanding, 
+performance bug detection and performance failure diagnosis. 
+Specifically, we conduct the first empirical studies on real-world performance bugs. 
+We examine final patches of fixed performance bugs, extract rules from these patches, 
+and build checkers to detect violations to these rules. 
+We explore the design space to apply statistical debugging to performance failure diagnosis. 
+We build LDoctor, which is a brand new technique for inefficient loops, 
+and can provide fine-grained diagnosis information. 
+The dissertation work reflects the philosophy from three aspects. 
+Firstly, empirical studies on functional bugs have already guided research in that area. 
+The findings of our empirical study on performance bugs have also guided our own performance bug detection and diagnosis project. 
+Secondly, rule-based bug detection has been widely used to detect functional bugs and security vulnerabilities. 
+Our experimental results show that rule-based bug detection is also promising for performance bugs. 
+Finally, statistical debugging is one of the most effective diagnosis techniques designed for functional bugs. 
+Our evaluation shows that after choosing correct design points, statistical debugging can effectively diagnose performance bugs. 
+Of course, performance bugs have their unique features, 
+so LDoctor is designed solely for performance bugs. 
+
+\subsection{Understanding performance bugs}
+
+Addressing performance bug problems require approaches from different aspects, 
+and all these aspects will benefit from a better understanding of performance bugs. 
+
+This dissertation conducts a comprehensive characteristics study on 
+a large number of real-world performance bugs collected from five widely used large open-source applications: 
+Apache, Chrome, GCC, Mozilla and MySQL. 
+This study reveals many interesting findings about performance bugs' root-cause patterns, 
+how performance bugs are introduced, performance bugs' manifestation conditions, and fix strategies. 
+It also directly motivates the following work on detecting and diagnosing performance bugs
+
+\subsection{Rule-based performance bugs}
+
+Guided by our characteristics study, we hypothesize that 
+(1) efficiency-related rules exist; 
+(2) we can extract rules from performance-bug patches; 
+and (3) we can use the extracted rules to discover previously unknown performance bugs. 
+To test these hypotheses, we collect rules from 25 Apache, Mozilla, and MySQL bug patches 
+and build static checkers to find violations to these rules.
+
+Our checkers find 332 previously unknown Potential Performance Problems (PPPs) 
+in the latest Apache, Mozilla, and MySQL. 
+These include 219 PPPs found by checking an application using rules extracted from a different application. 
+Our thorough code reviews and unit testings confirm that each PPP runs significantly slower 
+than its functionality-preserving alternate suggested by the checker. 
+We report some of found PPPs to developers. 77 PPPs are already confirmed by developers and 15 PPPs are fixed.  
+
+The main contribution of our bug-detection work is that it 
+confirms the existence and value of efficiency rules: 
+efficiency rules in our study are usually violated at more than one place, 
+by more than one developer, 
+and sometimes in more than one program. 
+Rule-based performance bug detection is a promising direction. 
+
+\subsection{Statistical Debugging for Real-World Performance Bugs}
+Statistical debugging is one of the most effective failure diagnosis techniques proposed for functional bugs. 
+We explore how to apply statistical debugging to performance bugs. 
+
+We first conduct an empirical study to understand how performance problems are observed and reported by real-world users. 
+Our study shows that statistical debugging is a natural fit for diagnosing performance bugs, 
+which are often observed through comparison-based approaches and reported together with both good and bad inputs. 
+We then thoroughly investigate different design points in statistical debugging, 
+including three different predicates and two different types of statistical models, 
+to understand which design point works the best for performance diagnosis. 
+Finally, we study how some unique nature of performance bugs allows sampling techniques 
+to lower the overhead of run-time performance diagnosis without extending the diagnosis latency. 
+
+\subsection{Performance Diagnosis for Inefficient Loops}
+Statistical debugging can accurately identify control-flow constructs 
+that are most correlated with the performance problem by comparing problematic runs and regular runs. 
+Unfortunately, for loop-related performance bugs, which contribute to
+two thirds of real-world user-perceived performance bugs in our study, 
+statistical debugging is not very effective.
+Although statistical debugging can identify the root-cause loop, it does
+not provide any information regarding why the loop is inefficient 
+and hence is not very helpful in fixing the performance bug.
+
+We build LDoctor, which is a series of static-dynamic hybrid analysis, for inefficient loops. 
+We build LDoctor through two steps. 
+The first step is to figure out a taxonomy of the root causes for common inefficient loops. 
+The second step is to follow the taxonomy and design analysis for each root-cause subcategory. 
+In order to balance accuracy and performance, we hybridize static and dynamic analysis. 
+We further use sampling to lower the run-time overhead. 
+Evaluation using real-world performance bugs show that LDoctor can provide good coverage and accuracy, 
+with small run-time overhead.
+
+\section{Dissertation Outline}
+The remainder of this dissertation is organized as follows. 
+\Cref{chap:background} describes the background knowledge and previous work on performance bug characteristics study, performance bug detection, performance failure diagnosis, and other related topics. 
+\Cref{chap:study} presents our characteristics study of real-world performance bugs. 
+\Cref{chap:detec} focus on our rule-based performance bug detection work. 
+\Cref{chap:sd} explains our work to explore how to apply statistical debugging to performance failure diagnosis. 
+\Cref{chap:ldoctor} presents LDoctor which can effectively diagnose inefficient loops. 
