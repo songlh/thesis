@@ -181,6 +181,14 @@ which is not obvious, due to the poor understanding of real-world performance bu
 For example, many functional bug diagnosis techniques highly depend on failure symptoms, like crashes. 
 Unfortunately, performance bugs have non fail-stop symptoms, and it is even unclear how to identify failure runs for performance bugs. 
 
+\begin{figure}[t!]
+\begin{center}
+\includegraphics[width=4.5in]{figures/overview}
+\caption{Interactions among the four components in this dissertation.}
+\label{fig:overview}
+\end{center}
+\end{figure}
+
 This dissertation works on three directions to address performance bug problems:
 real-world performance bug understanding, 
 performance bug detection and performance failure diagnosis. 
@@ -189,8 +197,10 @@ We examine final patches of fixed performance bugs, extract rules from these pat
 and build checkers to detect violations to these rules. 
 We explore the design space to apply statistical debugging to performance failure diagnosis. 
 We build LDoctor, which is a brand new technique for inefficient loops, 
-and can provide fine-grained diagnosis information. 
-The dissertation work reflects the philosophy from three aspects. 
+and can provide fine-grained diagnosis information.
+These components of this dissertation interact and complement each other as shown in Figure~\ref{fig:overview}.
+
+The dissertation work reflects the philosophy from three aspects. 
 Firstly, empirical studies on functional bugs have already guided research in that area. 
 The findings of our empirical study on performance bugs have also guided our own performance bug detection and diagnosis project. 
 Secondly, rule-based bug detection has been widely used to detect functional bugs and security vulnerabilities. 
@@ -212,7 +222,7 @@ This study reveals many interesting findings about performance bugs' root-cause 
 how performance bugs are introduced, performance bugs' manifestation conditions, and fix strategies. 
 It also directly motivates the following work on detecting and diagnosing performance bugs
 
-\subsection{Rule-based performance bugs}
+\subsection{Rule-based performance bug detection}
 
 Guided by our characteristics study, we hypothesize that 
 (1) efficiency-related rules exist; 
@@ -235,7 +245,7 @@ by more than one developer,
 and sometimes in more than one program. 
 Rule-based performance bug detection is a promising direction. 
 
-\subsection{Statistical Debugging for Real-World Performance Bugs}
+\subsection{Statistical debugging for real-world performance bugs}
 Statistical debugging is one of the most effective failure diagnosis techniques proposed for functional bugs. 
 We explore how to apply statistical debugging to performance bugs. 
 
@@ -248,7 +258,7 @@ to understand which design point works the best for performance diagnosis.
 Finally, we study how some unique nature of performance bugs allows sampling techniques 
 to lower the overhead of run-time performance diagnosis without extending the diagnosis latency. 
 
-\subsection{Performance Diagnosis for Inefficient Loops}
+\subsection{Performance diagnosis for inefficient loops}
 Statistical debugging can accurately identify control-flow constructs 
 that are most correlated with the performance problem by comparing problematic runs and regular runs. 
 Unfortunately, for loop-related performance bugs, which contribute to
