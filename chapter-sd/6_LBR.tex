@@ -1,18 +1,18 @@
 \section{Production-run statistical debugging}
-\label{sec:lbr}
-In-house performance diagnosis discussed in Section \ref{sec:inhouse} assumes
+\label{sec:5_lbr}
+In-house performance diagnosis discussed in Section \ref{sec:5_inhouse} assumes
 that users file a detailed bug report and developers can repeat the 
 performance problem at the development site. Unfortunately, this does not always
 happen. In many cases, production-run users only send 
 back a simple automatically generated report, claiming that a failure has 
 happened, together with a small amount
-of automatically collected run-time information. 
+of automatically collected runtime information. 
 
 The key challenge of diagnosing production-run failures is how to satisfy the
 following three requirements simultaneously:
 
 \begin{enumerate}
-\item Low run-time overhead. 
+\item Low runtime overhead. 
 The diagnosis tool will not be accepted by end users, if it incurs too much
 slow down to each production run.
 
@@ -29,7 +29,7 @@ This section discusses this issue
 in the context of performance bugs.
 
 \subsection{Design}
-The state of the art on production-run
+The state of the art production-run
 functional bug diagnosis \citep{liblit03,liblit05,CCI,joy.asplos13} proposes
 to satisfy the first two requirements (i.e., low overhead and high capability)
 by combining  
@@ -56,7 +56,7 @@ every run. This profile will be marked as
 crashes, error messages, and so on; the profile will be marked
 as \textit{success} otherwise. The same process does not apply to performance
 failures, because most performance failures are observed through
-comparisons across runs, as discussed in Section \ref{sec:study}. 
+comparisons across runs, as discussed in Section \ref{sec:5_study}. 
 
 To adapt to the unique way that performance problems are observed, we 
 expect that users will explicitly mark a profile as \textit{success}, 
@@ -68,7 +68,7 @@ that have non-comparison-based symptoms (i.e. application freeze), all
 profiles collected from production runs will be considered during statistical
 debugging.
 
-One issue not considered in this paper is \textit{failure bucketing}. That is, 
+One issue not considered in this chapter is \textit{failure bucketing}. That is, 
 how to separate failure (or success) profiles related to different software 
 defects. This problem is already handled by some statistical models 
 \citep{liblit03,liblit05} that can discover multiple failure predictors
@@ -100,7 +100,7 @@ sampling-based failure diagnosis for functional bugs.
 
 \subsubsection{Methodology}
 \paragraph{Benchmarks and inputs}
-We reuse the same set of benchmarks shown in Table~\ref{tab:app_bug}. 
+We reuse the same set of benchmarks shown in Table~\ref{tab:5_app_bug}. 
 We also use the same methodology to generate inputs and drive success/failure
 runs. The only difference is that for the four performance problems that users
 do not report any good inputs, we will use completely random inputs to produce
@@ -126,12 +126,12 @@ occurrences of a particular performance event (e.g, branch-taken event), with no
 
 \paragraph{Metrics and settings}
 We will evaluate all three key metrics for failure diagnosis:
-(1) run-time overhead, measured by the slow down caused by information
+(1) runtime overhead, measured by the slow down caused by information
 collection at every run;
 (2) diagnosis capability,
 measured by whether top ranked failure predictors are 
 related to failure root causes, as discussed in 
-Section~\ref{sec:inhouse_results}.
+Section~\ref{sec:5_inhouse_results}.
 (3) diagnosis latency,
 measured by how many failure runs are needed 
 to complete the diagnosis. 
@@ -149,7 +149,7 @@ while keeping the number of failure/success runs fixed.
 Particularly, we will try using only 10 success runs
 and 10 failure runs, under the default sampling rate, to see if we can achieve 
 good diagnosis capability,
-low diagnosis latency, and low run-time overhead \emph{simultaneously}. 
+low diagnosis latency, and low runtime overhead \emph{simultaneously}. 
 
 Since sampling is random, we have repeated our evaluation for several rounds to confirm that all
 the presented results are stable.
@@ -158,14 +158,14 @@ For every performance problem benchmark, the results presented below are
 obtained under the
 combination of predicate and statistical model that is shown to be (most) 
 effective
-in Table \ref{tab:in-house} (Section \ref{sec:inhouse}).
+in Table \ref{tab:5_in-house} (Section \ref{sec:5_inhouse}).
 That is, basic model plus branch predicates are used for seven benchmarks;
 basic model plus return predicates are used for one benchmark;
 $\Delta$LDA model plus branch$_{\text{loop}}$ predicates are used for the remaining twelve  
-benchmarks, including GCC12322.
+benchmarks, including GCC\#12322.
 Since sampling can only lower overhead and cannot
 improve the diagnosis capability, those combinations that fail to deliver
-useful diagnosis results in Table \ref{tab:in-house} still fail to deliver
+useful diagnosis results in Table \ref{tab:5_in-house} still fail to deliver
 useful diagnosis results in our sampling-based evaluation.
 
 \subsubsection{Results}
@@ -210,8 +210,8 @@ useful diagnosis results in our sampling-based evaluation.
     \bottomrule
    \end{tabular}
   %\nocaptionrule
-  \caption{Run-time overhead and diagnosis capability evaluated with the default sampling rate (1 out of 10000); 10, 100, 500, 1000 represents the different numbers of success/failure runs used for diagnosis.}
-  \label{tab:LBR}
+  \caption{Runtime overhead and diagnosis capability evaluated with the default sampling rate (1 out of 10000); 10, 100, 500, 1000 represents the different numbers of success/failure runs used for diagnosis.}
+  \label{tab:5_LBR}
 \end{table}
 
 
@@ -267,33 +267,33 @@ useful diagnosis results in our sampling-based evaluation.
    hardware-based sampling cannot be as frequent as $1/100$ and software-based
    CBI sampling does not apply for these C++ benchmarks.
    )}
-  \label{tab:rate}
+  \label{tab:5_rate}
 \end{table*}
 
 
-\paragraph{Run-time overhead}
-As shown in Table \ref{tab:LBR}, the run-time overhead is small
+\paragraph{Runtime overhead}
+As shown in Table \ref{tab:5_LBR}, the runtime overhead is small
 under the default sampling rate (i.e., 1 out of 10000).
 It is below 5\% in all but three cases, and is always below 8\%.
 
 As expected, the overhead is sensitive with the sampling rate. As shown in
-Table~\ref{tab:rate}, it can be further lowered to be mostly below 2\% under
+Table~\ref{tab:5_rate}, it can be further lowered to be mostly below 2\% under
 the $\frac{1}{10^{5}}$ sampling rate, and could be as large as over 40\% under
 the $\frac{1}{100}$ sampling rate.
 
 
 \paragraph{Diagnosis capability}
-As shown by Table \ref{tab:LBR}, with 1000 success runs
+As shown by Table \ref{tab:5_LBR}, with 1000 success runs
 and 1000 failure runs, sampling did very little damage to
 the diagnosis capability of statistical debugging. 
 Apache\#3278 is the only one, among all benchmarks, where 
 failure diagnosis fails under this sampling setting.
 For all other benchmarks, the
 rankings of the ideal failure predictors remain the same as those 
-without sampling in Table \ref{tab:in-house}.
+without sampling in Table \ref{tab:5_in-house}.
 
 Also as expected, the diagnosis capability would decrease under sparser
-sampling or fewer failure/success runs. As shown in Table \ref{tab:rate},
+sampling or fewer failure/success runs. As shown in Table \ref{tab:5_rate},
 under the default setting of 1000 success/failure runs, the diagnosis capability
 is roughly the same between $\frac{1}{10^{3}}$ sampling rate and 
 $\frac{1}{10^{4}}$ sampling
@@ -306,7 +306,7 @@ runs will be needed to restore the diagnosis capability with a lower
 sampling rate.
 
 \paragraph{Diagnosis latency}
-Diagnosis latency versus run-time overhead and diagnosis capability 
+Diagnosis latency versus runtime overhead and diagnosis capability 
 is a fundamental trade-off facing
 sampling-based statistical debugging for functional bugs \citep{liblit03,liblit05,CCI}.
 With sampling, intuitively, more failure runs are needed
@@ -317,22 +317,22 @@ for many times on many users' machines
 for software that is not widely deployed.
 
 We quantitatively measured the impact of sampling to diagnosis latency in 
-Table \ref{tab:LBR}. As we can see, three benchmarks need about 100 failure
+Table \ref{tab:5_LBR}. As we can see, three benchmarks need about 100 failure
 runs for their sampling-based diagnosis to produce useful results; 
 four benchmarks need about 500 failure runs; and one benchmark, Apache\#3278, 
 needs more than 1000 failure runs. This
 indicates longer diagnosis latencies than the non-sampling-based diagnosis
-evaluated in Section \ref{sec:inhouse}, where only 10 failure runs are used.
+evaluated in Section \ref{sec:5_inhouse}, where only 10 failure runs are used.
 
 Interestingly, there are 11 benchmarks, whose diagnosis latency is \textbf{not}
-lengthened by sampling. As shown in Table \ref{tab:LBR}, even with only
+lengthened by sampling. As shown in Table \ref{tab:5_LBR}, even with only
 10 failure runs, the sampling-based diagnosis still produces good failure
 predictors. These are exactly all the 11 benchmarks that $\Delta$LDA model 
-suits in Table \ref{tab:in-house}. 
+suits in Table \ref{tab:5_in-house}. 
 For all these benchmarks,
 the rankings are exactly the same with or without
 sampling, with just 10 failure runs. Consequently, sampling
-allows us to achieve low run-time overhead ($<$10\%), high diagnosis capability,
+allows us to achieve low runtime overhead ($<$10\%), high diagnosis capability,
 and low diagnosis latency \textbf{simultaneously}, a feat that is almost 
 impossible
 for sampling based functional bug diagnosis.

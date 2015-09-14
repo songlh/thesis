@@ -1,0 +1,65 @@
+\section{Performance-bug Detection}
+\label{sec:2_detect}
+
+Many performance-bug detection tools have been proposed recently.
+They each aims to find a specific type of hidden
+performance bugs before the bugs lead to performance problems observed by
+end users.
+
+Some tools~\citep{BloatFSE2008, XuBloatPLDI2009, XuBloatPLDI2010, PerfBlower}
+detect runtime bloat, a common performance problem in object-oriented 
+applications.
+Some tools~\citep{LeakChaser, JavaMemoryLeak} detect unnecessary references leading to memory leak. 
+\citet{XuDataStructure} target 
+low-utility data structures with unbalanced costs and benefits.
+Cachetor~\citep{Cachetor} detects cacheable computation through dynamic dependence profiling and value profiling. 
+A series abstracts are proposed to reduce the detection overhead. 
+\citet{Reusable} detects reuseable object, 
+data structures or data contained in the data structures. 
+In a follow up work~\citep{Resurrector}, 
+a new object lifetime profiling technique is proposed to improve the reusability detection results. 
+\citet{ORMPatterns} detect database-related performance anti-patterns,
+like fetching excessive data from database and issuing queries that could have
+been aggregated.
+WAIT~\citep{WAIT} focuses on bugs that
+block the application from making progress.
+\citet{falsesharing} build two tools to attack the false 
+sharing problem in multi-threaded software.
+
+Similar to our detection work in Chapter~\ref{chap:detec}, 
+\citet{SmartphoneStudy} extract two rules from studied performance bugs, 
+and detect violations to report unknown performance bugs. 
+The bug patterns they can detect are lengthy operations 
+in main thread and frequently-invoked heavy-weight callback. 
+Different from our work, their bug detection technique focuses on 
+performance bugs inside Android applications. 
+
+There are techniques targeting inefficient loops.
+Toddler~\citep{Alabama} detects inefficient nested loops by monitoring memory read instructions. 
+Given a nested loop, read value sequences from the same instructions inside the inner 
+loop are compared across different iterations of the outer loop, 
+and the nested loops will be reported as inefficiency, when repetitive value sequences are found.
+Caramel~\citep{CARAMEL} presents 4 static checkers to detect performance bugs with Cond-Break fixes. 
+Every detected bug is associated with a loop and a condition. 
+When the condition becomes true, the loop will not generate any results visible after the loop terminates. 
+Therefore, the loop can be sped up by adding an extra break statement.
+~\citet{xiao13:context} profile programs to calculate complexity for each basic block, 
+and identify a loop as input-dependent loop, if the loop can cause complexity change between outside the loop and inside the loop. 
+CLARITY~\citep{CLARITY} can statically detect asymptotic 
+performance bugs caused by traversing a data structure repeatedly. 
+
+These tools are all useful in improving software performance, 
+but they target different types of performance bugs 
+from the performance-bug detection technique (Chapter~\ref{chap:detec}) in this thesis. 
+With different design goals, these performance-bug detection tools are not guided by any specific
+performance symptoms. Consequently, they take different
+coverage-accuracy trade-offs from performance diagnosis techniques (Chapter~\ref{chap:ldoctor}).
+Performance diagnosis techniques try
+to cover a wide variety of root-cause categories and are more
+aggressive in identifying root-cause categories, because they are
+only applied to a small number of places that are known to
+be highly correlated with the specific performance symptom
+under study. Performance-bug detection tools have to be more
+conservative and try hard to lower false positive rates, 
+because they need to apply their analysis to the whole program. 
+

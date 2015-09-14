@@ -71,15 +71,15 @@
 \clearpage
 \listoffigures
 
-\clearpage
+%\clearpage
 % NOMENCLATURE
-% \begin{conventions}
-% % \begin{description}
-% % \item{\makebox[0.75in][l]{term}
-% %        \parbox[t]{5in}{definition\\}}
-% % \end{description}
-% \input{conventions}
-% \end{conventions}
+ %\begin{conventions}
+ %\begin{description}
+ % \item{\makebox[0.75in][l]{term}
+ %        \parbox[t]{5in}{definition\\}}
+ % \end{description}
+ %\input{frontmatter/conventions}
+ %\end{conventions}
 
 %\advisorname{Gottlob Frege}
 %\advisortitle{Professor}
@@ -88,6 +88,65 @@
 %  \input{frontmatter/abstract}
 %\end{umiabstract}
 
+\begin{nomenclature}
+%\begin{description}
+
+\begin{enumerate}
+
+\item{{\textit{Performance bug:}}}
+performance bugs are software implementation mistakes 
+that can cause inefficient execution. 
+We will use performance bugs
+and performance problems interchangeably in this thesis 
+following previous work in this 
+area~\citep{Alabama,perf.fse10}.
+
+
+\item{{\textit{Functional bug:}}}
+functional bugs are software defects that lead to functional misbehavior, 
+such as incorrect outputs, crashes, and hangs. 
+Functional bugs include semantic bugs, 
+memory bugs, concurrency bugs, and others~\citep{LiASID06}.
+
+
+
+\item{{\textit{Efficiency rule:}}}
+efficiency rules are principles inside programs, 
+violations of which will lead to inefficient execution. 
+Efficiency rules usually contain two components, 
+which indicate where and how a particular code transformation 
+can be conducted to improve performance, 
+while preserving original functionality. 
+
+
+\item{{\textit{Root-cause information:}}}
+for a particular failure, root-cause information includes a static code region causing the failure, 
+explanation why the failure happens, and potential fix suggestions.
+We consider the output of fault localization as coarse-grained root causes, 
+and consider failure explanation and fix suggestions as fine-grained root causes. 
+
+\item{{\textit{Inefficient loop:}}}
+inefficient loops are loops that conduct inefficient computation due to performance bugs.
+
+\item{{\textit{Diagnosis latency:}}}
+diagnosis latency is the time it takes to figure out the root cause of a failure.                    
+It is measured by
+how many failure runs are needed in order to conduct failure diagnosis. 
+
+
+\item{{\textit{Runtime overhead:}}}
+runtime overhead is measured by comparing normal execution with monitored execution. 
+
+
+%\item{\makebox[0.75in][l]{$V$}}    Voltage
+
+%\item{\makebox[0.75in][l]{\$}}     US Dollars
+
+\end{enumerate}
+%\end{description}
+\end{nomenclature}
+
+%\clearpage
 \begin{abstract}
   \input{frontmatter/abstract}
 \end{abstract}

@@ -1,12 +1,12 @@
-// nsPlacesTransactionsService.js 
-for (var i = 0; i < _childTransactions.length; ++i) 
+//Mozilla#490742 & Patch
+//browser/components/places/src/nsPlacesTransactionsService.js 
+
+//doTransact saves one tab into 'bookmark' SQLite Database.
+//Firefox hangs @ 'bookmark all (tabs)'
+for (var i = 0; i < tabs.length; ++i) 
 {
--  var txn = _childTransactions[i];
--  txn.wrappedJSObject.id = _id;
--  txn.doTransaction();
-+  childTransactions[i].wrappedJSObject.id = _id;
+  ...
+-  tabs[i].doTransact();
 }
 
-+ let aggregateTxn = 
-+             new placesAggregateTransactions(...)
-+ aggregateTxn.doTransaction();
++ doAggregateTransact(tabs);

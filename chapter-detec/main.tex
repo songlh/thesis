@@ -1,12 +1,20 @@
 \chapter[Rule-Based Performance-Bug Detection]{Rule-Based Performance-Bug Detection}
 \label{chap:detec}
 
-\section{Introduction}
+Bug detection aims to find previously unknown bugs inside programs. 
+This chapter presents our rule-based static performance-bug detection work. 
+Guided by the characteristics study in the last chapter, we extract efficiency rules 
+from 25 patches and use them to detect new performance bugs. 
+332 previously unknown performance problems are 
+found in the latest versions of Apache, Mozilla, and MySQL applications, 
+including 219 performance problems found by applying rules across applications.
 
-%Automatic performance bug detection is important and challenging, as discussed
-%in Section~\ref{sec:lessons}.
+
+\section{Introduction}
+\label{sec:4_intro}
+
 Rule-based detection approach is effective for discovering functional bugs
-and security vulnerabilities \citep{chouasplos00,billpugh,PRMiner05,semanticpatch,fortify}. 
+and security vulnerabilities~\citep{chouasplos00,billpugh,PRMiner05,semanticpatch,fortify}. 
 Many functional bugs can be identified by comparing against certain 
 function-call sequences that have to be followed in a program 
 for functional correctness and security.
@@ -14,115 +22,82 @@ for functional correctness and security.
 We hypothesize that rule-based bug detection is useful for detecting performance 
 bugs based on our characteristics study:
 
-%\begin{itemize}
-
-%\item 
-\emph{Efficiency rules should exist.} Those inefficient function-call sequences 
-studied in Section~\textcolor{red}{XX} could all become rules.
-%  procedure boundary!!
+\emph{Efficiency rules should exist.} Many performance bugs happen at call sites (Section~\ref{sec:3_other}), 
+and those inefficient call sites could all become rules.
 For example, \Code{random()} should not be used by concurrent threads, and
 \Code{doTransact()} in loops should be replaced by \Code{aggregateTransact()}.
 
-%\item 
 \emph{Efficiency rules can be easily collected from patches,} as 
-%It is not difficult to collect rules from patches, because
 most patches are small and follow regular fixing strategies 
-(Section~\textcolor{red}{XX}).
-%It will not be difficult to examine them and extract efficiency rules.
-%TODO We did find 40 out of \allbugs bug patches containing rules.
+(Section~\ref{sec:3_fix}).
+It will not be difficult to examine them and extract efficiency rules.
 
 \emph{Efficiency rules could be widely applicable,} as 
 a misunderstanding of an API or workload could affect many places and
 lead to many bugs, considering how bugs are introduced 
-(Section~\textcolor{red}{XX}).
+(Section~\ref{sec:3_introduce}).
 
-%\end{itemize}
+To test these hypotheses, we collected 25 rules from Apache, Mozilla, and MySQL bug patches, 
+and built static checkers to detect rule violations. 
+Our checkers automatically found 125 {\it potential performance problems} 
+({\it PPP}s)
+in the original buggy versions of Apache, Mozilla, and MySQL. 
+Programmers failed to fix them
+together with the original 25 bugs where the rules came from. 
+Our checkers also found 332 previously unknown PPPs
+in the latest versions of Apache, Mozilla, and MySQL, 
+including 219 PPPs found by extracting rules from one application and applying rules to a {\it different} application. 
+Our thorough code reviews and unit testings demonstrate that
+each PPP runs significantly slower than its functionality-preserving 
+alternate suggested by the checker. 77 of found PPPs are already
+confirmed by developers and 15 of found PPPs are fixed based on our report. 
 
-This chapter will test our hypothesis and provide guidance for future work 
-on combating performance bugs.
-%\comment{
-%Specifically, to test our hypothesis, we will answer the
-%following questions:
-%%How effective is it?
-%%How applicable are efficiency rules;
-%{\bf Q0:\ } Can rule-based approach discover previously unknown performance
-%problems?
-%{\bf Q1:\ } When fixing one performance bug, how many similar bugs did 
-%developers miss? Will those bugs eventually get fixed?
-%{\bf Q2:\ } After correcting a mistake, will developers make this
-%mistake again?
-%{\bf Q3:\ } Can we apply rules extracted from one application for
-%another application?
-%{\bf Q4:\ } Is violating rules rare compared with following the 
-%rules?
-%}
+
+The main contribution of our bug-detection work is that it confirms
+the existence and value of efficiency rules: efficiency rules in
+our study are usually violated at more than one place, by more than one
+developer, and sometimes in more than one program.
+Our experience motivates future work to automatically
+generate efficiency rules,
+through new patch languages~\citep{10yearlinux}, 
+automated patch analysis~\citep{kim.pldi11}, source code analysis, or
+performance-oriented annotations. Future work can also
+improve the accuracy of performance-bug detection
+by combining static checking with dynamic analysis and workload 
+monitoring.
+
+\input chapter-detec/rule_tab.tex
 
 \section{Efficiency Rules in Patches}
 
-\paragraph{Terminology} {\emph Efficiency rules}, or {\emph rules}, include two 
-components: a {\emph transformation} and a {\emph condition} for applying the 
+\paragraph{Terminology} \emph{Efficiency rules}, or \emph{ rules}, include two 
+components: a \emph{transformation} and a \emph{condition} for applying the 
 transformation. Once a code region satisfies the condition, 
 the transformation can be applied to improve performance and preserve
 functionality. 
 
 We have manually checked all the 110 performance-bug patches.
-50 out of these 110 patches contain efficiency rules, coming
-from all five applications. 
-The other 110 do not contain rules, because they
+50 out of these 110 patches contain efficiency rules. 
+The other 60 do not contain rules, because they
 either target too specific program contexts or are too general to be useful
 for rule-based bug detection.
 
-\input chapter-detec/rule_tab.tex
 
-Most of these 50 rules, according to the {\it lift} correlation metric,
-are related to the {\it Uncoordinated Functions} root cause and the
-{\it Change Call Sequence} fix strategy. 
+
 The conditions for applying these rules are composed of
 conditions on function-call sequences,
 parameter/return variables,
-and calling contexts, as shown in Table~\ref{tab:rule}.
+and calling contexts, as shown in Table~\ref{tab:4_rule}.
 For example, to apply the {\it Bookmark All} patch 
-in Figure~\ref{fig:uncoord2} elsewhere, one 
+in Figure~\ref{fig:Mozilla490742} elsewhere, one 
 needs to find places that call \Code{doTransact} inside a loop;
-%\Code{::DeleteObject()} is followed by 
-%\Code{::CreateRectRgn(,)} and the parameter of the former
-%is the same variable that holds the return value of 
-%the latter.
-to apply the patch in Figure~\ref{fig:emp} elsewhere, one needs to ensure
+to apply the patch in Figure~\ref{fig:Apache45464} elsewhere, one needs to ensure
 that certain fields of the object pointed by the first parameter of 
 \Code{apr\_stat} is not used afterward.
-%\comment{
-%For example, the patch of
-%Apache48778 applies when \Code{DateFormat.getDateInstance()} is invoked by 
-%only one thread or the number of its 
-%invocation per thread outweighs the number of threads invoking it;
-%the patch of MySQL38941 applies when multiple \Code{random()} could
-%be called simultaneously by multiple threads. 
-%For example, \Code{::DeleteObject( )} followed by \Code{::CreateRectRgn(,)}
-%(Figure~\ref{fig:uncoord1}); \Code{doTransact()} is inside a loop,
-%(Figure~\ref{fig:uncoord2}).
-%}
 There are also non-function rules, 
 usually containing {\it Change Condition} transformation and other
 miscellaneous algorithm improvements. 
-%They do not have common templates.
 
-%TODO: workload
-%\comment{
-%These rules are all useful for bug detection and fixing throughout the
-%software. For 26 bugs in our study, developers applied similar
-%patches at various locations in the code, when fixing them.
-%%Note that these are {\bf not} copy-paste code regions.
-%%Instead, they are code regions affected by the same understanding of particular
-%%APIs or workload.
-%Developers also complained about the manual effort involved in searching
-%code regions that need similar patches in the discussion board.
-%%After patching the bug shown in Figure~\ref{fig:emp}, 
-%%a developer commented that
-%%{\it `I believe there are other places that these occur'}.
-%%Unfortunately, without tool support, the developers failed
-%%to find all similar buggy code regions and left many unfixed.
-%}
 
 \section{Building Rule Checkers}
 
@@ -148,34 +123,13 @@ It also provides sufficient data type, data flow, and control
 flow analysis support for our checking. The other 11 checkers are 
 written in Python for 11 rules from Java, JavaScript, and C\# applications.
 
-%We build 25 checkers in total. 14 of them are built using LLVM compiler
-%infrastructure \cite{llvm} for rules from
-%C/C++ applications. 
-%\comment{
-%LLVM works well for C++ 
-%software that troubles many other static analysis infrastructures
-%\cite{10yearlinux}. It also
-%provides sufficient data type, data flow, and control
-%flow analysis support for our checking.}
-%%The other 11 checkers are written in Python for 11 rules from 
-%%Java, JavaScript, and C\# applications.
-
-%%The checker implementation is straightforward, and mostly takes fewer
-%%than 50 lines of code. 
-%%Each checker goes through software bitcode, in case of LLVM checkers,
-%%or source code, in case of Python checkers, and look for places that
-%%satisfy the patch-applying condition.
-%%Object type checking, control-flow analysis, intra-procedural data-flow
-%%analysis, and loop identification are all used in our checkers.
-%%Due to the space limit, we omit the implementation details of our
-%%checkers.
 
 The checker implementation is mostly straightforward. Each checker goes through 
 software bitcode, in case of LLVM checkers, or source code, in case of Python 
 checkers, looking for places that satisfy the patch-applying condition. We
 briefly discuss how our checkers examine typical conditions for function rules in the following.
 
-Checking call-sequence conditions, exemplified in Table~\ref{tab:rule}, involve mainly three tasks: 
+Checking call-sequence conditions, exemplified in Table~\ref{tab:4_rule}, involve mainly three tasks: 
 (1) Differentiating functions with the same name but different classes; 
 (2) Collecting loop information (loop-head, loop-exit conditions, 
 loop-body boundaries, etc.); (3) Control flow analysis. 
@@ -184,20 +138,16 @@ loop-body boundaries, etc.); (3) Control flow analysis.
 %an invocation of f2. 
 LLVM provides sufficient support for all these tasks. Checkers written in Python struggle from time to time.
 
-Checking parameter/return conditions, exemplified in Table~\ref{tab:rule}, 
+Checking parameter/return conditions, exemplified in Table~\ref{tab:4_rule}, 
 typically rely on data-flow analysis. In our current prototype, LLVM checkers 
 conduct intra-procedural data-flow analysis. This analysis is scalable, 
 but may lead to false positives and negatives. In practice, it works
 well as shown by our experimental results. Our current Python checkers can 
 extract parameters of particular function calls, but can only do preliminary data-flow analysis.
 
-%An example of a LLVM checker found be found at the following URL: https://...
-
-
-%TODO: rewrite to organize based on what type of analysis is needed?
 
 \section{Rule-Checking Methodology}
-\label{sec:detection_meth}
+\label{sec:4_detection_meth}
 
 We conduct all the experiments on an 8-core Intel Xeon
 machine running Linux version 2.6.18. 
@@ -223,30 +173,21 @@ from Apache TomCat server will be applied to the 65 other Java applications
 in the Apache software suite\footnote{Development teams
 behind different Apache applications are different}.
 
-%Actually, the 13 checkers are applicable to {\it any} application that is 
-%written in a particular programming language.
 
-%\comment{
-%Our checkers were applied to
-%Mozilla (4.46 million lines of code, mainly C++), 
-%MySQL (1.25 million lines of code, C/C++),
-%Apache HTTPD (0.39 million lines of code, C), 
-%and 66 Java applications from Apache suites (10.2 million lines of code).
-%Note that developers behind different Apache applications are different.
-%}
-
-%As shown in Table~\ref{tab:category}, 
 The checking results are categorized into three types: 
 {\it PPPs}, {\it bad practices}, and {\it false positives}. 
-As discussed in Section~\ref{sec:con2}, a PPP is an inefficient code region that
+As discussed in Section~\ref{sec:4_intro}, a PPP is an inefficient code region that
 runs slower than its functionality-preserving alternate implied by
 the efficiency rule. A bad practice is a region prone to becoming
 inefficient in the future.
 %Due to time constraints, we were unable to report all PPPs we found to
 %developers.
 We reported some PPPs to developers.
-Among those reported, 14 PPPs detected by 6 different
-checkers have been confirmed and fixed by the developers. 
+Based on our reports,
+77 PPPs detected by 10 different
+checkers have been confirmed by the developers.
+Among confirmed PPPs,
+15 PPPs detected by 7 different checkers have been fixed by the developers. 
 Other reported PPPs are put on hold due to lack of
 bug-triggering input information, which is unfortunately out of the 
 scope of this work.
@@ -256,49 +197,118 @@ code regions that follow each efficiency rule. We refer to these regions as
 {\it good practices}, the opposite of PPPs. 
 
 \section{Rule-Checking Results}
-\label{sec:detection_results}
+\label{sec:4_detection_results}
 
-\input chapter-detec/detector_result_tab.tex
+\begin{table}[tb!]
+\scriptsize
+\centering
+\begin{adjustwidth}{-.75in}{-.75in}
+{
+\begin{tabular}{cccccccccccccc}
+%\hline
+\toprule
+ID	    & \multicolumn{4}{c}{\bf Orig. Buggy Version} & \multicolumn{4}{c}{\bf Lastest Version of Same Softw.} & \multicolumn{4}{c}{\bf Latest Version of Diff. Softw.}& \\
+\cmidrule(lr){2-5}
+\cmidrule(lr){6-9}
+\cmidrule(lr){10-13}
+	       & {\it PPP}    &BadPr & F.P.&GoodPr  &  {\it PPP}   &BadPr & F.P.&GoodPr  & {\it PPP}   &BadPr & F.P.&GoodPr  & \\
+%\line
+\midrule
+Mozilla 35294  & {\it  5}     & 0      & 10     & /      & {\it - }     & -      & -      & /      & {\it -  }    & -      & -      & /      & C++	\\ 
+Mozilla103330  & {\it  2}     & 0      & 0      & 117    & {\it 0 }     & 0      & 0      & 7      & {\it -  }    & -      & -      & -      & C++	\\ 
+Mozilla258793  & {\it  1}     & 0      & 2      & 0      & {\it 0 }     & 1      & 1      & 2      & {\it -  }    & -      & -      & -      & C++	\\
+Mozilla267506  & {\it  6}     & 0      & 0      & 9      & {\it 3 }     & 0      & 0      & 19     & {\it -  }    & -      & -      & -      & C++	\\
+Mozilla311566  & {\it 26}     & 0      & 7      & 0      & {\it 25}     & 0      & 8      & 2      & {\it -  }    & -      & -      & -      & C++	\\
+Mozilla104962  & {\it  0}     & 0      & 0      & 1      & {\it 3 }     & 0      & 0      & 12     & {\it 0  }    & 0      & 0      & 0      & C\#	\\
+Mozilla124686  & {\it  0}     & 1      & 0      & 14     & {\it 0 }     & 0      & 0      & 1      & {\it 0  }    & 0      & 0      & 0      & C\#	\\ 
+Mozilla490742  & {\it  1}     & 0      & 3      & 5      & {\it 0 }     & 0      & 0      & 4      & {\it -  }    & -      & -      & -      & JS	\\
+%\hline
+\midrule                                                                                                                                         
+MySQL14637     & {\it 50}     & 0      & 11     & /      & {\it 49}     & 0      & 11     & /      & {\it 46 }    & 0      & 31     & /      & C/C++	\\
+MySQL15811     & {\it 15}     & 20     & 5      & 5      & {\it 16}     & 20     & 7      & 7      & {\it -  }    & -      & -      & -      & C++	\\ 
+MySQL38769     & {\it  0}     & 0      & 1      & 5      & {\it - }     & -      & -      & -      & {\it -  }    & -      & -      & -      & C++	\\ 
+MySQL38941     & {\it  1}     & 4      & 0      & 2      & {\it 1 }     & 4      & 0      & 2      & {\it 3  }    & 5      & 2      & 0      & C/C++	\\
+MySQL38968     & {\it  3}     & 0      & 1      & 38     & {\it 2 }     & 0      & 2      & 43     & {\it -  }    & -      & -      & -      & C/C++	\\
+MySQL39268     & {\it 7 }     & 0      & 0      & 4      & {\it 7 }     & 0      & 0      & 18     & {\it -  }    & -      & -      & -      & C++	\\ 
+MySQL49491     & {\it 1 }     & 0      & 0      & 0      & {\it 1 }     & 0      & 0      & 2      & {\it 3  }    & 0      & 0      & 0      & C/C++	\\
+MySQL26152     & {\it  0}     & 0      & 0      & 0      & {\it 0 }     & 0      & 0      & 0      & {\it 0  }    & 0      & 1      & 4      & C\#	\\ 
+MySQL45699     & {\it  0}     & 2      & 0      & 0      & {\it 0 }     & 0      & 0      & 0      & {\it 9  }    & 0      & 0      & 45     & C\#/Java	\\
+%\hline
+\midrule
+Apache33605    & {\it  0}     & 2      & 0      & /      & {\it 0 }     & 2      & 0      & /      & {\it 0  }    & 5      & 0      & /      & C  	\\
+Apache45464    & {\it  3}     & 0      & 0      & 47     & {\it 3 }     & 0      & 0      & 67     & {\it -  }    & -      & -      & -      & C	\\ 
+Apache19101    & {\it  1}     & 0      & 0      & 1      & {\it 1 }     & 0      & 0      & 0      & {\it -  }    & -      & -      & -      & Java	\\
+Apache32546    & {\it  1}     & 0      & 0      & 0      & {\it 1 }     & 0      & 0      & 0      & {\it 135}    & 24     & 9      & 13     & Java	\\
+Apache34464    & {\it  0}     & 0      & 0      & 3      & {\it 0 }     & 0      & 0      & 2      & {\it 1  }    & 0      & 0      & 12     & Java	\\
+Apache44408    & {\it  1}     & 0      & 1      & 1      & {\it 0 }     & 0      & 1      & 2      & {\it 3  }    & 1      & 2      & 2      & Java	\\
+Apache45396    & {\it  0}     & 0      & 0      & 0      & {\it 0 }     & 0      & 0      & 1      & {\it 0  }    & 0      & 0      & 1      & Java	\\
+Apache48778    & {\it  1}     & 0      & 0      & 0      & {\it 1 }     & 0      & 0      & 0      & {\it 19 }    & 14     & 1      & 17     & Java	\\
+%\hline
+\midrule                                                                                                                              
+Total          & {\it 125}    & 29     & 41     & 252    & {\it 113}    & 27     & 30     & 191    & {\it 219}    & 49     & 46     & 94     &    	\\
+%\hline
+\bottomrule
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{Checking results (BadPr: bad practice; F.P.: false positives; GoodPr: good practices. More detailed definitions are presented in
+Section~\ref{sec:4_detection_meth}. `-': not applicable. `/': good-practice checker does not exist.}
+\label{tab:4_detect_result}
+\end{table}
 
 {\bf Overall Results\ }
 %\subsubsection{Performance bugs}
-As shown in Table~\ref{tab:detect_result}, 125 PPPs are found in the {\it original 
+As shown in Table~\ref{tab:4_detect_result}, 125 PPPs are found in the {\it original 
 version} of software.
 Programmers missed them and failed to fix them together with the original bugs.
 
-%\underline{Answer to Q1, Q2}: 
+
+
+\begin{figure}
+  \centering
+  \hfill
+  \framebox{\lstinputlisting[boxpos=t\footnotesize]{figures/MySQL15811.c}}
+  \hfill
+  \framebox{\lstinputlisting[boxpos=t\footnotesize]{figures/MySQL15811-1.c}}
+  \hspace*{\fill}
+  \caption{PPPs we found in latest versions of {\it original} software (\textit{ismbchar} checks whether a string (2nd parameter) 
+   is coded by a specific character-set (1st parameter). 
+   Since \textit{ismbchar} only checks the first CHARSET::mbmaxlen characters of a string, 
+   calculating the exact length and range of a string is unnecessary. )}
+  \label{fig:MySQL15811&New}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \hfill
+  \framebox{\lstinputlisting[boxpos=t\footnotesize]{figures/Apache34464-short.c}}
+  \hfill
+  \framebox{\lstinputlisting[boxpos=t\footnotesize]{figures/Apache34464-short-1.c}}
+  \hspace*{\fill}
+  \caption{PPPs we found in latest versions of {\it different} software (\textit{String::indexOf}(String \textit{sub}) 
+  looks for sub-string \textit{sub} from the beginning of a string s. 
+  If program has already compared the first N characters of s with \textit{sub}, 
+  it is better not to repeat this. 
+  The Struts PPP is already confirmed and patched by Struts developers based on our report.  )}
+  \label{fig:Apache34464&New}
+\end{figure}
+
 113 previously unknown PPPs are found in the latest versions of the 
 {\it original software}, including bugs inherited from the original version
-and bugs newly introduced. Figure \ref{fig:newbug} shows an example. 
+and bugs newly introduced. Figure~\ref{fig:MySQL15811&New} shows an example. 
 
-%\underline{Answer to Q3}: 
 219 previously unknown PPPs are found in the latest versions of
-{\it different software}. An example is shown in Figure \ref{fig:newbug}. 
+{\it different software}. An example is shown in Figure~\ref{fig:Apache34464&New}. 
 
-14 PPPs in the latest versions of Apache, Mozilla, and MySQL
-are already confirmed and fixed by developers based on our report.
+77 PPPs in the latest versions of Apache, Mozilla, and MySQL
+are already confirmed by developers. 
+15 PPPs are already fixed by developers based on our reports.
 
 These results confirm that performance bugs widely 
 exist. Efficiency rules exist and are useful for finding
 performance problems.
 
-\begin{figure*}[t!]
-\begin{center}
-\begin{minipage}{3.3in}
-\includegraphics[height=1.42in]{figures/mysql15811.eps}
-%\caption{\small PPP found in the same application}
-%\label{fig:my15811}
-\end{minipage}
-\begin{minipage}{3in}
-\includegraphics[height=1.42in]{figures/apache34464.eps}
-%\caption{\small PPP found in a different application}
-%\label{fig:ap34464}
-\end{minipage}
-\end{center}
-\caption{PPPs we found in latest versions of {\it original} and {\it
-different} software (the gray area shows how these two PPPs should be fixed)}
-\label{fig:newbug}
-\end{figure*}
 
 {\bf PPPs In Original Versions\ }
 17 out of 25 checkers found new PPPs, 125 in total, in the original versions
@@ -307,13 +317,13 @@ of the buggy software.
 
 Some developers clearly tried to find all similar bugs when
 fixing one bug, but did not succeed.
-For example, in MySQL14637, after two buggy code regions were 
+For example, in MySQL\#14637, after two buggy code regions were 
 reported, developers found three more places that were similarly
 inefficient and fixed them altogether. Unfortunately,
 there were another 50 code regions that violated the same efficiency
 rule and skipped developers' checking, as shown in 
-Table~\ref{tab:result}. Similarly, MySQL developers found and fixed 3 places
-that had the inefficiency pattern shown in Figure~\ref{fig:newbug},
+Table~\ref{tab:4_detect_result}. Similarly, MySQL developers found and fixed 3 places
+that had the inefficiency pattern shown in Figure~\ref{fig:MySQL15811&New},
 but missed the other 15 places.
 
 113 out of these 125 PPPs exist in different files or even different 
@@ -354,11 +364,11 @@ PPPs in the latest versions of applications that are different from
 where the rules came from.
 
 Most of these checkers reflect common pitfalls in using
-library functions. For example, Figure~\ref{fig:newbug} shows a pitfall
+library functions. For example, Figure~\ref{fig:Apache34464&New} shows a pitfall
 of using \Code{String::indexof()}. Apache-Ant developers made this
 mistake, and we found Apache-Struts developers also made a similar mistake.
 
-Apache32546 checker presents an interesting case. In the original 
+Apache\#32546 checker presents an interesting case. In the original 
 bug report, developers from Apache-Slide recognized that
 a small buffer size would severely hurt the performance of 
 \Code{java.io.InputStream.read (byte buffer[])}
@@ -373,7 +383,7 @@ files from disk or web, and are doomed to performance losses.
 
 Some checkers reflect algorithm improvements and are also applicable to
 many applications. For example, algorithm improvements for string operations 
-proposed by MySQL developers (MySQL14637 and MySQL49491) also apply for
+proposed by MySQL developers (MySQL\#14637 and MySQL\#49491) also apply for
 Mozilla and Apache HTTPD.
 
 
@@ -381,7 +391,7 @@ Cross-application checking also helps validate efficiency rules.
 For example, by comparing how \Code{java.util.zip.Deflater.deflate()}
 is used across applications, we found that Ant developers'
 understanding of this API, reflected by their discussion, 
-was wrong. They fixed Apache45396 by coincidence.
+was wrong. They fixed Apache\#45396 by coincidence.
 
 \underline{Lesson\ } 
 The above results show that there exist general inefficiency patterns that
@@ -394,12 +404,12 @@ We can even discover performance bugs in a software where no
 performance patch has ever been filed.
 %TODO: software project, software application, confusing term.
 
-\vspace{0.05in}
+%\vspace{0.05in}
 {\bf Bad Practices\ } 
 Other than PPPs, some code regions identified by the 
 checkers are categorized as bad practices.
 For example, there are code regions very similar to
-the MySQL PPP shown in Figure~\ref{fig:newbug}, except that the calculation of
+the MySQL PPP shown in Figure~\ref{fig:MySQL15811&New}, except that the calculation of
 \Code{end} is not completely useless as \Code{end} is used in places other than 
 the invocation of \Code{ismbchar}.
 Clearly this practice is more likely to cause performance problems
@@ -407,7 +417,7 @@ in the future than directly using
 \Code{mysqlcs}$\rightarrow$\Code{mbmaxlen} as the parameter
 for \Code{ismbchar} function.
 
-\vspace{0.05in}
+%\vspace{0.05in}
 {\bf Good Practices\ }
 Code regions that have well followed the efficiency rules are also identified
 by slightly changed checkers.
@@ -431,23 +441,23 @@ The false positives mainly come from three sources.
 First, Python checkers have no object-type information.
 Therefore, some rules are applied to functions
 with right function names but wrong classes
-(e.g., Mozilla490742 and 
-Apache32546). This is not a problem in LLVM checkers.
+(e.g., Mozilla\#490742 and 
+Apache\#32546). This is not a problem in LLVM checkers.
 
 Second, some non-function rules are difficult to 
 accurately express and check, which leads to false positives in
-MySQL14637.
+MySQL\#14637.
 
-Third, accurately checking some efficiency rules requires run-time and/or 
+Third, accurately checking some efficiency rules requires runtime and/or 
 workload information, which inevitably leads to false positives in
 our static checkers. 
 %This includes
 %how many times a function is to be invoked, whether
 %multiple threads could invoke a function concurrently, what is the typical
 %length of an input, etc. 
-False positives in Apache44408 and Apache48778 mostly belong to this 
+False positives in Apache\#44408 and Apache\#48778 mostly belong to this 
 category. These false positives can be largely eliminated by
-run-time checkers.
+runtime checkers.
 
 {\bf Performance Results\ }
 Our checkers are efficient. Each Python checker finishes
@@ -466,22 +476,20 @@ When we feed the unit test with a 50MB file, which is a quite common image-file
 workload these days,
 the file operation time decreases from 0.87 second to 0.26 second,
 a definitely perceivable difference.
-As another example, the Struts code shown in Figure~\ref{fig:newbug}
+As another example, the Struts code shown in Figure~\ref{fig:Apache34464&New}
 is from a utility function used for processing JSP files. 
 Our unit testing with a 15K JSP 
 file shows that the simple patch can decrease latency by 0.1 second, 
 a perceivable difference in interactive web applications.
 
 Whole system testing turns out to be difficult, as suggested by our
-characteristics study (Section~\ref{sec:char_exp}). 
+characteristics study (Section~\ref{sec:3_exp}). 
 No PPP detected by our checkers belongs to the always-active category. 
 Future performance-oriented input-generation tools will significantly
 help performance testing and identify truly severe PPPs. Execution frequency
 information can also help future static performance-bug detectors to rank 
 the severity of PPPs.
 
-%TODO Our experience with developers. (1) If the patch is simple enough, 
-%developers would do it.
 
 
 \subsection{Discussions}
@@ -494,7 +502,7 @@ the severity of PPPs.
 also suggests alternative implementations with better efficiency.
 These alternative implementations often
 have small sizes and regular patterns,
-as shown in Figure~\ref{fig:newbug}, 
+as shown in Figure~\ref{fig:MySQL15811&New} and Figure~\ref{fig:Apache34464&New}, 
 making PPP validation and fixing easy.
 It is also conceivable to enhance our checkers for automated PPP fixing. 
 
@@ -509,10 +517,10 @@ difficult to catch using other approaches.
 
 
 {\it Maintaining code readability\ }
-Like those 109 patches studied earlier, 
+Like those \allbugs patches studied earlier, 
 most PPPs detected by us can be fixed through changes to a few lines of code,
 %and do not hurt code readability, 
-as shown in Figure~\ref{fig:newbug}.
+as shown in Figure~\ref{fig:MySQL15811&New} and Figure~\ref{fig:Apache34464&New}.
 Even for the few complicated PPPs, wrapper-functions or 
 macros can easily address the patch-readability issue.
 %which is exactly what developers did in some of the patches we studied.
@@ -531,14 +539,14 @@ automatically generating rules, checkers, or even patches.
 %TODO you can automatically un-fix if you want
 %TODO PPP xx is different from premature over-optimization.
 
-\vspace{0.1in}
+%\vspace{0.1in}
 {\bf Can these problems be detected by other tools?\ }
 
 {\it Copy-paste detectors\ } 
 Most PPPs that we found are {\bf not} from copy-paste code regions
  and cannot be detected by text-matching tools
 \citep{zhendong.oopsla10,CPMiner04}, as we can see in
-Figure~\ref{fig:newbug}. Rule violations are not rare.
+Figure~\ref{fig:MySQL15811&New} and Figure~\ref{fig:Apache34464&New}. Rule violations are not rare.
 When developers misunderstand an API,
 they tend to make mistakes whenever they use this API.
 As a result, these mistakes usually go beyond
@@ -549,29 +557,31 @@ None of the bugs that provided the efficiency rules could be optimized
 away by compilers used in Apache, MySQL, and Mozilla. Many PPPs 
 involve library functions and algorithmic inefficiency, and
 are almost impossible for a compiler to optimize
-(Figure~\ref{fig:newbug}).
+(Figure~\ref{fig:MySQL15811&New} and Figure~\ref{fig:Apache34464&New}).
 Even for the few cases where compiler optimization might help
-(Figure~\ref{fig:emp}), 
+(Figure~\ref{fig:Apache45464}), 
 the required inter-procedural and points-to analyses are not scalable
 for real-world large software. 
 
 {\it General rule-based bug detectors\ }
 Ideas for detecting functional bugs can greatly benefit 
-and inspire future research on performance bug detection.
+and inspire future research on performance-bug detection.
 However, many approaches cannot be directly applied.
 Tools that automatically infer functional correctness rules 
 \citep{engler01bugs,PRMiner05,livshits05dynamine} may not be suitable
 for efficiency rules, because rule violations are not rare,
-as shown in Table~\ref{tab:result}. In addition, many efficiency rules either
+as shown in Table~\ref{tab:4_detect_result}. In addition, many efficiency rules either
 involve only one function or discourage multiple functions to be used together, 
 making them unsuitable for tools that focus on function correlations. 
 
+\section{Conclusions}
 
-%TODO: gunami work infer complexity, ras bodik: 
+Guided by our empirical study in the last chapter, 
+we further explore rule-based performance-bug detection using efficiency rules implied by patches, 
+and find many previously unknown performance problems. 
+Many reported performance problems have already confirmed and fixed by the developers. 
+Our work shows that rule-based performance-bug detection is promising. 
 
 
-%TODO: these are potential performance problems.
-% how to use them: they might conflict with productivity, readability
-% it could be better done by macro, wrapper, use for diagnosis
 
 

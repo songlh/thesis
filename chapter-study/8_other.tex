@@ -1,0 +1,102 @@
+\section{Other Characteristics}
+\label{sec:3_other}
+
+{\bf Lifetime\ } We chose Mozilla to investigate the lifetime of performance bugs, 
+due to its convenient CVS query interface.
+We consider a bug's life to have started when its buggy code
+was first written. The 36 Mozilla bugs in our study
+took 966 days on average to get discovered, and another 140 days on average
+to be fixed.
+For comparison, we randomly sampled 36 functional bugs from Mozilla.
+These bugs took 252 days on average to be discovered, which is much shorter 
+than that of performance bugs in Mozilla.
+These bugs took another 117
+days on average to be fixed, which is a similar amount of time with those
+performance bugs.
+
+
+{\bf Location\ }
+For each bug, we studied the location of its minimum unit of inefficiency. 
+Our first finding shows that 
+most performance bugs happen at call sites, and their fix are changing the usage of function calls, 
+such as replacing old call sequences with new call sequences, conditionally or unconditionally skipping buggy functions or changing parameters, and so on. 
+For example, {\it Retrieve Unnecessary} (Figure~\ref{fig:Apache45464}), {\it Transparent Draw} (Figure~\ref{fig:Mozilla66461}), 
+{\it Intensive GC} (Figure~\ref{fig:Mozilla515287}), 
+{\it Bookmark All} (Figure~\ref{fig:Mozilla490742}), and
+{\it Slow Fast-Lock} (Figure~\ref{fig:MySQL38941}) are all fixed by changing function-call usage. 
+This is probably because developers and compilers have already done a good job in optimizing code within each procedure. 
+Therefore, future work to detect, 
+diagnose and fix performance bugs should allocate more effort at call sites and procedure boundaries. 
+
+There are also 32 bugs not fixed by changing function-call usage. 
+These bugs mainly arise from two scenarios. 
+In one scenario, the buggy code unit itself does not directly waste performance. 
+Instead, its impact propagates to other places in the software and causes performance loss there.  
+For example, the {\it No Cache} (Figure~\ref{fig:MySQL26527}) 
+bug happens when MySQL mistakenly does not allocate cache. 
+This operation itself does not take time, but it causes performance loss later. 
+The second scenario is to optimize code units inside functions, like MySQL\#14637, 
+whose patch replaces byte-wise parsing with
+four-byte-wise parsing to accelerate trimming blank characters from the end of a string.
+
+Our second finding shows that
+around three quarters of bugs are
+located inside either an input-dependent loop or an input-event handler. 
+For example, the buggy code in Figure~\ref{fig:Mozilla515287}
+is executed at every XHR completion.
+The bug in Figure~\ref{fig:Mozilla66461} wastes performance
+for every transparent image on a web page.
+In addition, about half performance bugs involve I/Os or 
+other time-consuming system calls. 
+There are a few bugs whose buggy code units only execute once or twice
+during each program execution. For example, the Mozilla\#110555 bug wastes
+performance while processing exactly two fixed-size
+default configuration files,
+userChrome.css and userContent.css, during the startup of a browser.
+
+{\bf Correlation Among Categories}
+Following previous empirical studies \citep{LiASID06}, we use a statistical 
+metric {\it lift} to study the correlation among characteristic categories.
+The {\it lift} of category A and category B, denoted as {\it lift(AB)}, 
+    is calculated 
+as $\frac{P(AB)}{P(A)P(B)}$, where P(AB) is the probability of a bug belonging 
+to both categories A and B. When {\it lift(AB)} equals 1,   
+category A and category B are independent of each other.
+When {\it lift(AB)} is greater than 1, categories A and B are 
+positively correlated: when a bug belongs to A, it likely
+also belongs to B. The larger the {\it lift} is, the more positively A and B
+are correlated.
+When {\it lift(AB)} is smaller than 1, A and B are negatively
+correlated: when a bug belongs to A, it likely does not belong to B.
+The smaller the {\it lift} is, the more negatively A and B are correlated.
+
+Root cause categories are highly correlated with fix strategies. 
+Among all correlations, the redundant root cause and the memorization fix strategy are 
+the most positively correlated with a 3.54. 
+The wrong branch selection root cause is strongly correlated with the change condition 
+fix strategy with a 2.74 lift. The redundant root cause and the batch fix strategy are the third 
+most positively correlated pair with a 2.36 lift. 
+On the other hand, the wrong branch selection root cause has the most negative correlation 
+with in-place call change, memorization and batch bug-fix strategies. 
+Their lifts are all 0. 
+
+
+
+{\bf Server Bugs vs. Client Bugs}
+Our study includes 41 bugs from server applications and 69 bugs from client 
+applications. To understand whether these two types of bugs have different 
+characteristics, we apply chi-square test
+\citep{chisquared} to each
+category listed in Table~\ref{tab:3_root}, Table~\ref{tab:3_intro}, Table~\ref{tab:3_exp} and Table~\ref{tab:3_fix}.
+We choose 0.01 as the significance level of our chi-square test. 
+Under this setting, if we conclude that server and client bugs have different
+probabilities of falling into a particular characteristic category, 
+this conclusion only has a 1\% probability to be wrong. 
+
+We find that, among all the categories listed in Table~\ref{tab:3_root}, Table~\ref{tab:3_intro}, Table~\ref{tab:3_exp} and Table~\ref{tab:3_fix},
+only the synchronization issues category
+is significantly different between server bugs 
+and client bugs ---
+synchronization issues have caused 31.7\% of server bugs and only 
+4.3\% of client bugs.
+

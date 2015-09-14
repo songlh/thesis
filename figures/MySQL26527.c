@@ -1,3 +1,6 @@
+//MySQL#26527 & Patch
+//sql/ha_partition.cc
+
 void ha_partition::start_bulk_insert(ha_rows rows)
 {
     ...

@@ -1,0 +1,35 @@
+\section{Other Techniques to Fight Performance Bugs}
+\label{sec:2_other}
+
+There are many test input generation techniques to improve performance testing process. 
+Wise~\citep{WISE} learns how to restrict conditional branches from small inputs, 
+and uses the learned policy to generate larger inputs with worst-case complexity. 
+EventBreak~\citep{EventBreak} generates test inputs for web applications. 
+SpeedGun~\citep{SpeedGun} generates tests for changed concurrent classes.
+
+Some techniques aim to improve the test selection or prioritize test targets during performance testing. 
+Forepost~\citep{Forepost} is a test-selection framework toward exposing more performance bottlenecks. 
+It run applications under a small set of randomly selected test inputs to learn rules 
+about which types of inputs are more likely to trigger intensive computation. 
+Then it use learned rules to pick remaining test inputs in order to expose performance bottlenecks quickly. 
+\citet{HuangRegression} study 100 performance regression issues. 
+Based on the studying results, 
+they design a performance risk analysis, which can help developers prioritize performance testing targets.  
+
+
+Big data systems are mainly written in managed languages. 
+They suffer from two performance issues~\citep{HarryISMM,FACADE}: 
+the excessive use of pointers or object reference will lead to a high space overhead, 
+and frequent garbage collection (GC) will prevent the systems from making progress. 
+To address these problems, \citet{HarryISMM} propose a design paradigm, 
+including two components: 
+merging small data record objects into large buffer, 
+and conducting data manipulation directly on the buffer. 
+In a follow up work, Facade~\citep{FACADE}, 
+as a compiler solution, 
+is proposed to separate data store from data manipulation. 
+After the transformation enforced by Facade, 
+data is stored in off-heap native memory, 
+and heap objects are only created for control purpose. 
+
+All these techniques combat performance bugs in different aspects from this thesis.

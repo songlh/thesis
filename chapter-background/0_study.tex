@@ -1,0 +1,43 @@
+\section{Empirical Studies on Performance Bugs}
+\label{sec:2_study}
+
+Recently, several empirical studies have been conducted for real-world
+performance bugs. They all have different focuses.
+
+\citet{Zaman2012MSR} compare the
+qualitative difference between performance bugs and non-performance bugs 
+across impact, context, fix and fix validation through studying 400 bugs from Mozilla Firefox and Google Chrome. 
+Their study is conducted on different aspects for performance bugs from our study. For example, in their fix study, 
+they focus on how many discussions among developers, whether the bug depends on other bugs,  
+and whether the reporter provides some hints or patches during reporting. 
+In our fix study, we focus on the fix strategies used in the final patches. 
+
+\citet{SmartphoneStudy} randomly collect 70 performance bugs 
+from smartphone applications to study the characteristics of these bugs. 
+Similar to our study, they also find that there are common patterns for 
+performance bugs, and these patterns can be used to detect previously unknown bugs. 
+Since their performance bugs are collected from smartphone applications, 
+they have some findings unique to mobile performance bugs. 
+For example, the three most common types of performance bugs in their study are GUI lagging, energy leak and memory bloat. 
+They also have some opposite findings from our study. 
+For example, they find that inputs with small scale are suffice to expose performance bugs. 
+
+The empirical study conducted by \citet{Nistor2013MSR} is similar
+to our bug characteristics study in Chapter~\ref{chap:sd} 
+in that it also finds that performance problems take long time
+to get diagnosed and the help from profilers is very limited. However, the
+similarity ends here. 
+Different from our study in Chapter~\ref{chap:study}, 
+this work does not investigate the root causes of performance bugs.
+Different from our study in Chapter~\ref{chap:sd}, 
+this work does not study how performance problems are observed and reported by end users. 
+Its bug set includes many problems
+that are not perceived by end users and are instead discovered through 
+developers' code inspection.
+
+\citet{HuangRegression} study 100 performance regression issues to understand
+what kind of changes are more likely to introduce performance regressions. 
+Similar to our study, they also find that performance regressions are more 
+likely to happen inside a loop, and many performance regressions involve invoking expensive function calls. 
+Different from our work, 
+their study focuses on performance regression. 

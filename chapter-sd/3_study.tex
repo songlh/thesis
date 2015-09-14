@@ -1,5 +1,5 @@
 \section{Understanding Real-World Performance Problem Reporting and Diagnosis}
-\label{sec:study}
+\label{sec:5_study}
 
 This section aims to understand the performance diagnosis process
 in real world. Specifically, we will focus on these two aspects of
@@ -9,7 +9,7 @@ performance diagnosis.
 \item How users notice and report performance problems.
 This will help us understand the feasibility of applying statistical debugging
 to real-world performance problems, as discussed in 
-Section~\ref{sec:canwe}. Particularly, we will study how users
+Section~\ref{sec:5_canwe}. Particularly, we will study how users
 tell success runs from failure
 runs in the context of performance bugs and how to obtain
 success-run inputs (i.e., good inputs) and failure-run inputs
@@ -23,39 +23,42 @@ This will help us understand the state of practice of performance diagnosis.
 \input{chapter-sd/2_meth}
 
 \begin{table*}[tb!]
-\begin{adjustwidth}{-.5in}{-.5in}
+\begin{adjustwidth}{-1.5in}{-1.5in}
 \scriptsize
 \centering
 {
 \begin{tabular}{lcccccc}
 \toprule
-&Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\multicolumn{1}{c}{Categories} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
 \midrule
-Total \# of bug reports & 16 & 5 & 9 & 19 & 16 & 65 \\
+\multicolumn{1}{l}{\textbf{Comparison within one code base}}
+&9&3&7&7&12&38\\
+\ \ Comparing the same input with different configurations &2&1&1&1&5&10\\
+\ \ Comparing inputs with different sizes&6&2&4&4&6&22\\
+\ \ Comparing inputs with slightly different functionality&2&0&3&2&4&11\\
 \midrule
-\multicolumn{7}{c}{\bf \# of bad inputs provided}\\
-\multicolumn{1}{l}{{\bf 0/?}: No bad input }
-&0&0&0&0&0&0\\
-\multicolumn{1}{l}{{\bf 1/?}: One bad input}
-&0&1&5&6&7&19\\
-\multicolumn{1}{l}{{\bf n/?}: A set of bad inputs}
-&16&4&4&13&9&46\\
+\multicolumn{1}{l}{\textbf{Comparison cross multiple code bases}}
+&7&3&8&5&4&27\\
+\ \ Comparing the same input under same application's different versions
+&4&2&8&3&3&20\\
+\ \ Comparing the same input under different applications
+&4&1&1&2&1&9\\
 \midrule
-\multicolumn{7}{c}{\bf \# of good inputs}\\
-\multicolumn{1}{l}{{\bf ?/0}: No good input}
-&7&2&2&12&4&27\\
-\multicolumn{1}{l}{{\bf ?/1}: One good input}
-&0&0&3&0&3&6\\
-\multicolumn{1}{l}{{\bf ?/n}: A set of good inputs}
-&9&3&4&7&9&32\\
+\multicolumn{1}{l}{\textbf{Not using comparison-based methods}}
+&3&1&0&9&1&14\\
 \bottomrule
 \end{tabular}
 }
 \end{adjustwidth}
-\caption{Inputs provided in users' bug reports ($n$: 
-developers provide a way to generate a large number of inputs)}
-\label{tab:input}
+\caption{How performance problems are observed by end users (There are overlaps among
+    different comparison-based categories; there is no overlap between non-comparison
+    and comparison-based categories)}
+\label{tab:5_cmp}
 \end{table*}
+
+
+
+
 
 
 
@@ -63,7 +66,7 @@ developers provide a way to generate a large number of inputs)}
 In general, to conduct software failure diagnosis, it is critical to understand 
 what are the failure symptoms and what information is available for failure
 diagnosis. 
-Specifically, as discussed in Section~\ref{sec:canwe}, to understand the
+Specifically, as discussed in Section~\ref{sec:5_canwe}, to understand the
 feasibility of applying statistical debugging for performance diagnosis, we
 will investigate two issues: (1)
 How do users judge whether a slow execution is caused by large workload or
@@ -75,7 +78,7 @@ implementation exists and hence help the performance diagnosis?
 
 \paragraph{How are performance problems observed?}
 
-As shown in Table~\ref{tab:cmp}, the majority (51 out of 65) of user-reported 
+As shown in Table~\ref{tab:5_cmp}, the majority (51 out of 65) of user-reported 
 performance problems are observed through comparison, including
 comparisons within one software code base and comparisons across multiple code bases.
 
@@ -128,6 +131,41 @@ For example, Mozilla\#299742 is reported as the web-browser frozed to crawl.
 
 \paragraph{What information is provided for diagnosis?}
 
+\begin{table*}[tb!]
+\begin{adjustwidth}{-.5in}{-.5in}
+\scriptsize
+\centering
+{
+\begin{tabular}{lcccccc}
+\toprule
+&Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+Total \# of bug reports & 16 & 5 & 9 & 19 & 16 & 65 \\
+\midrule
+\multicolumn{7}{c}{\bf \# of bad inputs provided}\\
+\multicolumn{1}{l}{{\bf 0/?}: No bad input }
+&0&0&0&0&0&0\\
+\multicolumn{1}{l}{{\bf 1/?}: One bad input}
+&0&1&5&6&7&19\\
+\multicolumn{1}{l}{{\bf n/?}: A set of bad inputs}
+&16&4&4&13&9&46\\
+\midrule
+\multicolumn{7}{c}{\bf \# of good inputs}\\
+\multicolumn{1}{l}{{\bf ?/0}: No good input}
+&7&2&2&12&4&27\\
+\multicolumn{1}{l}{{\bf ?/1}: One good input}
+&0&0&3&0&3&6\\
+\multicolumn{1}{l}{{\bf ?/n}: A set of good inputs}
+&9&3&4&7&9&32\\
+\bottomrule
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{Inputs provided in users' bug reports ($n$: 
+developers provide a way to generate a large number of inputs)}
+\label{tab:5_input}
+\end{table*}
+
 The most useful information provided by users include failure
 symptom (discussed above), bad inputs, and good inputs. Here, we refer to the 
 inputs that lead to user-observed performance problems
@@ -140,13 +178,13 @@ as \textit{good inputs}.
 inputs in all the 65 cases. What is interesting is that in about 70\% of
 cases (46 out of 65), users describe a category of inputs, instead of just
 one input, that can trigger
-the performance problem, as shown in Table \ref{tab:input}. For example,
+the performance problem, as shown in Table \ref{tab:5_input}. For example,
 in MySQL\#26527, the user describes that loading data from file into partitioned
 table can trigger the performance problem, no matter what is the content or 
 schema of the table. 
 
 \underline{\it Good inputs} Interestingly, good inputs are specified in almost
-60\% of bug reports, as shown in Table \ref{tab:input}. 
+60\% of bug reports, as shown in Table \ref{tab:5_input}. 
 That is, users describe inputs that look similar with the
 bad inputs but have much better performance in all the 38 bug reports
 where ``comparison within one code base'' is used to observe the performance
@@ -161,7 +199,7 @@ on tables using other types of charset settings (bad inputs) may cause lock cont
 Note that, this is much rarer in functional bug reports, which is why special
 tools are
 designed to automatically generate inputs that execute correctly
-and are similar with bad inputs, when diagnosing functional bug failures~\citep{delta}.
+and are similar with bad inputs, when diagnosing functional-bug failures~\citep{delta}.
 
 %\paragraph{Hypothesis Testing}
 
@@ -189,11 +227,11 @@ diagnosing a performance problem reported by users.
 Among the 5 software projects, the Chrome project has the shortest average
 performance-diagnosis time (59 days), and Apache project has the longest
 average diagnosis time (194 days).
-Comparing with the numbers reported by previous empirical studies,
+Comparing with the numbers reported in Chapter~\ref{chap:study}, 
 the time to diagnose user-reported performance problems is slightly shorter
-than that for non-user-reported performance problems~\citep{PerfBug},
+than that for non-user-reported performance problems,
 and similar or longer than that of 
-functional bugs~\citep{characteristics.asplos08,PerfBug}. 
+functional bugs. 
 
 We also studied how developers diagnose performance problems.
 The only type of diagnosis tools that are mentioned in bug reports are
@@ -203,7 +241,7 @@ developers 116 days on average to figure out the patches.
 
 
 \subsection{Implications of the study}
-\label{sec:study_imp}
+\label{sec:5_study_imp}
 
 \ \ \underline{\textit{Implication 1}}
 Performance bugs and functional bugs are observed in different ways.
@@ -246,20 +284,20 @@ under the same input in Mozilla\#515287.
 Statistical debugging is naturally suitable for diagnosing many
 user-reported performance problems,
 because most performance bugs are observed by users through comparison and many
-performance bug reports (38 out of 65) already contain information about 
+performance-bug reports (38 out of 65) already contain information about 
 both bad and good inputs that are similar with each other.
 Statistical tests~\citep{ztest} show that with 90\% statistical confidence, 
-a user-filed performance bug report is more likely to contain both 
+a user-filed performance-bug report is more likely to contain both 
 bad and good inputs than not.
 Comparing the 65 randomly sampled functional bugs mentioned above with the 65
 performance bugs, 
 statistical tests~\citep{ztest} show that, at the 99\% confidence level, 
-a user-filed performance bug report is more likely to contain
+a user-filed performance-bug report is more likely to contain
 good inputs than a user-filed
-functional bug report.
+functional-bug report.
 Previous statistical debugging work tries hard to generate good
 inputs to diagnose functional bugs~\citep{delta}. This task is
-likely easier for performance problem diagnosis.
+likely easier for performance failure diagnosis.
 
 \underline{\textit{Implication 4}}
 Developers need tools, in addition to profilers, to diagnose

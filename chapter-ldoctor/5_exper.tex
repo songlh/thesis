@@ -1,8 +1,8 @@
 \section{Evaluation}
-\label{sec:experiment}
+\label{sec:6_experiment}
 
 \subsection{Methodology}
-\label{sec:result_meth}
+\label{sec:6_result_meth}
 %Please discuss the potential usage scenarios of \Tool
 %How you will use it together with other tools 
 
@@ -46,10 +46,10 @@
   Root cause ``C-I'' is short for cross-iteration redundancy.
   Root cause ``C-L'' is short for cross-loop redundancy.
   C, B, M, and S represent different fix strategies, as discussed in
-  Table \ref{tab:root}.
+  Table \ref{tab:6_root}.
   ) 
  }
-  \label{tab:benchmarks}
+  \label{tab:6_benchmarks}
 \end{table}
 
 \paragraph{Implementation and Platform}
@@ -61,18 +61,18 @@ We implement \Tool in LLVM-3.4.2 \citep{llvm}, and conduct our
 experiments on a i7-960 machine, with Linux 3.11 kernel. 
 
 \paragraph{Benchmarks}
-We use 18 out of the 45 bugs listed in Table \ref{tab:root} as our 
+We use 18 out of the 45 bugs listed in Table \ref{tab:6_root} as our 
 evaluation benchmarks. Among these 18, seven are extracted from Java or JavaScript
 programs and re-implemented in C++, as \Tool currently only handles C/C++
 programs; one is extracted from a very old version of Mozilla.
 %These 18 bugs include all the benchmarks used in the recent
 %statistical performance debugging work~\cite{SongOOPSLA2014}.
-The remaining bugs listed in Table \ref{tab:root} are much more difficult to
+The remaining bugs listed in Table \ref{tab:6_root} are much more difficult to
 use as benchmarks, 
 either because they depend on special hardware/software environment
 or because they involve too complex data structures to extract. 
 Overall, these 18 bugs cover a wide variety of performance root causes, as 
-shown in Table~\ref{tab:benchmarks}. 
+shown in Table~\ref{tab:6_benchmarks}. 
 
 \paragraph{Metrics}
 Our experiments are designed to evaluate \Tool from three main aspects:
@@ -86,7 +86,7 @@ When analyzing non-buggy loops, will \Tool generate any false positives?
 \vspace{-0.05in}
 
 \item Performance. 
-What is the run-time overhead of \Tool?
+What is the runtime overhead of \Tool?
 \end{itemize}
 
 \paragraph{Evaluation settings}
@@ -94,12 +94,12 @@ The imagined usage scenario of \Tool is that one will apply \Tool to identify
 detailed root causes and provide fix-strategy suggestion for a small number of
 suspicious loops that are most correlated with the specific performance problem.
 
-Our evaluation uses existing statistical performance diagnosis
-tool \citep{SongOOPSLA2014} to process a performance problem and identify 
+Our evaluation uses the statistical performance diagnosis
+tool discussed in Chapter~\ref{chap:sd} to process a performance problem and identify 
 one or a few suspicious loops for \Tool to analyze.
 For 14 out of the 18 benchmarks, statistical performance debugging identifies the
 real root-cause loop as the top ranked suspicious loop. For the remaining
-benchmarks, the real root-cause loops are ranked number 2, 2, 4, and 10.
+benchmarks, the real root-cause loops are ranked number 2, 2, 4, and more than 5.
 %Overall, we believe future tools can accurately identify the most one or a couple
 %of suspicious loops.
 
@@ -138,7 +138,7 @@ benchmarks, the real root-cause loops are ranked number 2, 2, 4, and 10.
    \end{tabular}
   %\nocaptionrule
   \caption{Coverage Results.}
-  \label{tab:cover}
+  \label{tab:6_cover}
 \end{table}
 
 
@@ -146,21 +146,21 @@ To evaluate the coverage, accuracy, and performance of \Tool, we mainly conduct
 three sets of evaluation. First, we apply \Tool to the real root-cause loop to
 see if \Tool can correctly identify the root-cause category and provide
 correct fix-strategy suggestion. Second, we apply
-statistical performance debugging \citep{SongOOPSLA2014} to all our benchmarks
+statistical performance debugging (Chapter~\ref{chap:sd}) to all our benchmarks
 and apply \Tool to the top 5 ranked loops\footnote{Some extracted benchmarks
 have fewer than 5 loops. We simply apply \Tool to all loops in these cases.}
-to see how accurate \Tool is. Third, we evaluate the run-time performance of
+to see how accurate \Tool is. Third, we evaluate the runtime performance of
 applying \Tool to the real root-cause loop. 
  
 For all benchmarks we use, real-world
 users have provided at least one problem-triggering input in their on-line 
-bug bugs. We use these inputs in our run-time analysis.
+bug bugs. We use these inputs in our runtime analysis.
 
-As discussed in Section \ref{sec:design}, our analysis contains 
+As discussed in Section \ref{sec:6_design}, our analysis contains 
 several configurable thresholds. In our evaluation,
 we use 0.001 as the \textit{resultless rate} threshold for identifying
 0*1? loops, 0.01 as the \textit{resultless rate} threshold for identifying 
-[0$|$1]* loops, 0.5 as the \textit{cross-loop redundancy rate}, and 
+[0$|$1]* loops, 0.9 as the \textit{cross-loop redundancy rate}, and 
 2 as the \textit{cross-iteration redundancy rate} (i.e., 
 the number of distinct iterations is less than half of the total iterations).
 
@@ -173,16 +173,16 @@ All our diagnosis results require only \textbf{one} run under the
 problem-triggering input.
 
 \subsection{Coverage Results}
-\label{sec:coverage}
-Overall, \Tool provides good diagnosis coverage, as shown in Table~\ref{tab:cover}. 
+\label{sec:6_coverage}
+Overall, \Tool provides good diagnosis coverage, as shown in Table~\ref{tab:6_cover}. 
 \Tool identifies the correct root cause for \textbf{all} 18 benchmarks, and 
 suggests fix strategies that exactly match what developers took in practice
 for 16 out of 18 cases. There are only two cases where \Tool fails to suggest
-the fix strategy that developers used. For MySQL27287, the root-cause loop
+the fix strategy that developers used. For MySQL\#27287, the root-cause loop
 is both cross-loop redundant and 0*1? inefficient. \Tool suggests both changing
 data structures and memoization as fix strategies. In practice, the developers
 find a new data structure that can eliminate both root causes.
-For GCC12322, \Tool correctly tells that the loop under study
+For GCC\#12322, \Tool correctly tells that the loop under study
 does not contain any form of inefficiency and produce results in every 
 iteration, and hence fails to suggest any fix strategy. In practice, GCC
 developers decide to skip the loop, which will cause some programs compiled by
@@ -194,7 +194,7 @@ Providing this type of
 fix strategy suggestion goes beyond the capability of \Tool.
 
 \subsection{Accuracy Results}
-\label{sec:result_acc}
+\label{sec:6_result_acc}
 
 \begin{table}
   \centering
@@ -234,10 +234,10 @@ fix strategy suggestion goes beyond the capability of \Tool.
     Other cells report real false positives and benign false positives, which is in the
     subscript.
 }
-  \label{tab:top5}
+  \label{tab:6_top5}
 \end{table}
 
-As shown in Table \ref{tab:top5}, \Tool is accurate, having 0 real
+As shown in Table \ref{tab:6_top5}, \Tool is accurate, having 0 real
 false positive and 14 benign false positives for all the top 5 loops.
 
 Here, benign false positives mean that the \Tool analysis result is true ---
@@ -256,7 +256,7 @@ The remaining two cases happen when fixing the
 identified redundant/resultless problems
 are very difficult and hence developers decide not to fix them.
 
-The accuracy of \Tool benefits from its run-time analysis.
+The accuracy of \Tool benefits from its runtime analysis.
 For example, 4 benchmarks contain loops that only generate side-effect
 in the last iteration among their top 5 suspicious loops. However,
 these loops are actually not inefficient because the portion of
@@ -264,7 +264,7 @@ resultless iterations is small.
 
 The good accuracy of \Tool can actually help improving the accuracy of
 identifying which loop is the root cause loop.
-For example, the real root-cause loop of Apache34464 and GCC 46401 both
+For example, the real root-cause loop of Apache\#34464 and GCC\#46401 both
 rank number two by the statistical performance diagnosis tool.
 \Tool can tell that the number one loops in both cases do not contain
 any form of inefficiency, resultless or redundancy. This result can
@@ -272,7 +272,7 @@ potentially used to improve the accuracy of identifying root cause loops.
 
 
 \subsection{Performance}
-\label{sec:result_perf}
+\label{sec:6_result_perf}
 
 \begin{table}
   \centering
@@ -301,20 +301,18 @@ potentially used to improve the accuracy of identifying root cause loops.
    \bottomrule
    \end{tabular}
   %\nocaptionrule
-  \caption{Run-time overhead of applying \Tool to the buggy loop, with and
+  \caption{Runtime overhead of applying \Tool to the buggy loop, with and
     without optimizations. 
     Only results from non-extracted benchmarks are shown. 
   -: static analysis can figure out the results and hence no dynamic analysis is conducted.
   /: not applicable. }
-  \label{tab:performance}
+  \label{tab:6_performance}
 \end{table}
 
 
-
-
-As shown in Table \ref{tab:performance}, 
+As shown in Table \ref{tab:6_performance}, 
 the performance of \Tool is good. The overhead is consistently under or around 5\% 
-except for one benchmark, Mozilla347306. We believe \Tool is promising for potential production
+except for one benchmark, Mozilla\#347306. We believe \Tool is promising for potential production
 run usage. Of course, if we apply \Tool to multiple loops simultaneously,
 the overhead will be higher. However, the current results are obtained by running the
 program only \textbf{once} under the problem-triggering workload. The sampling nature
@@ -322,11 +320,11 @@ of \Tool will allow us to keep the overhead low at the exchange of running the p
 a couple of more times, if needed.
 
 As we can also see from the table, our performance optimization discussed in 
-Section \ref{sec:inst} and \ref{sec:perf} has contributed
+Section \ref{sec:6_inst} and \ref{sec:6_perf} has contributed
 a lot to the good performance of \Tool.
 
 Without sampling, while still applying our static optimization, our redundancy
-analysis would lead to over 100X slowdown for five benchmarks.
+analysis would lead to over 100X slowdown for six benchmarks.
 
 The buggy loops of MySQL\#27287 and MySQL\#15811 access arrays. 
 After changing to tracking the initial and ending memory-access addresses
@@ -335,25 +333,27 @@ the overhead is reduced from 11.77\% to 1.66\% for MySQL\#27287,
 and from 20.46\% to 0.03\% for MySQL\#15811 respectively 
 (sampling is conducted consistently here). 
 
-The side-effect of the buggy loop for MySQL15811 is to calculate the length of a string. 
+The side-effect of the buggy loop for MySQL\#15811 is to calculate the length of a string. 
 The variable representing the length is an induction variable. 
-The side-effect of the buggy loop for MySQL27287 is to calculate the index of a searched target, 
+The side-effect of the buggy loop for MySQL\#27287 is to calculate the index of a searched target, 
 and the variable representing the index is also an induction variable. 
 We can reply on static analysis to figure out that these two loops are not cross-iteration redundant.
 
 We also tried sampling with different sampling rates.
 For cross-loop redundancy, we also conduct experiments under sampling rate 1
 out of 1000. 
-Both run-time overhead and collected sample will be reduced. Mozilla347306 
-is still the benchmark with largest overhead, but the overhead is reduced to 0.49\%. For two benchmarks, GCC8805 and GCC12322, we cannot sample 
+Both runtime overhead and collected sample will be reduced. Mozilla\#347306 
+is still the benchmark with largest overhead, but the overhead is reduced to 0.49\%. 
+For two benchmarks, GCC\#8805 and GCC\#12322, we cannot sample 
 more than 10 loop instances and hence cannot draw strong conclusion
 about their root-cause type. For all other benchmarks, we can 
 still have more than 10 loop instances and get exactly the same 
 root-cause analysis results presented above.
 
-We also conduct cross-iteration redundant experiment under different sampling rates. When the sampling rate is 1 out of 100, there are two benchmarks, whose runtime overhead is larger than 30\%. The overhead for Mozilla347306 is 59.57\%, 
-and the overhead of GCC21430 is 30.65\%. When changing sampling rate to 1
-out of 10000, Mozilla347306 has the largest overhead, which is 4.47\%. And mozilla347306 is the only one whose overhead is larger than 2\%. Except for 
-GCC12322, all other benchmarks will have more than 100 iterations sampled, under the sample rate is 1 out of 10000. Consequently, the same root-cause
+We also conduct cross-iteration redundant experiment under different sampling rates. 
+When the sampling rate is 1 out of 100, there are two benchmarks, whose runtime overhead is larger than 30\%. The overhead for Mozilla\#347306 is 59.57\%, 
+and the overhead of GCC\#21430 is 30.65\%. When changing sampling rate to 1
+out of 10000, Mozilla\#347306 has the largest overhead, which is 4.47\%. And mozilla\#347306 is the only one whose overhead is larger than 2\%. Except for 
+GCC\#12322, all other benchmarks will have more than 100 iterations sampled, under the sample rate is 1 out of 10000. Consequently, the same root-cause
 analysis results will be reported for these benchmarks as the ones presented
 above.

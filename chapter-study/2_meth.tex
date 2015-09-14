@@ -1,0 +1,111 @@
+\section{Methodology}
+\label{sec:3_meth}
+
+This section describes how we collect performance bugs from the real world. 
+
+{\bf Applications}
+We chose five open-source software suites to examine: Apache, Chrome, GCC, 
+Mozilla, and MySQL. These popular, award-winning software suites 
+\citep{halloffame} are all large-scale and mature, with millions of lines of 
+source code and well maintained bug databases.
+
+\begin{table}[h!]
+\centering
+\scriptsize
+\begin{tabular}{@{\hspace{3pt}}l@{\hspace{3pt}}@{\hspace{3pt}}c@{\hspace{3pt}}}
+\toprule
+Application Suite Description (language) &    \# of Bugs        \\
+\midrule                            
+{\bf Apache Suite} 	                 & 25              \\
+%\cline{1-1}
+{HTTPD:	Web Server (C)	}                & \\
+{TomCat:  Web Application Server (Java)} & \\
+{Ant:	Build management utility (Java)} & \\
+%\hline
+%JMeter	& Load test utility (Java) & \\
+\midrule                            
+{\bf Chromium Suite} Google Chrome browser (C/C++) &  10 \\
+\midrule
+%\multicolumn{2}{|l|}
+{\bf GCC Suite}  GCC \& G++ Compiler (C/C++)   & 11  \\
+\midrule
+{\bf Mozilla Suite} & 36  \\
+%\cline{1-1}
+{Firefox: Web Browser (C++, JavaScript)}& 	\\
+{Thunderbird: Email Client (C++, JavaScript)}& \\
+\midrule
+{\bf MySQL Suite}    & 28 	\\
+%\cline{1-1}
+{Server: Database Server (C/C++)}&  	\\
+%\cline{1}
+{Connector: DB Client Libraries (C/C++/Java/.Net)}&  	\\
+\midrule
+{\bf Total}	  & \allbugs  \\
+\bottomrule
+\end{tabular}
+\caption{Applications and bugs used in the study}
+\label{tab:3_app_allbug}
+\end{table}
+
+As shown in Table~\ref{tab:3_app_allbug},
+these five suites provide a good coverage of various types of software, 
+such as interactive GUI 
+applications, server software, command-line utilities, compilers,
+and libraries.
+They are primarily written in C/C++ and Java. 
+Although they are all open-source software, Chrome is 
+backed up by Google
+and MySQL was acquired by Sun/Oracle in 2008.
+Furthermore, the Chrome browser was first released
+in 2008, while the other four
+have had 10--15 years of bug reporting history.
+From these applications, we can observe both traditions and new software
+trends such as web applications.
+
+{\bf Bug Collection}
+GCC, Mozilla, and MySQL developers {\it explicitly} mark certain reports in
+their bug databases as performance bugs using special tags, which are 
+{\it compile-time-hog}, {\it perf}, and {\it S5} respectively.
+Apache and Chrome developers do not use any special tag to mark performance 
+bugs. Therefore, we searched their bug databases using
+a set of performance-related keywords 
+(`slow', `performance', `latency', 
+`throughput', etc.).
+
+From these sources, we {\it randomly} sampled \allbugs fixed bugs that
+have sufficient documentation.
+Among these bugs, 44 were reported after 2008, 39 were
+reported between 2004 and 2007, and 27 were reported before 2004.
+41 bugs came from server applications and 69 bugs came
+from client applications. 
+The details are shown in Table~\ref{tab:3_app_allbug}.
+
+
+{\bf Caveats}
+Our findings need to be taken with the methodology in mind. 
+The applications in our study cover representative and important software 
+categories, workload, development background, and programming languages.
+Of course, there are still uncovered categories, such as scientific
+computing software and distributed systems.
+
+The bugs in our study are collected from five bug databases without bias. 
+We have followed the decisions made by developers about what are performance 
+bugs,
+and have not intentionally ignored any aspect of performance problems in bug
+databases. Of course, some
+performance problems may never be reported to the bug databases and some 
+reported problems may never be fixed by developers.
+Unfortunately, there is no conceivable way to study these unreported or
+unfixed performance problems.
+We believe the bugs in our study provide a representative sample of 
+the reported and fixed performance bugs in these representative applications. 
+
+We have spent more than one year to study all sources of information related
+to each bug, including forum discussions, patches, source code repositories, 
+and others. Each bug is studied by at least two people and
+the whole process consists of several rounds of bug (re-)study, 
+bug (re-)categorization, cross checking, etc. 
+
+Finally, we do not emphasize any quantitative characteristic results, and
+most of the characteristics we found are consistent across
+all examined applications.

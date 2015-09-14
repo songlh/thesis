@@ -1,0 +1,106 @@
+
+
+
+
+
+\section{Root Causes of Performance Bugs}
+\label{sec:3_root}
+
+There are a large variety of potential root causes for inefficient code, 
+such as poorly designed algorithms, non-optimal data structures, cache-unfriendly data layouts, etc. 
+Our goal here is not to discover previously unheard-of root causes, 
+but to check whether there are common root-cause patterns among 
+real-world performance bugs that bug detection and diagnosis work can focus on.
+
+\begin{table*}[tb!]
+\begin{adjustwidth}{-1in}{-1in}
+\scriptsize
+\centering
+{
+
+\begin{tabular}{lcccccc}
+\toprule
+\multicolumn{1}{c}{\bf Root Causes for Performance Bugs} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+\multicolumn{1}{l}{{\bf Wrong Branch:} branch selection leading to performance loss}
+&2&0&2&7&6&17\\
+\midrule
+\multicolumn{1}{l}{{\bf Resultless:} not generating desired results}
+&3&5&4&20&10&42\\
+\midrule
+\multicolumn{1}{l}{{\bf Redundancy:} generating the same results repeatedly}
+&13&3&4&6&5&31\\
+\midrule
+\multicolumn{1}{l}{{\bf Synchronization Issues:} inefficient synchronization among threads}
+&6&1&0&1&8&16\\
+\midrule
+\multicolumn{1}{l}{{\bf Others:} all the bugs not belonging to the above four categories}
+&5&1&1&3&3&13\\
+\bottomrule
+
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{Root cause categorization in Section~\ref{sec:3_root}}
+\label{tab:3_root}
+\end{table*}
+
+Our study shows that the majority of real-world performance bugs in our study 
+are covered by only a couple of root-cause categories (Table~\ref{tab:3_root}).
+
+\underline{\it Wrong Branch} 
+A non-negligible portion of performance bugs are branch-related.
+There are three situations for bugs under this category. 
+Firstly, wrong branches lead to some slow code paths. 
+For example, when Mozilla\#231300 is triggered, 
+Firefox would use separate system calls to move files 
+in the same directory one by one instead of using one single system call to move them altogether. 
+Seconly, wrong branches lead to unnecessary computation or execution. 
+For example, when Mozilla\#258793 is triggered, 
+Firefox will call draw functions for background figures, which actually do not exist. 
+Finally, wrong branches lead to inefficient functionalities,
+such as the {\it No Cache} example shown in Figure~\ref{fig:MySQL26527}. 
+
+\underline{\it Resultless} 
+Around one third of performance bugs are caused by resultless codes. 
+Buggy codes rarely generate results when these bugs are triggered.
+Bugs in this category can be further categorized along two dimensions: 
+according to different granularities, 
+resultless bugs can be divided into loop-related bugs and not loop-related bugs; 
+based on whether semantic information is needed to identify resultless, 
+resultless bugs can be divided into semantic resultless, and non-semantic resultless.
+When {\it Intensive GC} shown in Figure~\ref{fig:Mozilla515287} triggered, 
+the loop conducting garbage collection scans all heap objects, 
+but rarely finds free objects with reference number 0 and deallocate them. 
+This bug is loop-related and non-semantic.  
+{\it Transparent Draw} in Figure~\ref{fig:Mozilla66461} is not loop-related, 
+and semantic information is needed to know that drawing a transparent figure does not generate any results.
+
+\underline{\it Redundancy} 
+Redundancy means generating the same results repeatedly. 
+Intuitively, we can remove repeated work and improve performance. 
+According to different code granularity to observe redundant work, 
+bugs in this category can be divided into redundant snippets, 
+cross-iteration redundancy, and cross-loop redundancy.  
+For example, in Chrome\#70153, 
+both software and GPU will render the same video redundantly, 
+and this bug is categorized as redundant snippets. 
+In the {\it Bookmark All} example shown in Figure~\ref{fig:Mozilla515287}, 
+Firefox will start, commit, and destroy a transaction for each tab in each iteration, 
+and there is a lot of redundant work across different iterations. 
+There are also bugs caused by cross-loop redundancy, like Mozilla\#35294
+
+\underline{\it Synchronization Issues}
+Unnecessary synchronization that intensifies thread competition 
+is also a common root cause, as shown in the {\it Slow Fast-Lock} 
+bug (Figure~\ref{fig:MySQL26527}). 
+These bugs are especially common in server applications, 
+contributing to 6 out of 16 Apache server bugs and 7 out of 25 MySQL server bugs.
+
+\underline{\it Others}
+There are also bugs that do not fall into above categories. 
+For these bugs, developers find more efficient methods to optimize original codes.
+For example, in order to accelerate the slow startup of GPU process reported in Chrome\#59711, 
+developers use one extra thread to collect expensive GPU information. 
+For MySQL\#14637, MySQL developers replace byte-wise parsing by using four-byte-wise parsing 
+to accelerate trimming blank characters from the end of a string. 

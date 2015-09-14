@@ -1,191 +1,175 @@
 \relax 
 \providecommand\hyper@newdestlabel[2]{}
-\citation{PerfBug,Alabama,perf.fse10}
-\citation{s2e,PerfBug,perf.fse10,rily.perftest,perfantipattern}
-\citation{PerfBug}
-\citation{PerfBug}
-\citation{oprofile,gprof}
 \@writefile{lof}{\addvspace {10pt}}
 \@writefile{lot}{\addvspace {10pt}}
-\@writefile{toc}{\contentsline {chapter}{\chapternumberline {5}Statistical Debugging for Real-World Performance Bugs}{34}{chapter.5}}
-\newlabel{chap:sd}{{\M@TitleReference {5}{Statistical Debugging for Real-World Performance Bugs}}{34}{Statistical Debugging for Real-World Performance Bugs}{chapter.5}{}}
-\newlabel{chap:sd@cref}{{[chapter][5][]5}{34}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.1}Introduction}{34}{section.5.1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.1}Motivation}{34}{subsection.5.1.1}}
+\@writefile{toc}{\contentsline {chapter}{\chapternumberline {5}Statistical Debugging for Real-World Performance Bugs}{48}{chapter.5}}
+\newlabel{chap:sd}{{\M@TitleReference {5}{Statistical Debugging for Real-World Performance Bugs}}{48}{Statistical Debugging for Real-World Performance Bugs}{chapter.5}{}}
+\newlabel{chap:sd@cref}{{[chapter][5][]5}{48}}
+\citation{oprofile,gprof}
+\@writefile{toc}{\contentsline {section}{\numberline {5.1}Introduction}{49}{section.5.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.1}Motivation}{49}{subsection.5.1.1}}
 \citation{XRayOSDI}
 \citation{TaoAsplos2014,amertrace}
-\@writefile{lol}{\contentsline {lstlisting}{figures/MySQL26527.c}{35}{lstlisting.5.-2}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5.1}{\ignorespaces A real-world performance bug in MySQL (the `-' and `+' demonstrate the patch)\relax }}{35}{figure.caption.28}}
-\newlabel{fig:MySQLintro}{{\M@TitleReference {5.1}{A real-world performance bug in MySQL (the `-' and `+' demonstrate the patch)\relax }}{35}{A real-world performance bug in MySQL (the `-' and `+' demonstrate the patch)\relax }{figure.caption.28}{}}
-\newlabel{fig:MySQLintro@cref}{{[figure][1][5]5.1}{35}}
 \citation{Alabama}
 \citation{XuDataStructure}
 \citation{BloatFSE2008,XuBloatPLDI2009,XuBloatPLDI2010}
 \citation{horwitz,xiangyu.ase05,delta,liblit03,CCI,tarantula1}
 \citation{liblit03,CCI,tarantula1}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.2}Can we learn from functional failure diagnosis?}{36}{subsection.5.1.2}}
-\newlabel{sec:canwe}{{\M@TitleReference {5.1.2}{Statistical Debugging for Real-World Performance Bugs}}{36}{Can we learn from functional failure diagnosis?}{subsection.5.1.2}{}}
-\newlabel{sec:canwe@cref}{{[subsection][2][5,1]5.1.2}{36}}
-\@writefile{toc}{\contentsline {paragraph}{Is it feasible to apply statistical debugging?}{36}{paragraph*.29}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.2}Can we learn from functional failure diagnosis?}{50}{subsection.5.1.2}}
+\newlabel{sec:5_canwe}{{\M@TitleReference {5.1.2}{Statistical Debugging for Real-World Performance Bugs}}{50}{Can we learn from functional failure diagnosis?}{subsection.5.1.2}{}}
+\newlabel{sec:5_canwe@cref}{{[subsection][2][5,1]5.1.2}{50}}
+\@writefile{toc}{\contentsline {paragraph}{Is it feasible to apply statistical debugging?}{50}{paragraph*.30}}
 \citation{delta}
 \citation{liblit03,liblit05}
 \citation{CCI,joy.asplos13}
 \citation{Delta-LDA}
-\@writefile{toc}{\contentsline {paragraph}{How to conduct effective statistical debugging?}{37}{paragraph*.30}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.3}Contributions}{37}{subsection.5.1.3}}
-\@writefile{toc}{\contentsline {paragraph}{An empirical study of the diagnosis process of real-world user-reported performance problems}{37}{paragraph*.31}}
-\@writefile{toc}{\contentsline {paragraph}{A thorough study of statistical in-house performance diagnosis}{38}{paragraph*.32}}
-\@writefile{toc}{\contentsline {paragraph}{A thorough study of sampling-based production-run performance diagnosis}{38}{paragraph*.33}}
-\citation{PerfBug}
-\citation{PerfBug}
-\@writefile{toc}{\contentsline {section}{\numberline {5.2}Understanding Real-World Performance Problem Reporting and Diagnosis}{39}{section.5.2}}
-\newlabel{sec:study}{{\M@TitleReference {5.2}{Statistical Debugging for Real-World Performance Bugs}}{39}{Understanding Real-World Performance Problem Reporting and Diagnosis}{section.5.2}{}}
-\newlabel{sec:study@cref}{{[section][2][5]5.2}{39}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.1}Methodology}{39}{subsection.5.2.1}}
-\@writefile{lot}{\contentsline {table}{\numberline {5.1}{\ignorespaces Applications and bugs used in the study\relax }}{40}{table.caption.34}}
-\newlabel{tab:app_bug}{{\M@TitleReference {5.1}{Applications and bugs used in the study\relax }}{40}{Applications and bugs used in the study\relax }{table.caption.34}{}}
-\newlabel{tab:app_bug@cref}{{[table][1][5]5.1}{40}}
-\@writefile{lot}{\contentsline {table}{\numberline {5.2}{\ignorespaces How performance problems are observed by end users (There are overlaps among different comparison-based categories; there is no overlap between non-comparison and comparison-based categories)\relax }}{40}{table.caption.35}}
-\newlabel{tab:cmp}{{\M@TitleReference {5.2}{How performance problems are observed by end users (There are overlaps among different comparison-based categories; there is no overlap between non-comparison and comparison-based categories)\relax }}{40}{How performance problems are observed by end users (There are overlaps among different comparison-based categories; there is no overlap between non-comparison and comparison-based categories)\relax }{table.caption.35}{}}
-\newlabel{tab:cmp@cref}{{[table][2][5]5.2}{40}}
-\citation{PerfBug}
-\@writefile{lot}{\contentsline {table}{\numberline {5.3}{\ignorespaces Inputs provided in users' bug reports ($n$: developers provide a way to generate a large number of inputs)\relax }}{41}{table.caption.37}}
-\newlabel{tab:input}{{\M@TitleReference {5.3}{Inputs provided in users' bug reports ($n$: developers provide a way to generate a large number of inputs)\relax }}{41}{Inputs provided in users' bug reports ($n$: developers provide a way to generate a large number of inputs)\relax }{table.caption.37}{}}
-\newlabel{tab:input@cref}{{[table][3][5]5.3}{41}}
-\@writefile{toc}{\contentsline {paragraph}{Caveats}{41}{paragraph*.36}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.2}How users report performance problems}{42}{subsection.5.2.2}}
-\@writefile{toc}{\contentsline {paragraph}{How are performance problems observed?}{42}{paragraph*.38}}
+\@writefile{toc}{\contentsline {paragraph}{How to conduct effective statistical debugging?}{51}{paragraph*.31}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.3}Contributions}{51}{subsection.5.1.3}}
+\@writefile{toc}{\contentsline {paragraph}{An empirical study of the diagnosis process of real-world user-reported performance problems}{51}{paragraph*.32}}
+\@writefile{toc}{\contentsline {paragraph}{A thorough study of statistical in-house performance diagnosis}{52}{paragraph*.33}}
+\@writefile{toc}{\contentsline {paragraph}{A thorough study of sampling-based production-run performance diagnosis}{52}{paragraph*.34}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.2}Understanding Real-World Performance Problem Reporting and Diagnosis}{53}{section.5.2}}
+\newlabel{sec:5_study}{{\M@TitleReference {5.2}{Statistical Debugging for Real-World Performance Bugs}}{53}{Understanding Real-World Performance Problem Reporting and Diagnosis}{section.5.2}{}}
+\newlabel{sec:5_study@cref}{{[section][2][5]5.2}{53}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.1}Methodology}{53}{subsection.5.2.1}}
+\@writefile{lot}{\contentsline {table}{\numberline {5.1}{\ignorespaces Applications and bugs used in the study\relax }}{54}{table.caption.35}}
+\newlabel{tab:5_app_bug}{{\M@TitleReference {5.1}{Applications and bugs used in the study\relax }}{54}{Applications and bugs used in the study\relax }{table.caption.35}{}}
+\newlabel{tab:5_app_bug@cref}{{[table][1][5]5.1}{54}}
+\@writefile{toc}{\contentsline {paragraph}{Caveats}{54}{paragraph*.36}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.2}How users report performance problems}{54}{subsection.5.2.2}}
+\@writefile{lot}{\contentsline {table}{\numberline {5.2}{\ignorespaces How performance problems are observed by end users (There are overlaps among different comparison-based categories; there is no overlap between non-comparison and comparison-based categories)\relax }}{55}{table.caption.37}}
+\newlabel{tab:5_cmp}{{\M@TitleReference {5.2}{How performance problems are observed by end users (There are overlaps among different comparison-based categories; there is no overlap between non-comparison and comparison-based categories)\relax }}{55}{How performance problems are observed by end users (There are overlaps among different comparison-based categories; there is no overlap between non-comparison and comparison-based categories)\relax }{table.caption.37}{}}
+\newlabel{tab:5_cmp@cref}{{[table][2][5]5.2}{55}}
+\@writefile{toc}{\contentsline {paragraph}{How are performance problems observed?}{55}{paragraph*.38}}
+\@writefile{toc}{\contentsline {paragraph}{What information is provided for diagnosis?}{56}{paragraph*.39}}
 \citation{delta}
-\@writefile{toc}{\contentsline {paragraph}{What information is provided for diagnosis?}{43}{paragraph*.39}}
-\citation{PerfBug}
-\citation{characteristics.asplos08,PerfBug}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.3}How developers diagnose performance problems}{44}{subsection.5.2.3}}
+\@writefile{lot}{\contentsline {table}{\numberline {5.3}{\ignorespaces Inputs provided in users' bug reports ($n$: developers provide a way to generate a large number of inputs)\relax }}{57}{table.caption.40}}
+\newlabel{tab:5_input}{{\M@TitleReference {5.3}{Inputs provided in users' bug reports ($n$: developers provide a way to generate a large number of inputs)\relax }}{57}{Inputs provided in users' bug reports ($n$: developers provide a way to generate a large number of inputs)\relax }{table.caption.40}{}}
+\newlabel{tab:5_input@cref}{{[table][3][5]5.3}{57}}
 \citation{LiASID06}
 \citation{ztest}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.3}How developers diagnose performance problems}{58}{subsection.5.2.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.4}Implications of the study}{58}{subsection.5.2.4}}
+\newlabel{sec:5_study_imp}{{\M@TitleReference {5.2.4}{Statistical Debugging for Real-World Performance Bugs}}{58}{Implications of the study}{subsection.5.2.4}{}}
+\newlabel{sec:5_study_imp@cref}{{[subsection][4][5,2]5.2.4}{58}}
 \citation{ztest}
 \citation{ztest}
 \citation{delta}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.4}Implications of the study}{45}{subsection.5.2.4}}
-\newlabel{sec:study_imp}{{\M@TitleReference {5.2.4}{Statistical Debugging for Real-World Performance Bugs}}{45}{Implications of the study}{subsection.5.2.4}{}}
-\newlabel{sec:study_imp@cref}{{[subsection][4][5,2]5.2.4}{45}}
 \citation{liblit03,liblit05,CCI,tarantula1,tarantula2,tarantula.darko,joy.asplos13}
-\@writefile{toc}{\contentsline {section}{\numberline {5.3}In-house statistical debugging}{46}{section.5.3}}
-\newlabel{sec:inhouse}{{\M@TitleReference {5.3}{Statistical Debugging for Real-World Performance Bugs}}{46}{In-house statistical debugging}{section.5.3}{}}
-\newlabel{sec:inhouse@cref}{{[section][3][5]5.3}{46}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.1}Design}{46}{subsection.5.3.1}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.3}In-house statistical debugging}{60}{section.5.3}}
+\newlabel{sec:5_inhouse}{{\M@TitleReference {5.3}{Statistical Debugging for Real-World Performance Bugs}}{60}{In-house statistical debugging}{section.5.3}{}}
+\newlabel{sec:5_inhouse@cref}{{[section][3][5]5.3}{60}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.1}Design}{60}{subsection.5.3.1}}
 \citation{liblit03,liblit05}
 \citation{liblit03,liblit05}
 \citation{liblit03,liblit05}
 \citation{tarantula1,tarantula2,tarantula.darko}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1.1}Predicate designs}{47}{subsubsection.5.3.1.1}}
-\@writefile{toc}{\contentsline {paragraph}{Branches.}{47}{paragraph*.40}}
-\@writefile{toc}{\contentsline {paragraph}{Returns.}{47}{paragraph*.41}}
-\@writefile{toc}{\contentsline {paragraph}{Scalar-pairs.}{47}{paragraph*.42}}
 \citation{CCI}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1.1}Predicate designs}{61}{subsubsection.5.3.1.1}}
+\@writefile{toc}{\contentsline {paragraph}{Branches.}{61}{paragraph*.41}}
+\@writefile{toc}{\contentsline {paragraph}{Returns.}{61}{paragraph*.42}}
+\@writefile{toc}{\contentsline {paragraph}{Scalar-pairs.}{61}{paragraph*.43}}
+\@writefile{toc}{\contentsline {paragraph}{Instructions.}{61}{paragraph*.44}}
+\@writefile{toc}{\contentsline {paragraph}{Interleaving-related ones.}{61}{paragraph*.45}}
 \citation{engler01bugs,CPMiner04,kremenek06inferring,lamsigsoft02}
 \citation{liblit03,liblit05,CCI,tarantula1,tarantula2,tarantula.darko,Delta-LDA}
 \citation{liblit03,liblit05,CCI,joy.asplos13}
+\@writefile{lot}{\contentsline {table}{\numberline {5.4}{\ignorespaces Benchmark information. (N/A: since our statistical debugging tools only work for C/C++ programs, we have reimplemented the four Java benchmarks in C programs. *: we have no tools to collect scalar-pair predicates in C++ programs. The 1s and $n$s in the ``Reported Inputs'' column indicate how many bad/good inputs are reported by users.)\relax }}{62}{table.caption.46}}
+\newlabel{tab:5_benchmarks}{{\M@TitleReference {5.4}{Benchmark information. (N/A: since our statistical debugging tools only work for C/C++ programs, we have reimplemented the four Java benchmarks in C programs. *: we have no tools to collect scalar-pair predicates in C++ programs. The 1s and $n$s in the ``Reported Inputs'' column indicate how many bad/good inputs are reported by users.)\relax }}{62}{Benchmark information. (N/A: since our statistical debugging tools only work for C/C++ programs, we have reimplemented the four Java benchmarks in C programs. *: we have no tools to collect scalar-pair predicates in C++ programs. The 1s and $n$s in the ``Reported Inputs'' column indicate how many bad/good inputs are reported by users.)\relax }{table.caption.46}{}}
+\newlabel{tab:5_benchmarks@cref}{{[table][4][5]5.4}{62}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1.2}Statistical model designs}{62}{subsubsection.5.3.1.2}}
 \citation{liblit03,liblit05}
 \citation{Delta-LDA}
 \citation{liblit03,liblit05,Delta-LDA}
 \citation{liblit03,liblit05,Delta-LDA}
-\@writefile{toc}{\contentsline {paragraph}{Instructions.}{48}{paragraph*.43}}
-\@writefile{toc}{\contentsline {paragraph}{Interleaving-related ones.}{48}{paragraph*.44}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1.2}Statistical model designs}{48}{subsubsection.5.3.1.2}}
 \citation{liblit03}
-\@writefile{lot}{\contentsline {table}{\numberline {5.4}{\ignorespaces Benchmark information. (N/A: since our statistical debugging tools only work for C/C++ programs, we have reimplemented the four Java benchmarks in C programs. *: we have no tools to collect scalar-pair predicates in C++ programs. The 1s and $n$s in the ``Reported Inputs'' column indicate how many bad/good inputs are reported by users.)\relax }}{49}{table.caption.45}}
-\newlabel{tab:benchmarks}{{\M@TitleReference {5.4}{Benchmark information. (N/A: since our statistical debugging tools only work for C/C++ programs, we have reimplemented the four Java benchmarks in C programs. *: we have no tools to collect scalar-pair predicates in C++ programs. The 1s and $n$s in the ``Reported Inputs'' column indicate how many bad/good inputs are reported by users.)\relax }}{49}{Benchmark information. (N/A: since our statistical debugging tools only work for C/C++ programs, we have reimplemented the four Java benchmarks in C programs. *: we have no tools to collect scalar-pair predicates in C++ programs. The 1s and $n$s in the ``Reported Inputs'' column indicate how many bad/good inputs are reported by users.)\relax }{table.caption.45}{}}
-\newlabel{tab:benchmarks@cref}{{[table][4][5]5.4}{49}}
-\@writefile{toc}{\contentsline {paragraph}{Basic model}{49}{paragraph*.46}}
+\@writefile{toc}{\contentsline {paragraph}{Basic model}{63}{paragraph*.47}}
 \citation{liblit05}
 \citation{Delta-LDA}
 \citation{LDA}
 \citation{Delta-LDA}
 \citation{Delta-LDA}
-\@writefile{toc}{\contentsline {paragraph}{$\Delta $LDA model}{50}{paragraph*.47}}
-\@writefile{toc}{\contentsline {paragraph}{How to apply the models}{51}{paragraph*.48}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.2}Experimental evaluation}{51}{subsection.5.3.2}}
-\newlabel{sec:inhouse_results}{{\M@TitleReference {5.3.2}{Statistical Debugging for Real-World Performance Bugs}}{51}{Experimental evaluation}{subsection.5.3.2}{}}
-\newlabel{sec:inhouse_results@cref}{{[subsection][2][5,3]5.3.2}{51}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2.1}Methodology}{51}{subsubsection.5.3.2.1}}
-\newlabel{sec:inhouse_meth}{{\M@TitleReference {5.3.2.1}{Statistical Debugging for Real-World Performance Bugs}}{51}{Methodology}{subsubsection.5.3.2.1}{}}
-\newlabel{sec:inhouse_meth@cref}{{[subsubsection][1][5,3,2]5.3.2.1}{51}}
-\@writefile{toc}{\contentsline {paragraph}{Benchmark selection}{51}{paragraph*.49}}
+\@writefile{toc}{\contentsline {paragraph}{$\Delta $LDA model}{64}{paragraph*.48}}
+\@writefile{toc}{\contentsline {paragraph}{How to apply the models}{64}{paragraph*.49}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.2}Experimental evaluation}{65}{subsection.5.3.2}}
+\newlabel{sec:5_inhouse_results}{{\M@TitleReference {5.3.2}{Statistical Debugging for Real-World Performance Bugs}}{65}{Experimental evaluation}{subsection.5.3.2}{}}
+\newlabel{sec:5_inhouse_results@cref}{{[subsection][2][5,3]5.3.2}{65}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2.1}Methodology}{65}{subsubsection.5.3.2.1}}
+\newlabel{sec:5_inhouse_meth}{{\M@TitleReference {5.3.2.1}{Statistical Debugging for Real-World Performance Bugs}}{65}{Methodology}{subsubsection.5.3.2.1}{}}
+\newlabel{sec:5_inhouse_meth@cref}{{[subsubsection][1][5,3,2]5.3.2.1}{65}}
+\@writefile{toc}{\contentsline {paragraph}{Benchmark selection}{65}{paragraph*.50}}
+\@writefile{toc}{\contentsline {paragraph}{Input design}{65}{paragraph*.51}}
 \citation{liblit03,liblit05}
 \citation{liblit03,liblit05}
 \citation{pin}
-\@writefile{toc}{\contentsline {paragraph}{Input design}{52}{paragraph*.50}}
-\@writefile{toc}{\contentsline {paragraph}{Techniques under comparison}{52}{paragraph*.51}}
 \citation{oprofile}
-\@writefile{lot}{\contentsline {table}{\numberline {5.5}{\ignorespaces Experimental results for in-house diagnosis (\text  {$\mathsurround \z@ \mathchar "458$}{}$_x$(y): the $x$-th ranked failure predictor is highly related to the root cause, and is $y$ lines of code away from the patch. $(.)$: the failure predictor and the patch are more than 50 lines of code away from each other or are from different files. \text  {$\mathsurround \z@ \mathchar "458$}{}$_{x[y]}$: a $y$-th level caller of the $x$-th ranked function in a profiler result is related to the root cause; $_x[0]$ means it is the function itself that is related to the root cause. -: none of the top five predictors are related to the root cause or no predicates reach the threshold of the statistical model.).\relax }}{54}{table.caption.52}}
-\newlabel{tab:in-house}{{\M@TitleReference {5.5}{Experimental results for in-house diagnosis (\text  {$\mathsurround \z@ \mathchar "458$}{}$_x$(y): the $x$-th ranked failure predictor is highly related to the root cause, and is $y$ lines of code away from the patch. $(.)$: the failure predictor and the patch are more than 50 lines of code away from each other or are from different files. \text  {$\mathsurround \z@ \mathchar "458$}{}$_{x[y]}$: a $y$-th level caller of the $x$-th ranked function in a profiler result is related to the root cause; $_x[0]$ means it is the function itself that is related to the root cause. -: none of the top five predictors are related to the root cause or no predicates reach the threshold of the statistical model.).\relax }}{54}{Experimental results for in-house diagnosis (\Yes {x}(y): the $x$-th ranked failure predictor is highly related to the root cause, and is $y$ lines of code away from the patch. $(.)$: the failure predictor and the patch are more than 50 lines of code away from each other or are from different files. \checkmark {}$_{x[y]}$: a $y$-th level caller of the $x$-th ranked function in a profiler result is related to the root cause; $_x[0]$ means it is the function itself that is related to the root cause. \No : none of the top five predictors are related to the root cause or no predicates reach the threshold of the statistical model.).\relax }{table.caption.52}{}}
-\newlabel{tab:in-house@cref}{{[table][5][5]5.5}{54}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2.2}Results for basic model}{55}{subsubsection.5.3.2.2}}
-\newlabel{sec:inhousebasic}{{\M@TitleReference {5.3.2.2}{Statistical Debugging for Real-World Performance Bugs}}{55}{Results for basic model}{subsubsection.5.3.2.2}{}}
-\newlabel{sec:inhousebasic@cref}{{[subsubsection][2][5,3,2]5.3.2.2}{55}}
-\@writefile{lol}{\contentsline {lstlisting}{figures/Apache3278.c}{56}{lstlisting.5.-3}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5.2}{\ignorespaces An Apache bug diagnosed by Return\relax }}{56}{figure.caption.53}}
-\newlabel{fig:Apache3278}{{\M@TitleReference {5.2}{An Apache bug diagnosed by Return\relax }}{56}{An Apache bug diagnosed by Return\relax }{figure.caption.53}{}}
-\newlabel{fig:Apache3278@cref}{{[figure][2][5]5.2}{56}}
-\@writefile{lol}{\contentsline {lstlisting}{figures/MySQL44723.c}{56}{lstlisting.5.-4}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5.3}{\ignorespaces A MySQL bug diagnosed by Branch\relax }}{56}{figure.caption.54}}
-\newlabel{fig:MySQL44723}{{\M@TitleReference {5.3}{A MySQL bug diagnosed by Branch\relax }}{56}{A MySQL bug diagnosed by Branch\relax }{figure.caption.54}{}}
-\newlabel{fig:MySQL44723@cref}{{[figure][3][5]5.3}{56}}
-\@writefile{lot}{\contentsline {table}{\numberline {5.6}{\ignorespaces How different predicates work for diagnosing user-reported performance bugs (In this manual inspection, if more than one predicate can help diagnose a problem, we only count the predicate that is most directly related to the root cause)\relax }}{57}{table.caption.55}}
-\newlabel{tab:predicate}{{\M@TitleReference {5.6}{How different predicates work for diagnosing user-reported performance bugs (In this manual inspection, if more than one predicate can help diagnose a problem, we only count the predicate that is most directly related to the root cause)\relax }}{57}{How different predicates work for diagnosing user-reported performance bugs (In this manual inspection, if more than one predicate can help diagnose a problem, we only count the predicate that is most directly related to the root cause)\relax }{table.caption.55}{}}
-\newlabel{tab:predicate@cref}{{[table][6][5]5.6}{57}}
-\@writefile{toc}{\contentsline {paragraph}{Comparing with the profiler}{57}{paragraph*.56}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2.3}Results for $\Delta $LDA model}{58}{subsubsection.5.3.2.3}}
-\newlabel{sec:deltalda_results}{{\M@TitleReference {5.3.2.3}{Statistical Debugging for Real-World Performance Bugs}}{58}{Results for $\Delta $LDA model}{subsubsection.5.3.2.3}{}}
-\newlabel{sec:deltalda_results@cref}{{[subsubsection][3][5,3,2]5.3.2.3}{58}}
-\@writefile{lot}{\contentsline {table}{\numberline {5.7}{\ignorespaces Fix strategies for loop-related bugs\relax }}{59}{table.caption.57}}
-\newlabel{tab:loop-rootcause}{{\M@TitleReference {5.7}{Fix strategies for loop-related bugs\relax }}{59}{Fix strategies for loop-related bugs\relax }{table.caption.57}{}}
-\newlabel{tab:loop-rootcause@cref}{{[table][7][5]5.7}{59}}
-\@writefile{toc}{\contentsline {paragraph}{Comparing with the profiler}{59}{paragraph*.58}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.3}Manual inspection}{60}{subsection.5.3.3}}
-\newlabel{sec:manual_results}{{\M@TitleReference {5.3.3}{Statistical Debugging for Real-World Performance Bugs}}{60}{Manual inspection}{subsection.5.3.3}{}}
-\newlabel{sec:manual_results@cref}{{[subsection][3][5,3]5.3.3}{60}}
+\@writefile{toc}{\contentsline {paragraph}{Techniques under comparison}{66}{paragraph*.52}}
+\@writefile{lot}{\contentsline {table}{\numberline {5.5}{\ignorespaces Experimental results for in-house diagnosis (\text  {$\mathsurround \z@ \mathchar "458$}{}$_x$(y): the $x$-th ranked failure predictor is highly related to the root cause, and is $y$ lines of code away from the patch. $(.)$: the failure predictor and the patch are more than 50 lines of code away from each other or are from different files. \text  {$\mathsurround \z@ \mathchar "458$}{}$_{x[y]}$: a $y$-th level caller of the $x$-th ranked function in a profiler result is related to the root cause; $_x[0]$ means it is the function itself that is related to the root cause. -: none of the top five predictors are related to the root cause or no predicates reach the threshold of the statistical model.).\relax }}{67}{table.caption.53}}
+\newlabel{tab:5_in-house}{{\M@TitleReference {5.5}{Experimental results for in-house diagnosis (\text  {$\mathsurround \z@ \mathchar "458$}{}$_x$(y): the $x$-th ranked failure predictor is highly related to the root cause, and is $y$ lines of code away from the patch. $(.)$: the failure predictor and the patch are more than 50 lines of code away from each other or are from different files. \text  {$\mathsurround \z@ \mathchar "458$}{}$_{x[y]}$: a $y$-th level caller of the $x$-th ranked function in a profiler result is related to the root cause; $_x[0]$ means it is the function itself that is related to the root cause. -: none of the top five predictors are related to the root cause or no predicates reach the threshold of the statistical model.).\relax }}{67}{Experimental results for in-house diagnosis (\Yes {x}(y): the $x$-th ranked failure predictor is highly related to the root cause, and is $y$ lines of code away from the patch. $(.)$: the failure predictor and the patch are more than 50 lines of code away from each other or are from different files. \checkmark {}$_{x[y]}$: a $y$-th level caller of the $x$-th ranked function in a profiler result is related to the root cause; $_x[0]$ means it is the function itself that is related to the root cause. \No : none of the top five predictors are related to the root cause or no predicates reach the threshold of the statistical model.).\relax }{table.caption.53}{}}
+\newlabel{tab:5_in-house@cref}{{[table][5][5]5.5}{67}}
+\@writefile{lol}{\contentsline {lstlisting}{figures/Apache3278.c}{68}{lstlisting.5.-12}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.1}{\ignorespaces An Apache bug diagnosed by Return\relax }}{68}{figure.caption.54}}
+\newlabel{fig:Apache3278}{{\M@TitleReference {5.1}{An Apache bug diagnosed by Return\relax }}{68}{An Apache bug diagnosed by Return\relax }{figure.caption.54}{}}
+\newlabel{fig:Apache3278@cref}{{[figure][1][5]5.1}{68}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2.2}Results for basic model}{68}{subsubsection.5.3.2.2}}
+\newlabel{sec:5_inhousebasic}{{\M@TitleReference {5.3.2.2}{Statistical Debugging for Real-World Performance Bugs}}{68}{Results for basic model}{subsubsection.5.3.2.2}{}}
+\newlabel{sec:5_inhousebasic@cref}{{[subsubsection][2][5,3,2]5.3.2.2}{68}}
+\@writefile{lol}{\contentsline {lstlisting}{figures/MySQL44723.c}{69}{lstlisting.5.-13}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.2}{\ignorespaces A MySQL bug diagnosed by Branch\relax }}{69}{figure.caption.55}}
+\newlabel{fig:MySQL44723}{{\M@TitleReference {5.2}{A MySQL bug diagnosed by Branch\relax }}{69}{A MySQL bug diagnosed by Branch\relax }{figure.caption.55}{}}
+\newlabel{fig:MySQL44723@cref}{{[figure][2][5]5.2}{69}}
+\@writefile{toc}{\contentsline {paragraph}{Comparing with the profiler}{70}{paragraph*.56}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2.3}Results for $\Delta $LDA model}{70}{subsubsection.5.3.2.3}}
+\newlabel{sec:5_deltalda_results}{{\M@TitleReference {5.3.2.3}{Statistical Debugging for Real-World Performance Bugs}}{70}{Results for $\Delta $LDA model}{subsubsection.5.3.2.3}{}}
+\newlabel{sec:5_deltalda_results@cref}{{[subsubsection][3][5,3,2]5.3.2.3}{70}}
+\@writefile{toc}{\contentsline {paragraph}{Comparing with the profiler}{71}{paragraph*.57}}
+\@writefile{lot}{\contentsline {table}{\numberline {5.6}{\ignorespaces How different predicates work for diagnosing user-reported performance bugs (In this manual inspection, if more than one predicate can help diagnose a problem, we only count the predicate that is most directly related to the root cause)\relax }}{72}{table.caption.58}}
+\newlabel{tab:5_predicate}{{\M@TitleReference {5.6}{How different predicates work for diagnosing user-reported performance bugs (In this manual inspection, if more than one predicate can help diagnose a problem, we only count the predicate that is most directly related to the root cause)\relax }}{72}{How different predicates work for diagnosing user-reported performance bugs (In this manual inspection, if more than one predicate can help diagnose a problem, we only count the predicate that is most directly related to the root cause)\relax }{table.caption.58}{}}
+\newlabel{tab:5_predicate@cref}{{[table][6][5]5.6}{72}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.3}Manual inspection}{73}{subsection.5.3.3}}
+\newlabel{sec:5_manual_results}{{\M@TitleReference {5.3.3}{Statistical Debugging for Real-World Performance Bugs}}{73}{Manual inspection}{subsection.5.3.3}{}}
+\newlabel{sec:5_manual_results@cref}{{[subsection][3][5,3]5.3.3}{73}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.4}Discussion}{73}{subsection.5.3.4}}
 \citation{liblit03,liblit05,tarantula1,tarantula2,tarantula.darko,CCI,joy.asplos13}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.4}Discussion}{61}{subsection.5.3.4}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.4}Production-run statistical debugging}{74}{section.5.4}}
+\newlabel{sec:5_lbr}{{\M@TitleReference {5.4}{Statistical Debugging for Real-World Performance Bugs}}{74}{Production-run statistical debugging}{section.5.4}{}}
+\newlabel{sec:5_lbr@cref}{{[section][4][5]5.4}{74}}
 \citation{liblit03,liblit05,CCI,joy.asplos13}
 \citation{liblit03,liblit05,CCI,joy.asplos13}
-\@writefile{toc}{\contentsline {section}{\numberline {5.4}Production-run statistical debugging}{62}{section.5.4}}
-\newlabel{sec:lbr}{{\M@TitleReference {5.4}{Statistical Debugging for Real-World Performance Bugs}}{62}{Production-run statistical debugging}{section.5.4}{}}
-\newlabel{sec:lbr@cref}{{[section][4][5]5.4}{62}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.1}Design}{62}{subsection.5.4.1}}
 \citation{liblit03,liblit05,CCI,joy.asplos13}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.1}Design}{75}{subsection.5.4.1}}
 \citation{liblit03,liblit05}
 \citation{hunt.sosp09}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.2}Experimental evaluation}{63}{subsection.5.4.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.2}Experimental evaluation}{76}{subsection.5.4.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.2.1}Methodology}{76}{subsubsection.5.4.2.1}}
+\@writefile{toc}{\contentsline {paragraph}{Benchmarks and inputs}{76}{paragraph*.59}}
 \citation{liblit03,liblit05}
 \citation{joy.asplos13}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.2.1}Methodology}{64}{subsubsection.5.4.2.1}}
-\@writefile{toc}{\contentsline {paragraph}{Benchmarks and inputs}{64}{paragraph*.59}}
-\@writefile{toc}{\contentsline {paragraph}{Tool implementation}{64}{paragraph*.60}}
-\@writefile{toc}{\contentsline {paragraph}{Metrics and settings}{64}{paragraph*.61}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.2.2}Results}{65}{subsubsection.5.4.2.2}}
-\@writefile{toc}{\contentsline {paragraph}{Run-time overhead}{65}{paragraph*.64}}
+\@writefile{toc}{\contentsline {paragraph}{Tool implementation}{77}{paragraph*.60}}
+\@writefile{toc}{\contentsline {paragraph}{Metrics and settings}{77}{paragraph*.61}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.2.2}Results}{78}{subsubsection.5.4.2.2}}
+\@writefile{lot}{\contentsline {table}{\numberline {5.7}{\ignorespaces Runtime overhead and diagnosis capability evaluated with the default sampling rate (1 out of 10000); 10, 100, 500, 1000 represents the different numbers of success/failure runs used for diagnosis.\relax }}{78}{table.caption.62}}
+\newlabel{tab:5_LBR}{{\M@TitleReference {5.7}{Runtime overhead and diagnosis capability evaluated with the default sampling rate (1 out of 10000); 10, 100, 500, 1000 represents the different numbers of success/failure runs used for diagnosis.\relax }}{78}{Runtime overhead and diagnosis capability evaluated with the default sampling rate (1 out of 10000); 10, 100, 500, 1000 represents the different numbers of success/failure runs used for diagnosis.\relax }{table.caption.62}{}}
+\newlabel{tab:5_LBR@cref}{{[table][7][5]5.7}{78}}
+\@writefile{lot}{\contentsline {table}{\numberline {5.8}{\ignorespaces Diagnosis capability, overhead, and average number of samples in each run under different sampling rates by using 1000 success/failure runs (*: no results are available, because hardware-based sampling cannot be as frequent as $1/100$ and software-based CBI sampling does not apply for these C++ benchmarks. )\relax }}{79}{table.caption.63}}
+\newlabel{tab:5_rate}{{\M@TitleReference {5.8}{Diagnosis capability, overhead, and average number of samples in each run under different sampling rates by using 1000 success/failure runs (*: no results are available, because hardware-based sampling cannot be as frequent as $1/100$ and software-based CBI sampling does not apply for these C++ benchmarks. )\relax }}{79}{Diagnosis capability, overhead, and average number of samples in each run under different sampling rates by using 1000 success/failure runs (*: no results are available, because hardware-based sampling cannot be as frequent as $1/100$ and software-based CBI sampling does not apply for these C++ benchmarks. )\relax }{table.caption.63}{}}
+\newlabel{tab:5_rate@cref}{{[table][8][5]5.8}{79}}
+\@writefile{toc}{\contentsline {paragraph}{Runtime overhead}{79}{paragraph*.64}}
+\@writefile{toc}{\contentsline {paragraph}{Diagnosis capability}{79}{paragraph*.65}}
 \citation{liblit03,liblit05,CCI}
 \citation{hunt.sosp09}
-\@writefile{lot}{\contentsline {table}{\numberline {5.8}{\ignorespaces Run-time overhead and diagnosis capability evaluated with the default sampling rate (1 out of 10000); 10, 100, 500, 1000 represents the different numbers of success/failure runs used for diagnosis.\relax }}{66}{table.caption.62}}
-\newlabel{tab:LBR}{{\M@TitleReference {5.8}{Run-time overhead and diagnosis capability evaluated with the default sampling rate (1 out of 10000); 10, 100, 500, 1000 represents the different numbers of success/failure runs used for diagnosis.\relax }}{66}{Run-time overhead and diagnosis capability evaluated with the default sampling rate (1 out of 10000); 10, 100, 500, 1000 represents the different numbers of success/failure runs used for diagnosis.\relax }{table.caption.62}{}}
-\newlabel{tab:LBR@cref}{{[table][8][5]5.8}{66}}
-\@writefile{toc}{\contentsline {paragraph}{Diagnosis capability}{66}{paragraph*.65}}
-\@writefile{lot}{\contentsline {table}{\numberline {5.9}{\ignorespaces Diagnosis capability, overhead, and average number of samples in each run under different sampling rates by using 1000 success/failure runs (*: no results are available, because hardware-based sampling cannot be as frequent as $1/100$ and software-based CBI sampling does not apply for these C++ benchmarks. )\relax }}{67}{table.caption.63}}
-\newlabel{tab:rate}{{\M@TitleReference {5.9}{Diagnosis capability, overhead, and average number of samples in each run under different sampling rates by using 1000 success/failure runs (*: no results are available, because hardware-based sampling cannot be as frequent as $1/100$ and software-based CBI sampling does not apply for these C++ benchmarks. )\relax }}{67}{Diagnosis capability, overhead, and average number of samples in each run under different sampling rates by using 1000 success/failure runs (*: no results are available, because hardware-based sampling cannot be as frequent as $1/100$ and software-based CBI sampling does not apply for these C++ benchmarks. )\relax }{table.caption.63}{}}
-\newlabel{tab:rate@cref}{{[table][9][5]5.9}{67}}
-\@writefile{toc}{\contentsline {paragraph}{Diagnosis latency}{67}{paragraph*.66}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.5}Conclusion}{68}{section.5.5}}
-\newlabel{sec:con}{{\M@TitleReference {5.5}{Statistical Debugging for Real-World Performance Bugs}}{68}{Conclusion}{section.5.5}{}}
-\newlabel{sec:con@cref}{{[section][5][5]5.5}{68}}
+\@writefile{toc}{\contentsline {paragraph}{Diagnosis latency}{80}{paragraph*.66}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.5}Conclusion}{81}{section.5.5}}
+\newlabel{sec:con}{{\M@TitleReference {5.5}{Statistical Debugging for Real-World Performance Bugs}}{81}{Conclusion}{section.5.5}{}}
+\newlabel{sec:con@cref}{{[section][5][5]5.5}{81}}
 \@setckpt{chapter-sd/main}{
-\setcounter{page}{70}
+\setcounter{page}{82}
 \setcounter{equation}{0}
 \setcounter{enumi}{2}
 \setcounter{enumii}{0}
 \setcounter{enumiii}{0}
 \setcounter{enumiv}{0}
-\setcounter{footnote}{5}
+\setcounter{footnote}{3}
 \setcounter{mpfootnote}{0}
 \setcounter{@memmarkcntra}{0}
 \setcounter{storedpagenumber}{1}
@@ -226,12 +210,12 @@
 \setcounter{cmsm@mctr}{0}
 \setcounter{bsm@mctr}{0}
 \setcounter{workm@mctr}{0}
-\setcounter{sheetsequence}{81}
-\setcounter{lastsheet}{119}
-\setcounter{lastpage}{108}
-\setcounter{figure}{3}
+\setcounter{sheetsequence}{99}
+\setcounter{lastsheet}{148}
+\setcounter{lastpage}{131}
+\setcounter{figure}{2}
 \setcounter{lofdepth}{1}
-\setcounter{table}{9}
+\setcounter{table}{8}
 \setcounter{lotdepth}{1}
 \setcounter{parentequation}{0}
 \setcounter{ContinuedFloat}{0}
@@ -244,8 +228,8 @@
 \setcounter{hanglisti}{0}
 \setcounter{lstnumber}{1}
 \setcounter{vrcnt}{0}
-\setcounter{Item}{17}
-\setcounter{Hfootnote}{6}
+\setcounter{Item}{24}
+\setcounter{Hfootnote}{4}
 \setcounter{memhycontfloat}{0}
 \setcounter{Hpagenote}{0}
 \setcounter{bookmark@seq@number}{0}

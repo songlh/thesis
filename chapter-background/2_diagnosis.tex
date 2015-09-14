@@ -1,0 +1,120 @@
+\section{Performance Failure Diagnosis}
+\label{sec:2_diagnosis}
+Diagnosis tools aim to identify root causes and possibly suggest fix strategies when 
+software failures happen. 
+
+\subsection{Profilers}
+Profilers are widely used by developers to diagnose performance problems. 
+For example, both gprof~\citep{gprof} and oprofile~\citep{oprofile} are
+widely used profilers.
+To use gprof, programs need to be compiled by using ``-pg'' option. 
+For each call instance, gprof will record its caller. For each static function, 
+gprof will record how many times it is called. 
+At run time, gprof will look at program counter for every 0.01 second and record 
+which function is executed right now. 
+gprof provides two types of profiling results: 
+flat profile, which will rank executed functions based on how much time spent in them, 
+and call graph, which shows how much time is spent in each function and its 
+children. 
+Oprofile does not instrument programs. 
+Oprofile asks users to specify hardware events and sampling frequency. 
+Every time the specified number of events occur, 
+oprofile will record the value of program counter and call stack. 
+Similar to gprof, oprofile can also provide flat profile and call-graph information. 
+
+There are also research progress made on profilers. 
+Both AlgoProf~\citep{AlgoProf} and aprof~\citep{Aprof1, Aprof2} try to associate complexity information to bottleneck functions. 
+The difference between AlgoProf and aprof is that 
+AlgoProf considers the size of recursive date structure as input size, 
+while aprof estimates the input size by using the number of distinct 
+memory first accessed by a routine or its descendants.
+Calling Context Tree (CCT) is a compact representation of encountered calling contexts during program execution. 
+Each node on CCT corresponds a routine, and the path from the root to the node represents an unique calling context. 
+\citet{AdaptiveBurst} optimize the runtime overhead of building CCT through adaptive bursting. 
+\citet{HotCallingContext} optimize the space overhead by building 
+Hot Calling Context Tree (HCCT) through mining frequent items in calling context stream. 
+LagHunter~\citep{LagHunter} tries to provide lag information for interactive systems when they are handling user events. 
+AppInsight~\citep{AppInsight} is built to monitor mobile applications, which are asynchronized and multi-threaded. 
+AppInsight can automatically instrument mobile binary codes and figure out critical path in each user-transaction, across asynchronous-call boundaries. 
+Changing critical path will change the user-perceived latency. 
+Leveraging critical-path information, developers can identify code regions to be optimized 
+and improve user experience. 
+After evaluating 4 commonly used Java profilers, 
+\citet{4Profilers} find that these profilers often do not agree with each other, 
+and do not always produce actionable profiles. 
+There are two reasons causing this problem: 
+firstly, the four profilers take samples only at yield points, 
+and this is not randomly taking samples from program execution; 
+secondly, compiler optimizations are affected by these profilers, 
+and program performance and the placement of yield points are changed under profiling. 
+The authors design and implement a new profiler, which does not suffer from the two problems. 
+
+Different from our work, profiling aims to tell
+where computation resources are spent, not where and why
+computation resources are wasted. The root-cause code region 
+of a performance problem often is not inside the top-
+ranked functions in the profiling result (Chapter~\ref{chap:sd}). 
+Even if it is,
+developers still need to spend a lot of effort to understand
+whether and what kind of computation inefficiency exists.
+
+\subsection{Automated Performance Diagnosis Tools}
+There are also tools proposed to diagnose certain
+type of performance problems.
+
+X-ray~\citep{XRayOSDI} aims to diagnose performance 
+problems caused by end users. The root causes discussed in the X-ray paper are 
+unexpected inputs or configurations that can be changed by end users. 
+X-ray pinpoints the inputs or configuration entries that are most 
+responsible for a performance problem, and help users to solve the 
+performance issues by themselves (by changing the inputs or configuration
+entries). 
+The main technique used in X-ray is called performance summarization, which 
+first attributes a performance 
+cost to each basic block, and then estimates the possibility that each block 
+will be executed 
+due to certain input entry, and finally ranks all input entries.
+Diagnosis techniques discussed in this thesis aim to help developers. 
+We want to provide 
+information to help developers change inefficient codes and fix performance bugs.
+
+Some diagnosis techniques are built through analyzing system log. 
+IntroPerf~\citep{IntroPerf} automatically infers latency of calling contexts, 
+composing of user-level and kernel-level function calls, 
+based on operating system tracers. 
+After compared with normal runs, 
+calling contexts from buggy runs will be ranked to help diagnose performance problems. 
+StackMine~\citep{TaoICSE2012} mines costly-maximal-pattern from stack traces collected from event handlers, 
+whose response time is longer than a predefined threshold. 
+Identified patterns will be clustered to help developers effectively analyze impactful performance bugs. 
+A two-step technique proposed by \citet{TaoAsplos2014} analyzes system traces to 
+understand performance impact propagation and causality relationship among different system components. 
+In impact analysis step, performance measurement is conducted for each component. 
+In causality analysis step, 
+wait graphs are built for both slow and fast executions, 
+and contrast data mining is used to identify special path segments on the slow wait graph. 
+Too much logging would incur a large runtime overhead and bring extra burden for log analysis. 
+Log2~\citep{TaoATC2015} tries to control the overhead of logging, 
+while keeping its performance diagnosis capability. 
+Log2 achieves this goal by making a ``whether to log'' decision for each log request through a two-phase filtering mechanism. 
+During local filter, log requests, whose utility scores lower than a global threshold, will be discarded. 
+In global filter, all log requests are ranked, 
+and only top-ranked requests are flushed to disk to meet the logging budget request. 
+All these diagnosis tools are very useful in practice, but have different
+focus from the diagnosis work in this thesis. They
+do not aim to identify source-code fine-grained 
+root causes of performance problems reported by end users.
+
+
+Many techniques have been proposed to diagnose 
+performance problems in distributed systems
+\citep{SambasivanNSDI,Fonseca2010,Kasick2010,XuSOSP2009}.
+These techniques often focus on identifying the faulty components/nodes or 
+faulty interactions that lead to performance problems, 
+which are different from diagnosis work in this thesis.
+
+
+
+
+
+

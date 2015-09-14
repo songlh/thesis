@@ -1,5 +1,5 @@
 \subsection{Redundancy Checker}
-\label{sec:redundant}
+\label{sec:6_redundant}
 
 \subsubsection{Design overview}
 To check whether there is redundant computation across different iterations
@@ -30,12 +30,12 @@ a naive, yet expensive, solution is to record and compare the return value of
 every memory read conducted by $i_1$ and $i_2$. Two better alternative
 solutions are to record and compare only the values written or read by the
 side-effect instructions, such as 
-line 9 in Figure~\ref{fig:Mozilla477564},
+line 10 in Figure~\ref{fig:Mozilla477564},
 or the source instructions\footnote{We define source instructions in a code
 region $r$ as a set of memory-read instructions that side-effect
 instructions in $r$ depend on and do not depend on any other instructions
 inside $r$.}, 
-such as source[i] at line 12 of Figure~\ref{fig:Apache34464}.
+such as source[i] at line 11 of Figure~\ref{fig:Apache34464}.
 
 Among the the above two potential solutions, our design chooses the second one.
 The reason is that, if there is indeed
@@ -49,41 +49,41 @@ In practice, redundant loops may be doing largely the same, instead of exactly
 the same, computation across iterations or loop instances. It is also possible
 %TODO define loop instance.
 that only some, instead of all, iterations in a loop are doing redundant
-computation. We will discuss how we handle this issue in Section \ref{sec:cal}.
+computation. We will discuss how we handle this issue in Section \ref{sec:6_cal}.
 
 
 
 \emph{How to lower the overhead of record-and-compare?}
 Even if we only record and compare the values returned by source instructions,
-instead of all instructions in a loop, the run-time overhead and the log size
+instead of all instructions in a loop, the runtime overhead and the log size
 would still be large. We will use two ways to lower this time and spatial
 overhead. First, static analysis can already tell some source instructions
 will always return the same value across iterations/loop-instances, and hence
 need not be traced at run time. Second, we can leverage the repetitive nature
 of performance problems and use random sampling to lower the overhead without
 degrading the diagnosis capability. We will discuss details of 
-these two optimization in Section \ref{sec:inst} and \ref{sec:perf}.
+these two optimization in Section \ref{sec:6_inst} and \ref{sec:6_perf}.
 %TODO static analysis alone is not sufficient, because some redundant is
 %workload dependent
 
 \emph{How to provide the most suitable fix-strategy suggestion?}
-Finally, as discussed in Section \ref{sec:study_ob} and Table \ref{tab:root},
+Finally, as discussed in Section \ref{sec:6_study_ob} and Table \ref{tab:6_root},
 memoization and batching are both common fix strategies for redundant loops.
 To pick the right fix strategies to fix a redundant loop, we will conduct 
-some extra analysis. We will discuss this in Section \ref{sec:redundant_fix}.
+some extra analysis. We will discuss this in Section \ref{sec:6_redundant_fix}.
 
 
 \subsubsection{Identifying source instructions}
-\label{sec:dependence}
+\label{sec:6_dependence}
 
 Informally, we use static analysis to identify a set of 
 memory-read instructions that the loop computation depends on. We refer
 to these instructions as \textit{source} instructions. The values returned
-from them at run-time will be tracked and compared to identify
+from them at runtime will be tracked and compared to identify
 redundant computation.
 
 Specifically, we first identify side-effect instructions in the loop, as 
-discussed in Section \ref{sec:s_workless}; we then conduct static slicing 
+discussed in Section \ref{sec:6_s_workless}; we then conduct static slicing 
 from these instructions, considering both control and data
 dependency, to identify source instructions.
 
@@ -138,7 +138,7 @@ source instruction for cross-iteration redundancy analysis, while we continue
 the slicing for cross-loop redundancy analysis. 
 For example, 
 the instruction defining the value of \texttt{i} is the only side-effect instruction 
-for the loop at line 12 of Figure~\ref{fig:Apache34464}. 
+for the loop at line 11 of Figure~\ref{fig:Apache34464}. 
 The source instructions calculated by cross-loop dependence analysis include 
 memory read \texttt{source[i]} inside the loop, 
 and three values defined outside the loop, 
@@ -151,7 +151,7 @@ and two values defined outside the loop (\texttt{max} and \texttt{first}).
 
 
 \subsubsection{Identifying redundant loops}
-\label{sec:cal}
+\label{sec:6_cal}
 
 After identifying source instructions, we instrument these source
 instructions, so that the values returned by these memory read
@@ -253,9 +253,9 @@ For example, Figure~\ref{fig:Mozilla477564} demonstrates a cross-loop redundancy
 problem in Mozilla. Here, the
 latter instances contain more iterations than previous instances. 
 Figure~\ref{fig:Apache34464} shows an example in Apache, 
-The inner loop, which starts from line 9,  
+The inner loop, which starts from line 8,  
 searches from the beginning of a string \texttt{sb} for a target sub-string 
-\texttt{s}. Since the outer loop, which starts on line 36, appends one 
+\texttt{s}. Since the outer loop, which starts on line 30, appends one 
 character to \texttt{sb} in every iteration, every inner loop instance is 
 doing computation that is similar, but not exactly the same, 
 from its previous instance.
@@ -347,7 +347,7 @@ redundancy value.
 %For all other cases, when the values from two compared instances are the same, redundancy is 1, otherwise, redundancy is 0.
 
 \subsubsection{Dynamic performance optimization: sampling}
-\label{sec:inst}
+\label{sec:6_inst}
 
 %\begin{figure}[ht]
 %\center
@@ -357,14 +357,14 @@ redundancy value.
 %\end{figure}
 
 Recording values returned by every source instructions would lead to 
-huge run-time time. To lower the overhead,
+huge runtime time. To lower the overhead,
 we use random sampling to reduce the number of instructions that we
 track at run time. Due to the repetitive nature of performance bugs,
 we will still be able to recognize redundant 
 computation as long as the sampling rate is not too sparse (we will evaluate
-this in Section \ref{sec:experiment}). 
+this in Section \ref{sec:6_experiment}). 
 Our sampling scheme requires almost no changes to our redundancy 
-identification algorithm discussed in Section \ref{sec:cal}.
+identification algorithm discussed in Section \ref{sec:6_cal}.
 
 
 %Another observation, which can also be demonstrated by examples shown in Figure~\ref{fig:Mozilla477564} and Figure~\ref{fig:Apache34464}, 
@@ -445,7 +445,7 @@ under study, so that the sampling decision can be correctly conducted
 throughout the call chain.
 
 \subsubsection{Static analysis for performance optimization}
-\label{sec:perf}
+\label{sec:6_perf}
 
 We conduct a series of static analysis to reduce the number of instructions we 
 need to monitor. 
@@ -488,7 +488,7 @@ on the same address. We do not need to record these two memory read.
 Second, we identify and avoid monitoring some memory reads whose return values 
 can be statically proved to be different throughout one loop instance in 
 cross-iteration redundancy analysis.
-Specifically, for read on loop induction variable, such as i for loop at line 12 of Figure~\ref{fig:Apache34464}, 
+Specifically, for read on loop induction variable, such as i for loop at line 11 of Figure~\ref{fig:Apache34464}, 
 %Specifically, reading of loop induction 
 %variables, such as XXX, are always identified as source instructions in % variable i for loop at line 12
 %cross-iteration redundancy analysis; 
@@ -533,10 +533,10 @@ values.
 Third, sometimes we only record the memory-address range of a sequence of memory
 read, instead of the value returned by every read, in cross-loop redundancy
 analysis. 
-The loop at line 12 in Figure~\ref{fig:Apache34464} shows an example.
-The content of array \texttt{source} is never modified
+The loop at line 11 in Figure~\ref{fig:Apache34464} shows an example.
+The content of array \texttt{source} is not heavily modified
 throughout the outer-loop, which starts 
-at line 12 in the Figure~\ref{fig:Apache34464}.
+at line 30 in the Figure~\ref{fig:Apache34464}.
 %We do not have the static analysis to prove the content of array does not change.
 %for source[i] for the loop at line 12, we only need to record source, initial value of i and final value of i. 
 %TODO
@@ -578,8 +578,8 @@ is source plus the ending value of \texttt{i}.
 
 
 \subsubsection{Fix strategy recommendation}
-\label{sec:redundant_fix}
-As discussed in Section \ref{sec:tax_study}, extra analysis is needed to
+\label{sec:6_redundant_fix}
+As discussed in Section \ref{sec:6_tax_study}, extra analysis is needed to
 decide whether batching or memoization should be suggested to fix a 
 loop that conducts redundant computation.
 

@@ -1,0 +1,67 @@
+\section{How Performance Bugs Are Fixed}
+\label{sec:3_fix}
+
+\begin{table*}[tb!]
+\begin{adjustwidth}{-1in}{-1in}
+\scriptsize
+\centering
+{
+\begin{tabular}{lcccccc}
+\toprule
+\multicolumn{1}{c}{\bf How to Fix Performance Bugs} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+\multicolumn{1}{l}{{\bf Change Condition:} {a condition is added or modified} }
+&3&3&5&13&9&36\\
+\midrule
+\multicolumn{1}{l}{{\bf In-place Call Change:} {replace call sequences in the exact same place} }
+&5&1&0&12&10&28\\
+\midrule
+\multicolumn{1}{l}{{\bf Memorization:} {reuse results from previous computation}}
+&9&1&3&2&3&18\\
+\midrule
+ \multicolumn{1}{l}{{\bf Batch:} {batch computation to eliminate redundancy}}
+&4&3&1&6&1&15\\
+\midrule
+\multicolumn{1}{l}{{\bf Others:} all the bugs not belonging to the above four categories}
+&4&2&2&3&5&16\\
+\bottomrule
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{How to fix performance bugs in Section~\ref{sec:3_fix}}
+\label{tab:3_fix}
+\end{table*}
+
+There are four common strategies in fixing performance bugs, as shown in Table~\ref{tab:3_fix}.
+
+\underline{\it Change Condition} The most common fix strategy is {\it Change Condition}. 
+It is used in 36 patches, in which code units not always generating 
+results are conditionally skipped, 
+a fast path is changed to be executed, or the same functionality is realized in a more efficient way. 
+For example, Draw is conditionally skipped to fix {\it Transparent Draw} (Figure~\ref{fig:Mozilla66461}), 
+and cache will be used to fix {\it No Cache} (Figure~\ref{fig:MySQL26527} ).
+
+\underline{\it In-place Call Change} 
+The second most common strategy is {\it In-place Call Change}. 
+By using this strategy, 
+developers replace or reorganize the call sequence in the exact same place. 
+The performance gain can be achieved whenever changed codes are executed. 
+For example, in order to fix Mozilla\#103330, 
+developers replace the \Code{setLength} and \Code{Append} call combination with \Code{Assign}.
+
+\underline{\it Memorization} fixes 18 bugs by reusing results 
+from previous computation. 
+For example, in order to fix Mozilla\#409961, 
+developers move \Code{do\_QueryInterface} outside the buggy loop, instead of calling it in each iteration.  
+
+\underline{\it Batch} strategy is used in 15 patches. 
+For example, {\it Bookmark All} in Figure~\ref{fig:Mozilla490742} is fixed by this strategy.   
+
+\underline{\it Are patches complicated?}
+Most performance bugs in our study can be fixed through simple changes. 
+In fact, 41 out of 110 bug patches contain five or fewer lines of code changes. 
+The median patch size for all examined bugs is 9 lines of code.
+The small patch size is a result of the above fixing strategies.
+Many change condition patches are small. 
+Most in-place call change, memorization, and batch patches do not require implementing new function calls.
+

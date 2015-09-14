@@ -1,5 +1,5 @@
 \section{Experiment}
-\label{sec:experiment}
+\label{sec:6_experiment}
 
 \subsection{Methodology}
 
@@ -42,7 +42,7 @@
   \# of Loops: the number of loops we analyze for each benchmark. 
   N/A: we re-implement benchmarks not in C/C++, or depending on very old libraries and operating systems. 
   W. is short for Resultless, R. is short for Redundancy, C-I. is short for cross-iteration, and C-L. is short for cross-loop. )}
-  \label{tab:benchmarks}
+  \label{tab:6_benchmarks}
 \end{table}
 
 {\bf Implementation and Platform}
@@ -62,7 +62,7 @@ or because they involve very complex data structures.
 In total, we use 18 benchmarks in our experiments. 
 For all real bugs, we follow their default building setting. For all re-implemented bugs,
 we build them by using ``-O0 -g''. 
-Detailed benchmark information is shown in Table~\ref{tab:benchmarks}. 
+Detailed benchmark information is shown in Table~\ref{tab:6_benchmarks}. 
 For all bugs used in~\cite{SongOOPSLA2014} and the new bug we install (GCC27733), 
 we follow the same methodology discussed in~\cite{SongOOPSLA2014} to run the statistical model. 
 We run our analysis on top 5 loops, 
@@ -120,14 +120,14 @@ we run instrumented programs by using the bad inputs provided by users.
   ( (\No) means false positives. 
    In the dynamic part, we report average iteration number for 
   0*1?, and ratio of working iteration number for [0$|$1]*.)}
-  \label{tab:workless}
+  \label{tab:6_workless}
 \end{table*}
 
 In this section, we run our analysis on all 64 loops. 
 We will discuss the effectiveness and performance for each of our techniques. 
 
 \underline{\textit{Resultless Analysis}}
-The results for resultless analysis is shown in Table~\ref{tab:workless}.
+The results for resultless analysis is shown in Table~\ref{tab:6_workless}.
 3 benchmarks are caused by 0*1?, and 1 benchmark is caused by [0$|$1]*. 
 They are all identified by related static analysis. Our static analysis does not have false negatives. 
 Besides these 4 loops, there are other 20 loops identified as either 0*1? or [0$|$1]*. 
@@ -178,11 +178,11 @@ Collecting dynamic resultless information does not incur a large overhead. The l
    \end{tabular}
   %\nocaptionrule
   \caption{Experimental Results for System Call Checking. }
-  \label{tab:sys}
+  \label{tab:6_sys}
 \end{table}
 
 \underline{\textit{Batchable System Call}}
-The results for static batchable system call analysis is shown in Table~\ref{tab:sys}. 
+The results for static batchable system call analysis is shown in Table~\ref{tab:6_sys}. 
 Our static analysis does point out the two loops caused by batchable system calls, and it does not bring any false positives. 
 
 \begin{table*}
@@ -221,17 +221,17 @@ Our static analysis does point out the two loops caused by batchable system call
    \end{tabular}
   %\nocaptionrule
   \caption{Experimental Results for Cross-loop Redundancy Analysis.}
-  \label{tab:CL-Results}
+  \label{tab:6_CL-Results}
 \end{table*}
 
 
 \underline{\textit{Cross-loop Redundancy}}
-As we discussed in Section~\ref{sec:cal}, we skip consecutive loop instance pairs, where two instances are both too short, 
+As we discussed in Section~\ref{sec:6_cal}, we skip consecutive loop instance pairs, where two instances are both too short, 
 or one instance is too short compared with the other. The concrete threshold we use in our experiment is that we skip pairs, 
 where two instances are both less than 100 iterations, 
 or the shorter one is less than 100 iterations and less than half of the longer instance's iterations. 
 
-The result for cross-loop redundancy analysis under sampling rate 1/100 is shown in Table~\ref{tab:CL-Results}.  
+The result for cross-loop redundancy analysis under sampling rate 1/100 is shown in Table~\ref{tab:6_CL-Results}.  
 We skip loops without outer loop, and loop recursively call the function containing itself.
 All 7 buggy cross-loop redundant loops are identified. 
 We have 4 false positives. 
@@ -287,10 +287,10 @@ The overhead for cross-loop instrumentation is quite large. There are two loops,
    \end{tabular}
   %\nocaptionrule
   \caption{Experimental Results for Cross-iteration Redundancy Analysis. (- in Overhead part means we get the result based on static analysis.) }
-  \label{tab:CI-Results}
+  \label{tab:6_CI-Results}
 \end{table*}
 
-The results for cross-iteration redundancy is shown in Table~\ref{tab:CI-Results}. 
+The results for cross-iteration redundancy is shown in Table~\ref{tab:6_CI-Results}. 
 The experiment is conducted under sampling rate 1/1000. 
 The iteration number for the buggy loop of Mozilla\#490472 is only 50, and we do not have any sample for that bug.
 
@@ -342,7 +342,7 @@ and we do not need dynamic analysis to know that there is no cross-iteration red
   %\nocaptionrule
   \caption{Combined results. Diagnosis Rank: the rank of the loop identified as root cause loop by our technique. 
   Diagnosis Result: the reason for performance loss our diagnosis tool report.}
-  \label{tab:final}
+  \label{tab:6_final}
 \end{table}
 
 In this section, we will discuss whether our techniques can enhance statistical fault localization for performance bugs. 
@@ -359,7 +359,7 @@ We think that resultless could be side-effect of redundancy,
 if there is a loop identifies as redundancy in top 5 loops, 
 we will consider the root cause as redundancy.  
 
-The combined result is shown in Table~\ref{tab:final}. 
+The combined result is shown in Table~\ref{tab:6_final}. 
 We do not have correct diagnosis results for two bugs, 
 MySQL\#15811 and GCC\#12322. The root cause for MySQL\#15811 is 1*, 
 and we identify the buggy loop as cross-loop redundancy. The buggy loop for GCC\#12322 is not within top 5.  

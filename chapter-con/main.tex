@@ -1,0 +1,84 @@
+\chapter[Conclusion]{Conclusion}
+\label{chap:con}
+
+Performance bugs are software implementation mistakes, which can cause inefficient execution. 
+Performance bugs are common and severe, and they have already become one major source of software's performance problem. 
+With the increasing complexity
+of modern software and workload, the meager increases of single-core hardware performance, and the pressing energy concerns, 
+it is urgent to combat performance bugs. 
+This thesis focuses on three directions to improve the state-of-the-art performance bug fighting techniques. 
+Our empirical study provides better understanding of real-world performance bugs, 
+our rule-based bug detection techniques find hundreds of previously unknown performance bugs, 
+and our diagnosis techniques can effectively diagnose user-perceived and user-reported performance bugs. 
+
+We conduct the first empirical study on 110 real-world performance bugs, 
+randomly collected from 5 open-source software suites 
+(Apache, Chrome, GCC, Mozilla and MySQL). 
+Our study is conducted mainly through 4 directions. 
+We study the root causes of performance bugs, 
+how performance bugs are introduced, 
+how to expose performance bugs, 
+and how to fix performance bugs. 
+Important findings include: 
+(1) performance bugs have dominating root causes and fix strategies, 
+which are highly correlated with each other; 
+(2) workload mismatch and misunderstanding of API's performance features 
+are two major reasons why performance bugs are introduced; 
+(3) around half of studied performance bugs need inputs with both special features 
+and large scales to manifest. 
+Our empirical study can guide future research on performance bugs, 
+and it has already inspired our own bug detection and diagnosis projects. 
+
+Inspired by our empirical study, 
+we hypothesize that efficiency rules widely exist in software, 
+rule-violations can be statically checked, and violations also widely exist. 
+To test our hypothesis, we manually inspect patches of fixed performance bugs, 
+extract efficiency rules from studied patches, 
+and implement static checkers to detect violations of efficiency rules. 
+In total, our static checkers find 332 previously unknown performance bugs from latest versions of Apache, Mozilla and MySQL. 
+This project demonstrates that rule-based performance-bug detection is a promising direction. 
+
+Due to the preliminary tool support, 
+many performance bugs escape from in-house testing and manifest in front of end users. 
+It is important to provide tool support for diagnosing user-reported performance problems. 
+We investigate feasibility and design space to apply statistical debugging to performance diagnosis. 
+We find that statistical debugging is a natural fit for performance problems, 
+and branch predicates plus two statistical models can effectively identify buggy branches and inefficient loops. 
+Localizing inefficient loops is not informative enough. Therefore, we design LDoctor, 
+which is a series of static-dynamic hybrid analysis for inefficient loops. 
+LDoctor can identify fine-grained root-cause information and provide fix suggestions to developers.
+
+Future work can explore how to combat performance bugs through different aspects from this thesis. 
+The following are several immediate research opportunities:
+
+\begin{itemize}
+
+\item
+Our empirical study in Chapter~\ref{chap:study} 
+shows that many performance bugs are introduced due to developers' misunderstanding of workload in reality. 
+We think that monitoring workload from production run is a possible solution.
+Given a performance critical routine, existing techniques demonstrate that read memory size (RMS), 
+which is measured as distinct memory size with read as first access by the routine or its descendants, is a good estimation of the workload size. 
+Collecting precise RMS may incur more than 100 times slow down, and this is not acceptable in production run.  
+In Chapter~\ref{chap:ldoctor}, we discussed how to use sampling and designed optimization to collect memory read value in a low overhead. 
+It is promising to explore how to leverage similar techniques to collect RMS in a low overhead. 
+Combined with simple performance metrics, it is also promising to conduct algorithmic profiling in production run. 
+
+\item
+In Chapter~\ref{chap:study}, 
+we discussed almost half of studied performance bugs need inputs with both special features and large scales to manifest. 
+Existing techniques are designed to generate inputs with good code coverage and focus on special features.
+How to extend existing input-generation techniques with emphasis on large scale remains an open issue. 
+Another important problem during performance testing is to automatically judge whether a problem bug has occurred. 
+How to leverage existing dynamic performance-bug detection techniques to build test oracle also remains an open issue. 
+
+
+\item
+Our study in Chapter~\ref{chap:study} shows that performance-aware annotations, 
+which can help developers maintain and communicate APIs' performance features, 
+can help avoid performance bugs. 
+How to automatically identify performance features, 
+like existence of lock or IO, 
+through program analysis or document mining for existing software, remain an open issue. 
+
+\end{itemize} 

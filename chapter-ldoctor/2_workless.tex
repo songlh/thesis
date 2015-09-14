@@ -1,13 +1,13 @@
 \section{\Tool design}
-\label{sec:design}
+\label{sec:6_design}
 \Tool is composed of a series of analysis routines, each designed to 
 identify whether a given loop belongs to one specific type of root causes,
 as we will present below. 
 
-As briefly mentioned in Section \ref{sec:intro}, the design of these analysis routines follows the following principles.
+As briefly mentioned in Section \ref{sec:6_intro}, the design of these analysis routines follows the following principles.
 \begin{itemize}
 \item Providing diagnosis information, not detecting bugs. \Tool will be  
-used together with other performance diagnosis tools \citep{SongOOPSLA2014}
+used together with other performance diagnosis tools (Chapter~\ref{chap:sd})
 and focus on a small
 number of loops that are most correlated with a specific performance symptom,
 instead of being applied to the whole program. Therefore, we will have different
@@ -19,14 +19,14 @@ will not be able to provide all the needed information for performance
 diagnosis; dynamic analysis alone will incur too much unnecessary overhead.
 Therefore, we will use static-dynamic hybrid approach throughout our design.
 
-\item Using sampling to decrease run-time overhead. Loop-related 
+\item Using sampling to decrease runtime overhead. Loop-related 
 performance problems have the unique nature of repetitiveness, which make 
 them a natural fit for random sampling. Therefore, we will design different
 sampling schemes for different analysis routines.
 \end{itemize}
 
 \subsection{Resultless Checker}
-\label{sec:workless}
+\label{sec:6_workless}
 
 Our resultless checker includes two parts. First, we use static analysis
 to figure out which are the side-effect instructions in a loop and hence
@@ -44,7 +44,7 @@ inefficient.
 %\end{figure}
 
 \subsubsection{Static Analysis}
-\label{sec:s_workless}
+\label{sec:6_s_workless}
 
 We consider side-effect instructions as those instructions that write to
 variables defined outside the loop. The analysis to identify side-effect
@@ -66,7 +66,7 @@ The remaining cases are either
 Differentiating these two cases is also straight-forward.
 In short, when the basic block that contains side-effect instructions
 is part of the natural loop, the case
-belongs to [0$|$1]*; instead, if the side-effect basic block is post-dominated
+belongs to [0$|$1]*; instead, if the side-effect basic block is strictly post-dominated
 by one of the loop-exit blocks and is dominated by the loop header, yet is
 not part of the natural loop, the case belongs to 0*1?.
 
@@ -77,7 +77,7 @@ for this loop (e.g., cross-iteration or cross-loop redundancy).
 
 %TODO Shan will rewrite the next two paragraphs
 \subsubsection{Dynamic Monitoring}
-\label{sec:d_workless}
+\label{sec:6_d_workless}
 
 Except for 0*, none of the other three type of loops are inefficient for sure.
 We need dynamic analysis to figure out what portion of loop iterations are
@@ -90,7 +90,8 @@ of iterations when the loop has multiple instances) to figure out the
 \textit{resultless rate} of the loop. The implementation is straightforward
 --- we initialize a local counter to be 0 in the pre-header of the loop; we 
 increase the counter by 1 in the loop header to count the number of 
-iterations; we dump that counter to log when the loop exits.
+iterations; 
+we dump that local counter value to a global counter when the loop exits.
 
 For [0$|$1]*, we need to count not only the total number of iterations, but
 also the exact number of iterations that execute side-effect instructions
@@ -106,9 +107,9 @@ If both block A and block B are side-effect blocks and block A post-dominates
 block B, we only instrument block A to update \texttt{HasResult}. 
 
 We could speed up the above counting using sampling. However, since the 
-run-time overhead of the above counting is low, as shown in Section 
-\ref{sec:experiment}, our current prototype of \Tool does 
-not use sampling for this part of run-time analysis.
+runtime overhead of the above counting is low, as shown in Section 
+\ref{sec:6_experiment}, our current prototype of \Tool does 
+not use sampling for this part of runtime analysis.
 
 %\subsubsection{Sampling}
 %We calculate the average iteration number 
@@ -119,13 +120,13 @@ not use sampling for this part of run-time analysis.
 %based on branch sampling reports to get rid of the extra instrumentation and the extra bad run.   
 
 \subsubsection{Limitations}
-\label{sec:l_workless}
+\label{sec:6_l_workless}
 The technique designed in this section has the following limitations.
 First, when callee may have side effect, we will consider it will have side effect in the caller side, 
 and do not consider the real execution inside callee. This could bring false negatives, 
 because we could miss resultless cases, 
 where side effect instructions inside callee do not execute. 
-Experiments results in Section~\ref{sec:experiment} show that this is not a big issue, 
+Experiments results in Section~\ref{sec:6_experiment} show that this is not a big issue, 
 since we do not miss any resultless bugs.  
 
 Second, our dynamic instrumentation does not consider concurrent execution of the monitored loop, 

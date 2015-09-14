@@ -1,0 +1,157 @@
+\section{Case Studies}
+\label{sec:3_case}
+We will discuss six motivating examples in this part, and 
+we will answer the following questions by using these six examples. 
+
+(1) Are performance bugs too different from traditional bugs to study along
+the traditional bug-fighting process (i.e.,
+bug avoidance, testing, detection, and fixing)?
+
+(2) If they are not too different, are they too similar to be worthy of 
+a study?
+
+(3) If developers were more careful, do we still need research and tool 
+support to combat performance bugs?
+
+
+\begin{figure}
+\codefig{Apache45464}
+\caption{An Apache-HTTPD bug retrieving more than necessary data}
+\label{fig:Apache45464}
+\end{figure}
+
+\begin{figure}
+\codefig{Mozilla66461}
+\caption{A Mozilla bug drawing transparent figures}
+\label{fig:Mozilla66461}
+\end{figure}
+
+{\bf Retrieve Unnecessary (Figure~\ref{fig:Apache45464})}
+Apache HTTPD developers forgot to change a parameter of API \Code{apr_stat} after an API upgrade. 
+This mistake causes \Code{apr_stat} to retrieve more than necessary information 
+from the file system and leads to more than ten times slowdown in Apache server. 
+After changing the parameter, \Code{apr_stat} will retrieve exactly what developers originally needed
+%After changing to \Code{APR_FINFO_TYPE}, \Code{apr_stat} will retrieve exactly what 
+%developers originally needed through \Code{APR_FINFO_NORM}. 
+
+
+{\bf Transparent Draw (Figure~\ref{fig:Mozilla66461})\ } 
+Mozilla developers implemented a procedure \Code{nsImageGTK::Draw} for
+figure scaling, compositing, and rendering, which is 
+a waste of time for transparent figures. This problem did not catch 
+developers' attention until two years later when 1 pixel by 1 pixel 
+transparent GIFs became general purpose spacers widely used by Web
+developers to work around certain idiosyncrasies in HTML 4.
+The patch of this bug skips
+\Code{nsImageGTK::Draw} when the function input is a transparent figure.
+
+\begin{figure}
+\codefig{Mozilla515287}
+\caption{A Mozilla bug doing intensive GCs}
+\label{fig:Mozilla515287}
+\end{figure}
+
+{\bf Intensive GC (Figure~\ref{fig:Mozilla515287})\ }
+Users reported that Firefox cost 10 times more CPU than Safari on
+some popular Web pages, such as gmail.com.
+Lengthy profiling and code investigation revealed that
+Firefox conducted an expensive
+garbage collection (GC) process at the end of {\it every}
+XMLHttpRequest, which is too frequent.
+A developer then recalled that GC was added there
+five years ago when
+XHRs were infrequent, and each XHR replaced substantial portions of the 
+DOM in JavaScript. However, things have changed in modern Web pages.
+As a primary feature enabling Web 2.0, 
+XHRs are much more common 
+than they were five years ago.
+%As a result, GC after every XHR became a performance bug. 
+This bug is fixed by removing the call to GC.
+
+\begin{figure}
+\codefig{Mozilla490742}
+\caption{A Mozilla bug with un-batched DB operations}
+\label{fig:Mozilla490742}
+\end{figure}
+
+{\bf Bookmark All (Figure~\ref{fig:Mozilla490742})\ }
+Users reported that Firefox hung when they clicked `bookmark all (tabs)'
+with 50 open tabs.
+Investigation revealed that Firefox used $N$ database transactions to bookmark
+$N$ tabs, which is very time-consuming comparing with batching all bookmark
+tasks into a single transaction.
+Discussion among developers revealed that
+there was almost no batchable database task in Firefox a few years back.  
+The addition of batchable
+functionalities, such as `bookmark all (tabs)' exposed this inefficiency
+problem.
+After replacing $N$ invocations of 
+\Code{doTransact} with a single \Code{doAggregateTransact}, the hang disappears.
+During patch review, developers found two more places
+with similar problems and fixed them by \Code{doAggregateTransact}.
+
+\begin{figure}
+\codefig{MySQL38941}
+\caption{A MySQL bug with over synchronization}
+\label{fig:MySQL38941}
+\end{figure}
+
+{\bf Slow Fast-Lock (Figure~\ref{fig:MySQL38941})\ }
+In order to conduct fast locking, 
+MySQL synchronization-library developers implemented a \Code{fastmutex\_lock}, 
+which would call library function \Code{random} to calculate spin delay. 
+Unfortunately, it turns out that \Code{random} actually contains a lock, 
+and this lock serializes every thread that invoke \Code{random}. 
+Developers' unit test showed that invoking \Code{random} 
+from multi-thread could be 40 times slower than from multi-process, 
+due to the lock contention. 
+This bug is fixed by replacing \Code{random} with a non-synchronized random number generator.
+
+\begin{figure}
+\codefig{MySQL26527}
+\caption{A MySQL bug without using cache}
+\label{fig:MySQL26527}
+\end{figure}
+
+{\bf No Cache (Figure~\ref{fig:MySQL26527})\ }
+MySQL users reported that loading data into a partitioned table would be 20 times slower, 
+compared with loading the same amount of data into an unpartitioned table. 
+The slowness comes from the fact that cache was not used, 
+and it is the branch in Figure~\ref{fig:MySQL26527} causing cache not to be allocated. 
+The developer who implemented this \Code{start\_bulk\_insert} function thought that parameter 0 indicates no need of cache, 
+while developer who wrote caller function thought that parameter 0 means the allocation of a large cache. 
+This miscommunication causes this bug. 
+The patch is to change the branch selection when using 0 as parameter. 
+
+These six bugs can help us answer the questions asked earlier.
+
+
+(1) They have similarity with traditional bugs.
+For example, they are either related to usage rules of functions/APIs or related to programs' control flow, like branch,
+both of which are well studied by previous work on detecting and diagnosing functional 
+bugs~\citep{PRMiner05,livshits05dynamine,liblit05}.
+
+(2) They also have interesting differences compared to traditional bugs.
+For example, the code snippets in Figure 
+\ref{fig:Apache45464}--\ref{fig:Mozilla490742}
+turned buggy (or buggier) long after they were written,
+which is rare for functional bugs.
+As another example, testing designed for functional bugs
+cannot effectively expose bugs like {\it Bookmark All}. 
+Once the program has tried the `bookmark all (tab)' button with one or two open tabs,
+bookmarking more tabs will not improve the statement or branch coverage and
+will be skipped by functional testing.
+
+(3) Developers cannot fight these bugs by themselves.
+They cannot predict future workload
+or code changes to avoid bugs like {\it Retrieve Unnecessary}, {\it Transparent Draw}, 
+{\it Intensive GC}, and
+{\it Bookmark All}. Even experts
+who implemented synchronization libraries
+could not avoid bugs like {\it Slow Fast-Lock}, 
+given opaque APIs with unexpected performance features.
+Research and tool support are needed here.
+
+Of course, it is premature to draw any conclusion based on six bugs.
+Next, we will comprehensively study \allbugs performance bugs.
+

@@ -1,0 +1,92 @@
+\section{Guidance for Future Work}
+
+{\bf Comparison with Functional Bugs\ }
+There are several interesting comparisons between performance and functional
+bugs. (1)
+The distribution of performance-failure rates over software life time
+follows neither the bathtub model of
+hardware errors nor the gradually maturing model of functional bugs, because
+performance bugs have long hiding periods (Section \ref{sec:3_other}) 
+and can emerge from non-buggy 
+places when software evolves (Section \ref{sec:3_introduce}).
+(2) Unlike functional bugs, performance bugs cannot always be modeled as 
+rare events, because some of them are always active 
+(Section \ref{sec:3_exp}).
+(3) The percentage of synchronization problems among
+performance bugs in our study is higher than the percentage of synchronization
+problems among functional bugs in a previous study for
+a similar set of applications~\citep{LiASID06} (Section \ref{sec:3_root}).
+
+{\bf Annotation Systems\ }
+Annotation systems are used in many software development environments
+\citep{msdnannot,linuxannot}. Unfortunately, they mainly communicate
+functionality information.%, but not performance-related information.
+
+Our study calls for performance-aware annotation systems
+\citep{perfassert1,perfassert2}
+that help developers maintain and communicate APIs' performance features
+and workload assumptions (Section \ref{sec:3_introduce}).
+%Therefore, developers can make informed decisions when they face large and 
+%varied APIs. 
+Simple support such as warning about the existence of locks in
+a library function, specifying the complexity of a function, and
+indicating the desired range of a performance-sensitive parameter
+%or specifying the complexity of an API 
+can go a long way in avoiding performance bugs.
+Recent work that automatically calculates function complexity is
+also promising~\citep{gulwani.popl2009}.
+
+{\bf Testing\ }
+Regression testing and change-impact analysis have to
+consider workload changes and performance impacts, because new performance bugs
+may emerge from old code
+(Section \ref{sec:3_introduce}).
+
+Performance testing can be improved if its input
+design combines smart input-generation techniques used in functional testing
+\citep{KLEE, dart} with an emphasis on large scale
+(Section~\ref{sec:3_exp}).
+
+Expressing performance oracles and judging whether performance bugs have 
+occurred are critical challenges in performance testing 
+(Section~\ref{sec:3_exp}). Techniques that can smartly compare performance
+numbers across inputs and automatically discover the existence of 
+performance problems are 
+desired.
+
+{\bf Future Directions}
+One might argue that performance sometimes needs
+to be sacrificed for better productivity and functional correctness. However,
+the fact that we can often achieve significant performance improvement through
+only a few lines of code change motivates future research to pay more
+attention to performance bugs (Section~\ref{sec:3_fix}).
+Our study suggests 
+that the workload trend and API features of modern software will lead
+to more performance bugs in the future (Section~\ref{sec:3_introduce}).
+In addition, our study observes a significant portion of synchronization-related
+performance bugs in multi-threaded software. There will be more bugs of this
+type in the multi-core era. Beyond research discussed in this proposal, we think 
+that there are still several potential directions to combat performance bugs.
+
+Finally, our observations have been consistent across old software and new 
+software (Chrome), old bugs (27 pre-2004 bugs) and new bugs (44 post-2008 bugs).
+Therefore, we are confident that these lessons will be useful at least 
+for the near
+future.
+
+\section{Conclusions}
+
+Performance bugs have largely been ignored in previous research
+on software defects. Facing the increasing significance of performance
+bugs, this chapter provides one of the first studies on
+real-world performance bugs based on 110 bugs collected from
+five representative software suites. The study covers a wide spectrum
+of characteristics, and provides guidance for future research
+on performance-bug avoidance, performance testing, bug detection,
+etc. 
+However, the empirical studies presented in this chapter do not cover all characteristics 
+of real-world performance bugs that might be interesting for tool developers. 
+In fact, later in Section~\ref{sec:5_study} and Section~\ref{sec:6_study}, 
+we will further study subsets of these performance bugs to guide our 
+research in performance failure diagnosis.
+

@@ -1,7 +1,34 @@
 \chapter[Statistical Debugging for Real-World Performance Bugs]{Statistical Debugging for Real-World Performance Bugs}
 \label{chap:sd}
 
-TODO
+As we discussed in previous chapters, performance bugs are difficult to 
+avoid due the lack of performance documentation and the quickly changing workload. 
+Many performance bugs escape from in-house testing process and manifest in front of end users. 
+Effective tools that diagnose performance problems and point out the inefficiency root cause 
+are sorely needed.
+
+The state of the art of performance diagnosis is preliminary. Profiling
+can identify the functions that consume the most computation resources, 
+but can neither identify the ones that waste the most resources nor explain why.
+Performance-bug detectors can identify
+specific type of inefficient computation, but are not suited for
+diagnosing general performance problems. Effective failure
+diagnosis techniques, such as statistical debugging, have been proposed for
+functional bugs. However, whether they work for
+performance problems is still an open question.
+
+In this chapter, we first conduct an empirical study to understand how performance
+problems are observed and reported by real-world users. Our study shows that
+statistical debugging is a natural fit for diagnosing 
+performance problems, which
+are often observed through comparison-based approaches and
+reported together with both good and bad inputs. We then thoroughly investigate
+different design points in statistical debugging, including three different
+predicates and two different types of statistical models, to understand which
+design point works the best for performance diagnosis. Finally, we study how 
+some unique nature of performance bugs allows sampling techniques to  
+lower the overhead of runtime performance diagnosis without extending the
+diagnosis latency.
 
 \input{chapter-sd/0_intro}
 \input{chapter-sd/3_study}

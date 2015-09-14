@@ -1,0 +1,94 @@
+\section{How Performance Bugs Are Introduced}
+\label{sec:3_introduce}
+
+\begin{table*}[tb!]
+\begin{adjustwidth}{-1in}{-1in}
+\scriptsize
+\centering
+{
+\begin{tabular}{lcccccc}
+\toprule
+\multicolumn{1}{c}{\bf How Performance Bugs Are Introduced} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+\multicolumn{1}{l}{{\bf Workload Issues:} {developers' workload assumption is wrong or out-dated}}
+&15&4&7&21&10&57\\
+\midrule
+\multicolumn{1}{l}{{\bf API Issues:} {misunderstand performance features of functions/APIs}}
+&6&2&1&10&9&28\\
+\midrule
+\multicolumn{1}{l}{{\bf Others:} all the bugs not belonging to the above two categories}
+&4&4&3&6&9&26\\
+\bottomrule
+
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{How performance bugs are introduced in Sections~\ref{sec:3_introduce}}
+\label{tab:3_intro}
+\end{table*}
+
+We have studied the discussion among developers in bug databases and checked the 
+source code of different software versions to understand how bugs are introduced. 
+Our study has particularly focused on the challenges faced by developers in writing 
+efficient software, and features of modern software that affect the introduction
+of performance bugs. 
+
+Our study shows that developers are in a great need of tools that can help them 
+avoid the following mistakes.
+
+\underline{\it Workload Mismatch\ }
+Performance bugs are most frequently introduced when 
+developers' workload understanding does not match with the reality.
+
+Our further investigation shows that the following challenges
+are responsible for most workload mismatches.
+
+Firstly, the input paradigm could shift {\it after}
+code implementation. For example, the HTML standard change and new trends in 
+web-page content led to {\it Transparent Draw} and
+{\it Intensive GC}, shown
+in Figure~\ref{fig:Mozilla66461} and Figure~\ref{fig:Mozilla515287}.
+
+Secondly, software workload has become much more diverse and complex than 
+before.
+A single program, such as Mozilla, may face various types of workload issues:
+the popularity of transparent figures on web pages led
+to {\it Transparent Draw} 
+in Figure \ref{fig:Mozilla66461}; the high frequency of XMLHttpRequest led to
+{\it Intensive GC}
+in Figure \ref{fig:Mozilla515287}; users' habit of not changing the default
+configuration setting led to Mozilla\#110555. 
+
+The increasingly dynamic and diverse workload of modern software will lead
+to more performance bugs in the future.
+
+\underline{\it API Misunderstanding\ }
+The second most common reason is that
+developers misunderstand the performance feature of certain
+functions. This occurs for 28 bugs in our study.
+
+Sometimes, the performance of a function is sensitive to the value of a
+particular parameter, and developers happen to use performance-hurting values. 
+
+Sometimes, developers use a function to perform task $i$, and are unaware of
+an irrelevant task $j$ 
+conducted by this function that hurts performance but not functionality. 
+For example, MySQL developers did not know the synchronization inside
+\Code{random} and introduced the {\it Slow Fast-Lock} bug shown in 
+Figure~\ref{fig:MySQL38941}. 
+
+Code encapsulation in modern software leads to many APIs with poorly 
+documented performance features. 
+We have seen developers explicitly complain about this issue 
+\citep{apache45396}. It will lead to more performance bugs in the future.
+
+\underline{\it When a bug was not buggy\ }
+An interesting trend is that 29 out of \allbugs bugs were not born buggy.
+They became inefficient long after they were written due to workload shift,
+such as that in {\it Transparent Draw} and {\it Intensive GC}
+(Figures~\ref{fig:Mozilla66461} and \ref{fig:Mozilla515287}), 
+and code changes in other part of the software, such as
+that in Figure~\ref{fig:Apache45464}.
+In Chrome\#70153, when GPU accelerator became available, software
+rendering code became redundant.
+Many of these bugs went through regression testing without being caught.

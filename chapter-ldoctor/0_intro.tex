@@ -1,15 +1,16 @@
 \section{Introduction}
-\label{sec:intro}
+\label{sec:6_intro}
 \subsection{Motivation}
 
-Performance bugs\footnote{We also refer performance bugs as performance problems
-following previous works in this area~\citep{PerfBug,Alabama,SongOOPSLA2014}} 
-are software implementation mistakes that cause unnecessary performance
-degradation in software. They widely exist in deployed software due to the 
-complexity of modern software and the lack of testing support
-~\citep{s2e,PerfBug,perf.fse10,rily.perftest,perfantipattern,xiao13:context}. 
-They annoy end users and waste energy during production runs, and 
-have already caused highly publicized failures~\citep{ACA-health,colorado}.
+%Performance bugs 
+%are software implementation mistakes that cause unnecessary performance
+%degradation in software. They widely exist in deployed software due to the 
+%complexity of modern software and the lack of testing support
+%~\citep{s2e,perf.fse10,rily.perftest,perfantipattern,xiao13:context}. 
+%They annoy end users and waste energy during production runs, and 
+%have already caused highly publicized failures~\citep{ACA-health,colorado}.
+As we discussed in previous chapters, 
+performance failure diagnosis is another key aspect of fighting performance bugs.
 Tools that can help
 developers quickly and accurately diagnose performance problems,
 find performance-wasting root causes, and fix performance problems
@@ -21,7 +22,7 @@ at identifying the root cause and suggesting a fix strategy.
 In the context of performance problems,
 the symptom is often
 an execution showing severe absolute or
-relative slowness \citep{SongOOPSLA2014}; the root cause contains 
+relative slowness (Chapter~\ref{chap:sd}); the root cause contains 
 information like which code region is inefficient and why
 it is inefficient. An effective diagnosis tool can help developers quickly
 and correctly figure out a patch to fix the performance problem.
@@ -41,7 +42,7 @@ the reason a specific region is inefficient needs to be accurately
 explained, so that developers can quickly fix the performance problem.
 
 \item Performance. 
-Diagnosis often requires collecting run-time information. The lower the overhead
+Diagnosis often requires collecting runtime information. The lower the overhead
 is, the easier for the diagnosis tool to be deployed, especially for 
 production-run usage scenarios. 
 \end{itemize}
@@ -54,9 +55,10 @@ It is far from providing the desired \textit{accuracy}, as it is designed to
 tell where computation resources are spent, 
 but not where and why computation resources are wasted. 
 In many cases, the root-cause function of a performance problem may not even
-get ranked by a profiler \citep{SongOOPSLA2014}.
+get ranked by a profiler (Chapter~\ref{chap:sd}).
 
-Performance bug detection tools use static or dynamic analysis to identify
+
+Performance-bug detection tools use static or dynamic analysis to identify
 code regions that match specific inefficiency patterns 
 \citep{Alabama,CARAMEL, Cachetor,XuDataStructure,BloatFSE2008, XuBloatPLDI2009, XuBloatPLDI2010}. 
 Unfortunately, these tools are not designed for performance diagnosis.
@@ -67,8 +69,15 @@ performance symptom, and hence are at disadvantage in terms of diagnosis
 10X slowdowns or more \citep{Cachetor,XuBloatPLDI2010,Alabama}, 
 not ideal in terms of \textit{performance}.
 
-Recently, progress has been made on applying statistical debugging to 
-performance diagnosis \citep{SongOOPSLA2014}. Given the symptom of 
+
+%\begin{figure}
+%\codefig{GCC27733}
+%\caption{A real-world performance bug in GCC (the `-' and `+' demonstrate the patch)}
+%\label{fig:GCC27733}
+%\end{figure}
+
+In Chapter~\ref{chap:sd}, we discussed how to apply statistical debugging to performance diagnosis. 
+Given the symptom of 
 a performance problem (e.g., two similar inputs leading to very
 different execution speed),
 statistical debugging, an approach widely used for diagnosing
@@ -76,27 +85,13 @@ functional failures \citep{liblit03,liblit05,tarantula1}, can
 accurately identify control-flow constructs that are most correlated with
 the performance problem by comparing problematic runs and regular runs.
 Unfortunately, for loop-related 
-performance problems, which contribute to two thirds of
-real-world performance problems studied in previous work 
-\citep{SongOOPSLA2014,PerfBug}, statistical debugging is not very effective.
+performance problems, which contribute to two thirds of user-reported
+real-world performance problems studied in Chapter~\ref{chap:sd},
+statistical debugging is not very effective.
 Although it can identify the root-cause loop, it does not provide any 
 information regarding why the loop is inefficient and hence is not very helpful
 in fixing the performance problem.
 
-\begin{figure}
-\codefig{GCC27733}
-\caption{A real-world performance bug in GCC (the `-' and `+' demonstrate the patch)}
-\label{fig:GCC27733}
-\end{figure}
-
-%\begin{figure}
-%\centering
-%\lstset{basicstyle=\ttfamily\fontsize{8}{8}\selectfont,
-%     morekeywords={+},keepspaces=true}
-%  \mbox{\lstinputlisting[mathescape,boxpos=t]{figures/GCC27733.c}}
-%\caption{A real-world performance bug in GCC (the `-' and `+' demonstrate the patch)}
-%\label{fig:GCC27733}
-%\end{figure}
 
 Figure~\ref{fig:GCC27733} shows a real-world performance bug in GCC. 
 Function \texttt{synth\_mult} is used to compute the best algorithm for 
@@ -114,7 +109,7 @@ huge performance problems.  In practice, developers know the problem is inside
 \texttt{synth\_mult} very early. However, since this function is 
 complicated, it took them several weeks to figure out the root cause. 
 If a tool can tell them not only which loop\footnote{Recursive functions are
-handled similarly as loops in this paper.}
+handled similarly as loops in this chapter.}
 is the root cause but also why a loop is inefficient (i.e., lot of redundant
 computation and the need for better memoization in this example), 
 the diagnosis and bug fixing
@@ -128,14 +123,14 @@ performance is well desired.
 
 
 \subsection{Contributions}
-This paper presents a tool, \Tool, that can help effectively diagnose
+This chapter presents a tool, \Tool, that can help effectively diagnose
 inefficient loop problems with good coverage, accuracy, and performance.
 
 \Tool targets the most common type of performance problems, inefficient
-loops, according to previous
-empirical studies \citep{SongOOPSLA2014,PerfBug}.
+loops, according to
+empirical studies in Chapter~\ref{chap:study} and Chapter~\ref{chap:sd}.
 \Tool also targets a challenging problem. Although
-statistical debugging \citep{SongOOPSLA2014}
+statistical debugging (Chapter~\ref{chap:sd})
 can help identify suspicious loops that are highly correlated with 
 user-perceived performance problems,
 it provides no information about why the suspicious loop is inefficient,
@@ -162,19 +157,19 @@ inefficient loops.
 Our empirical study shows that our taxonomy is general enough to cover
 common inefficient loops, and also specific enough to help developers understand
 and fix the performance problem. We will present more details 
-in Section \ref{sec:study}.
+in Section~\ref{sec:6_study}.
  
 Second, building a tool(kit) \Tool that can automatically and accurately
-identify the fine-grained root-cause type of a suspicious loop, 
-together fix-strategy suggestions. 
+identify the fine-grained root-cause type of a suspicious loop 
+and provide fix-strategy suggestions. 
 We achieve this following several principles:
 
 \begin{itemize}
 \item Focused checking. 
-Different from performance-bug detection tools that blindly checks the whole
+Different from performance-bug detection tools that blindly check the whole
 software, \Tool focuses on performance symptoms and only check inefficient
 loop candidates identified by existing tools, a statistical debugging
-tool in our current prototype \citep{SongOOPSLA2014}. 
+tool (Chapter~\ref{chap:sd}) in our current prototype. 
 This focused study is crucial for \Tool to achieve high
 accuracy.
 
@@ -190,16 +185,16 @@ As we will see, static analysis alone cannot accurately identify
 inefficiency root causes, especially because some inefficiency problems only
 happen under specific workload. However, pure dynamic analysis will 
 cause too large 
-run-time overhead. Therefore, we take a hybrid approach to achieve both
+runtime overhead. Therefore, we take a hybrid approach to achieve both
 performance and accuracy goals.
 \end{itemize}
 
-Third, using sampling to further lower the run-time overhead of \Tool, without
+Third, using sampling to further lower the runtime overhead of \Tool, without
 degrading diagnosis capability. Random sampling is a natural fit for performance
-diagnosis due to the repetitive nature of inefficient code, especially
+diagnosis due to the repetitive nature of inefficient codes, especially
 inefficient loops.
 
 We have evaluated \Tool on 18 real-world performance problems. 
 Evaluation results show that \Tool can accurately identify the detailed
 root cause for all benchmarks and provide correct fix-strategy suggestion for
-16 benchmarks. All these are achieved with low run-time overhead.
+16 benchmarks. All these are achieved with low runtime overhead.

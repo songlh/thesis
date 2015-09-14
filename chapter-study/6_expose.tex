@@ -1,0 +1,66 @@
+\section{How Performance Bugs Are Exposed}
+\label{sec:3_exp}
+
+\begin{table*}[tb!]
+\begin{adjustwidth}{-1in}{-1in}
+\scriptsize
+\centering
+{
+\begin{tabular}{lcccccc}
+\toprule
+\multicolumn{1}{c}{\bf How Performance Bugs Are Exposed} &Apache&Chrome&GCC&Mozilla&MySQL&Total\\
+\midrule
+\multicolumn{1}{l}{{\bf Always Active:} almost every input on every platform can trigger this bug}
+&2&3&0&6&5&16\\
+\midrule
+\multicolumn{1}{l}{{\bf Special Feature:} need special-value inputs to cover specific code regions}
+&18&7&11&23&17&76\\
+\midrule
+\multicolumn{1}{l}{{\bf Special Scale:} need large-scale inputs to execute a code region many times}
+&18&2&10&21&18&69\\
+\midrule
+\multicolumn{1}{l}{{\bf Feature+Scale:} the intersection of Special Feature and Special Scale}
+&13&2&10&14&12&51\\
+\bottomrule
+\end{tabular}
+}
+\end{adjustwidth}
+\caption{How performance bugs are exposed in Section~\ref{sec:3_exp}}
+\label{tab:3_exp}
+\end{table*}
+
+
+We define exposing a performance bug as causing a perceivably negative performance impact, 
+following the convention used in most bug reports. Our study demonstrates several unique challenges for performance testing.
+
+\underline{\it Always Active Bugs\ } 
+A non-negligible portion of performance bugs are almost always active.
+They are located at the start-up phase, the shutdown phase, or other places 
+that are exercised by almost all inputs. 
+They could be very harmful in the long term, because
+they waste performance at every deployment site during every run of a program.
+Many of these bugs were caught during comparison with other software
+(e.g., Chrome vs. Mozilla vs. Safari).
+
+Judging whether performance bugs have manifested is a unique challenge in 
+performance testing.
+
+\underline{\it Input Feature \& Scale Conditions\ } 
+About two thirds of performance bugs need inputs with special features
+to manifest. Otherwise, the buggy code units cannot be touched.
+Unfortunately, this is not what black-box testing is good at.
+Much manual effort will be needed to design test inputs, a problem
+well studied by past research in functional testing \citep{KLEE,s2e}.
+
+
+About two thirds of performance bugs need large-scale inputs to manifest in
+a perceivable way. These bugs cannot be effectively exposed if 
+software testing executes each buggy code unit only once,
+which unfortunately is the goal of most functional testing.
+
+Almost half of the bugs need inputs that have special features {\bf and} 
+large scales to manifest. 
+For example, to trigger the bug shown in Figure~\ref{fig:Mozilla515287}, the user
+has to click `bookmark all' button (i.e., special feature) with many open
+tabs (i.e., large scale).
+

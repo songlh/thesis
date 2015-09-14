@@ -47,11 +47,15 @@
 \gdef\@degree{Doctor of Philosophy}    %Default is PhD
 \gdef\@doctype{A dissertation}         %Default is dissertation
 
-\gdef\@department{(Electrical Engineering)} % Default is Electical Engineering
-\gdef\@defensedate{XX/XX/2015}% Default is a long time from now.
+\gdef\@department{(Computer Sciences)} % Default is Electical Engineering
+\gdef\@defensedate{10/16/2015}% Default is a long time from now.
 \gdef\@committee{
 \hspace*{-0.6in}Shan Lu, Associate Professor, Computer Science (at the University of Chicago)\\
 \hspace*{-0.6in}Benjamin Liblit, Associate Professor, Computer Sciences\\
+\hspace*{-0.6in}Aws Albarghouthi, Assistant Professor, Computer Sciences\\
+\hspace*{-0.6in}Remzi Arpaci-Dusseau, Professor, Computer Sciences\\
+\hspace*{-0.6in}Xinyu Zhang, Assistant Professor, Electrical and Computer Engineering\\
+\hspace*{-0.6in}Darko Marinov, Associate Professor, Computer Science (at the University of Illinois at Urbana-Champaign)\\
 }
 
 \renewcommand{\maketitle}{%
@@ -208,7 +212,7 @@
 % - produce the table of contents entry for the nomenclature section
 % - start a new page with NOMENCLATURE centered two inches from the top
 %=============================================================================
-\def\nomenclature{\separatorpage{DISCARD THIS PAGE}
+\def\nomenclature{
   \chapter*{Nomenclature}
   \addcontentsline{toc}{chapter}{NOMENCLATURE}}
 \def\endnomenclature{\par\newpage}

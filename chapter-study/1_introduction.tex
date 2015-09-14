@@ -1,0 +1,99 @@
+\section{Introduction}
+\label{sec:3_introduction}
+
+Performance bugs~\citep{s2e,perf.fse10,rily.perftest,perfantipattern} 
+are software implementation mistakes that can cause slow execution.
+The patches for performance bugs are often not too complex.
+These patches can preserve the same functionality, and achieve significant performance improvement. 
+Performance bugs cannot be optimized away by compiler optimization. 
+Many of them escape from testing process and manifest in front of end users~\citep{xiao13:context}.
+Performance bugs are common and severe. 
+Mozilla developers have to fix 5 to 50 performance bugs each month in the last 10 years. 
+Performance bugs have already caused several highly publicized failures, 
+like the slow affordable care act system~\citep{ACA-health}.
+Fighting performance bugs is solely needed.  
+
+There are many misunderstanding of performance bugs, 
+such as ``performance is taken care of by compilers and hardware'' and 
+``profiling is sufficient to solve performance problems''. 
+These wrong perceptions are partly the causes of today's performance-bug problem~\citep{lies}. 
+The lack of understanding of performance bugs has severely limited the research and tool building in this area. 
+
+There are many empirical studies on functional bugs~\citep{chou01empirical,characteristics.asplos08, 10yearlinux,emmett.ppopp10,
+sullivan92comparison,Lu.study.fast}. 
+Many of them are conducted along the following dimensions: 
+root causes of functional bugs, 
+how functional bugs are introduced, how to expose functional bugs, 
+and how to fix functional bugs. 
+These studies have provided guidance for functional-bug detection, 
+functional failure diagnosis, functional-bug avoidance, and software testing. 
+It is feasible and necessary to conduct similar studies on performance bugs for the following reasons: 
+
+Firstly, it is feasible to sample performance-bug reports in the real world to conduct the empirical study. 
+There are well-known open-source software with long well maintained bug databases. 
+For some of them, developers explicitly mark certain bug reports in their bug databases as performance bugs. 
+For example, Mozilla developers use ``perf'' tag to mark performance bugs. 
+It is fairly easy for us to collect enough performance bugs in order to conduct the study.
+
+Secondly, it is reasonable to understand whether techniques designed for functional bugs still work for performance bugs, 
+before designing new techniques for performance bugs. 
+In order to make this clear, 
+it is necessary to follow the study dimension conducted on functional 
+bugs to perform a similar empirical study for performance bugs. 
+
+Finally, performance bugs are different from functional bugs. 
+For example, performance bugs do not have failure symptoms, 
+like crash or segmentation fault. 
+We cannot directly leverage experience gained from combating functional bugs. 
+It is necessary to understand the unique features and bug patterns for performance bugs.
+
+This chapter makes the first, to the best of our knowledge,
+comprehensive study of real-world performance bugs
+based on \allbugs bugs randomly collected from the bug databases of five
+representative open-source software suites (Apache, Chrome, GCC,
+Mozilla, and MySQL). Our study has made the following findings.
+
+{\bf Guidance for bug avoidance.\ }
+Two thirds of the studied bugs are
+introduced by developers' wrong understanding of workload
+or API performance features.  
+More than one quarter of the bugs arise from previously correct
+code due to workload or API changes. 
+To avoid performance bugs,
+developers need performance-oriented
+annotation systems and change-impact analysis.
+
+{\bf Guidance for performance testing.\ } 
+Almost half of the studied bugs require inputs with {\bf both} {special}
+features and large scales to manifest. 
+New performance-testing schemes that combine the input-generation techniques 
+used by functional testing~\citep{KLEE,dart} with a consideration towards large 
+scales will significantly improve the state-of-the-art.
+
+{\bf Guidance for bug detection.\ } Recent works
+~\citep{s2e,BloatFSE2008,perf.fse10,jolt,XuBloatPLDI2009,XuBloatPLDI2010}
+have demonstrated the potential of performance-bug detection. 
+Our study found common root causes and structural patterns of real-world
+performance bugs that can help improve the coverage and accuracy 
+of performance-bug detection.
+
+{\bf Guidance for bug diagnosis.\ } 
+The root-cause patterns and fix strategies for performance bugs are 
+highly correlated. It is feasible to propose fix strategies automatically, based on identified root causes. 
+
+{\bf Comparison with functional bugs.\ }
+Performance bugs tend to hide for much longer time in software 
+than functional bugs.
+Unlike functional bugs, performance
+bugs cannot all be modeled as rare events, because a 
+non-negligible portion of them can be triggered by
+almost all inputs.
+
+{\bf General motivation\ }
+(1) Many performance-bug patches are small.  The fact that we can
+achieve significant performance
+improvement through a few lines of code change motivates
+researchers to pay more attention to performance bugs.
+(2) A non-negligible portion of performance bugs in multi-threaded
+software are related to synchronization.
+Developers need tool support to avoid over-synchronization traps.

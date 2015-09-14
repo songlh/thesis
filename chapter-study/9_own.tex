@@ -1,0 +1,26 @@
+\section{Guidance for My Thesis Work}
+\label{sec:3_own}
+
+{\bf Performance-bug Detection}
+Our study provides several motivations for our own rule-based bug detection work, 
+which will be discussed in detail in Chapter~\ref{chap:detec}. 
+Most performance bugs loss performance at function-call sites (Section~\ref{sec:3_other}), 
+more than one fourth of performance bugs are introduced by misunderstanding API (Section~\ref{sec:3_introduce}), 
+and more than one fourth of performance bugs are fixed by in-place call changes (Section~\ref{sec:3_fix}). 
+We could detect similar inefficient call usage to find new bugs, and propose more efficient call sequences with the same functionalities.
+Because some performance bugs are always active (Section~\ref{sec:3_exp}), 
+performance bugs cannot be modeled as rare events.
+Automatically inferring efficiency rules~\citep{engler01bugs} may not be feasible for performance bugs. 
+Patches for performance bugs are simple (Section~\ref{sec:3_fix}), and they follow limited fix strategies. 
+It is feasible to extract efficiency rules from these patches. 
+
+{\bf Performance Failure Diagnosis}
+Our study also provides guidance for our performance failure diagnosis work (Chapter~\ref{chap:sd} and Chapter~\ref{chap:ldoctor}). 
+A non-negligible portion of performance bugs are caused by wrong branch selection (Section~\ref{sec:3_introduce}). 
+Statistical debugging, leveraging branch predicate, can well diagnose functional bugs with similar root causes. 
+It is promising to explore how to apply statistical debugging to diagnose performance bugs. 
+The three common root causes are wrong branch, resultless and redundancy (Section~\ref{sec:3_root}). 
+Our diagnosis projects should focus on bugs caused by these three root causes. 
+Root causes and fix strategies are highly correlated (Section~\ref{sec:3_other}).
+It is feasible to automatically provide fix suggestions based on identified root causes. 
+

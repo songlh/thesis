@@ -1,3 +1,67 @@
-TODO
+Everyone wants software to run fast. 
+Slow and inefficient software can easily frustrate end users and cause economic loss. 
+Software-inefficiency problem has already caused several highly publicized failures. 
+One major source of software's slowness is performance bug.
+Performance bugs are software implementation mistakes that can cause inefficient execution. 
+Performance bugs cannot be optimized away  by state-of-practice compilers. 
+Many of them escape from in-house testing and manifest in front of end users, 
+causing severe performance degradation and huge energy waste in the field. 
+Performance bugs are becoming more critical, 
+with the increasing complexity of modern software and workload,
+the meager increases of single-core hardware performance, and the 
+pressing energy concerns.
+It is urgent to combat performance bugs.
 
-./frontmatter/abstract.tex
+This thesis works on three directions to fight performance bugs: 
+performance bug understanding, rule-based performance-bug detection, 
+and performance failure diagnosis. 
+
+Building better tools needs a better understanding of performance bugs. 
+In order to improve the understanding of performance bugs, 
+we randomly sample 110 real-world performance bugs from 
+5 large open-source software suites (Apache, Chrome, GCC, Mozilla and MySQL), 
+and conduct the first empirical study on performance bugs. 
+Our study is mainly performed to understand what are common root causes of performance bugs, 
+how performance bugs are introduced, how to expose performance bugs and how to fix performance bugs. 
+Important finds include: (1) there are dominating root causes and fix strategies for performance bugs, 
+and root causes are highly correlated with fix strategies; 
+(2) workload and API issues are two major reasons causing performance bugs to be introduced; 
+(3) performance bugs need both special feature and large scale to be exposed effectively. 
+Our empirical study can guide future research on performance bugs, 
+and it has already inspired our own performance-bug detection 
+and performance failure diagnosis projects. 
+
+Rule-based bug detection is widely used to detect functional bugs and security vulnerabilities. 
+Inspired by our empirical study, we hypothesize that there are also statically 
+checkable efficiency-related rules for performance bugs, 
+violating which will lead to inefficient execution. 
+These rules can be used to detect previously unknown performance bugs. 
+To test our hypothesis, we manually examine fixed performance bugs, 
+extract efficiency rules from performance bugs' patches, and implement static checkers to detect rules' violations. 
+Our checkers find 332 previously unknown performance bugs. 
+Some of found bugs have already been confirmed and fixed by developers. 
+Our results demonstrate that rule-based performance-bug detection is a promising direction. 
+
+Effectively diagnosing user-reported performance bugs is another key aspect of fighting performance bugs. 
+Statistical debugging is one of the most effective failure diagnosis techniques designed for functional bugs. 
+We explore the feasibility and design spaces to apply statistical debugging to performance failure diagnosis. 
+We find that statistical debugging is a natural fit for diagnosing performance problems, 
+which are often observed through comparison-based approaches and reported together 
+with both good and bad inputs,
+statistical debugging can effectively identify coarse-grained root causes 
+for performance bugs under right types of design points, 
+and special nature of performance bugs allows sampling to lower the 
+overhead of runtime performance diagnosis without extending the diagnosis latency.
+
+Performance bugs caused by inefficient loops contribute two thirds of user-reported performance bugs in our study. 
+For them, coarse-grained root-cause information is not enough. 
+To solve this problem, we first conduct an empirical study to understand what are fine-grained root
+causes for inefficient loops in the real world. 
+We then design LDoctor, which is a series of static-dynamic 
+hybrid analysis routines that can help identify accurate fine-grained root-cause information. 
+Sampling is leveraged to further lower diagnosis overhead, without hurting diagnosis accuracy or latency. 
+Evaluation results show that LDoctor can cover most root-cause categories with good accuracy and small runtime overhead.
+
+Our bug-detection technique and performance failure diagnosis techniques, 
+guided by our empirical study, 
+complement each other to significantly improve software performance. 

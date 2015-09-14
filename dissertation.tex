@@ -159,15 +159,16 @@
 \DeclareRobustCommand\SignalText{\tikz \node [rotate=-90, inner sep=1pt] {\large\SignalSymbol} ;}
 \newcommand{\Signal}[0]{\contour{white}{\LARGE\SignalSymbol}}
 
-\newcommand{\code}[1]{\textsf{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\codefamily}[0]{\sffamily}
 
 \newcommand{\allbugs}{110\xspace}
 \newcommand{\heavybugs}{66\xspace}
 
+
 \newcommand{\codefig}[1]{%
   \centering
-  \mbox{\lstinputlisting[basicstyle=\ttfamily\footnotesize ]{figures/#1.c}}}
+  \framebox{\lstinputlisting[boxpos=t\footnotesize]{figures/#1.c}}}
 
 \newcommand{\Tool}{LDoctor\xspace}
 
@@ -207,11 +208,8 @@
 \include{chapter-detec/main}
 \include{chapter-sd/main}
 \include{chapter-ldoctor/main}
-%\input{chapter-cci/main}
-%\input{chapter-afix/main}
-%\input{chapter-cfix/main}
-%\input{chapter-petri-net/main}
-%\input{chapter-conclusion/main}
+\include{chapter-con/main}
+
 
 %% etc, etc.
 
