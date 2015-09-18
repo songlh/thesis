@@ -461,7 +461,8 @@ prune memory reads whose reading address is loop invariant, and there are no wri
 inside the loop which are possibly conducted on the same address. 
 For example, the read address of \texttt{aNode.localName} and \texttt{aNode.namespaceURI}
 in Figure~\ref{fig:Mozilla347306} is loop-invariant, and there are no write conducted 
-on the same address. We do not need to record these two memory read. 
+on the same address. 
+We do not need to record these two memory reads during cross-iteration redundancy analysis. 
 %It is easy to lift read from local variable outside the loop. 
 %Compiler is conservative to move read, which may cause exception, outside the loop.
 %I think this part of analysis is to prune memory read which is invariant, but unsafe to be moved out by compiler. 

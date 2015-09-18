@@ -4,12 +4,12 @@
 Statistical performance debugging discussed in the last chapter can 
 identify which loop is the root cause for a performance problem. 
 However, it cannot provide detailed root-cause information, 
-such as why a loop is inefficient and how developers might fix the problem. 
+such as why the loop is inefficient and how developers might fix the problem. 
 
-In this chapter, we first conduct an empirical study to understand what are
+In this chapter, we first conduct an empirical study to understand what is
 fine-grained root-cause information for inefficient loops in the real world. 
 We then design a series of static-dynamic hybrid analysis routines that can
-help identify accurate fine-grained root-cause information for inefficient loops.
+help identify accurate fine-grained root-cause information.
 We further use sampling techniques to lower our diagnosis overhead without
 hurting diagnosis accuracy or latency. Evaluation using real-world inefficient loops 
 shows that our tool can provide good coverage and accuracy, 
