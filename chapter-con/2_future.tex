@@ -1,0 +1,59 @@
+\section{Future Work}
+\label{sec:7_future}
+
+Future work can explore how to combat performance bugs through different aspects from this thesis. 
+The following are several potential research opportunities:
+
+
+%\begin{itemize}
+
+{\bf On-line workload monitoring.} 
+Our empirical study in Chapter~\ref{chap:study} 
+shows that many performance bugs are introduced due to developers' misunderstanding of workload in reality. 
+We think that monitoring workload from productions runs is a possible solution. 
+Production-run techniques need to keep a low runtime overhead.
+How to collect accurate workload information from deployed software in a low overhead remains an open issue. 
+
+{\bf Improving accuracy of static analysis by leveraging existing dynamic information.}
+One lesson we learned is that static analysis alone is not accurate enough, 
+and dynamic information is needed (Section~\ref{sec:7_lessons}). 
+Systems may have already recorded some dynamic information through logging or tracing.
+How to leverage existing dynamic information to improve the results of static analysis remains an open issue. 
+
+{\bf Applying sampling to existing in-house performance-bug techniques.}
+Sampling can help lower runtime overhead, while recording dynamic information. 
+Due to performance bugs' repetitive patterns, 
+sampling does not hurt latency as much as functional bugs. 
+In Chapter~\ref{chap:sd} and Chapter~\ref{chap:ldoctor}, 
+we show that how sampling help statistical debugging and LDoctor. 
+How to leverage sampling to make other existing in-house performance-bug detection 
+and performance failure diagnosis techniques applicable in production runs remains an open issue. 
+
+
+{\bf Test input generation for performance bugs.}
+In Chapter~\ref{chap:study}, 
+we discuss that almost half of studied performance bugs need inputs with both special features and large scales to manifest. 
+Existing techniques are designed to generate inputs with good code coverage and focus only on special features.
+How to extend existing input-generation techniques with emphasis on large scales remains an open issue. 
+Another important problem during performance testing is to automatically judge whether a problem bug has occurred. 
+How to leverage existing dynamic performance-bug detection techniques to build test oracles for performance bugs also remains an open issue.  
+
+
+{\bf Performance-aware annotation system.}
+Our study in Chapter~\ref{chap:study} shows that performance-aware annotations, 
+which can help developers maintain and communicate APIs' performance features, 
+can help avoid performance bugs. 
+How to automatically identify performance features, 
+like existence of lock or IO, 
+through program analysis or document mining on existing software, remain an open issue. 
+
+%\end{itemize} 
+
+\section{Closing Words}
+Performance bugs are software implementation mistakes, which can slow down the program. 
+With new software and hardware trends and pressing energy concerns, it is very important to fight performance bugs. 
+We hope that this dissertation can help researchers and developers 
+by providing better understanding of real-world performance bugs. 
+We also hope that this dissertation can provide hints 
+and implications for developers when they try to identify previously unknown performance bugs 
+and diagnose user-perceived performance failure. 

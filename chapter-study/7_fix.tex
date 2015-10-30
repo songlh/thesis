@@ -16,7 +16,7 @@
 \multicolumn{1}{l}{{\bf In-place Call Change:} {replace call sequences in the exact same place} }
 &5&1&0&12&10&28\\
 \midrule
-\multicolumn{1}{l}{{\bf Memorization:} {reuse results from previous computation}}
+\multicolumn{1}{l}{{\bf Memoization:} {reuse results from previous computation}}
 &9&1&3&2&3&18\\
 \midrule
  \multicolumn{1}{l}{{\bf Batch:} {batch computation to eliminate redundancy}}
@@ -28,7 +28,7 @@
 \end{tabular}
 }
 \end{adjustwidth}
-\caption{How to fix performance bugs in Section~\ref{sec:3_fix}}
+\caption{How to fix performance bugs in Section~\ref{sec:3_fix}.}
 \label{tab:3_fix}
 \end{table*}
 
@@ -49,7 +49,7 @@ The performance gain can be achieved whenever changed codes are executed.
 For example, in order to fix Mozilla\#103330, 
 developers replace the \Code{setLength} and \Code{Append} call combination with \Code{Assign}.
 
-\underline{\it Memorization} fixes 18 bugs by reusing results 
+\underline{\it Memoization} fixes 18 bugs by reusing results 
 from previous computation. 
 For example, in order to fix Mozilla\#409961, 
 developers move \Code{do\_QueryInterface} outside the buggy loop, instead of calling it in each iteration.  
@@ -63,5 +63,5 @@ In fact, 41 out of 110 bug patches contain five or fewer lines of code changes.
 The median patch size for all examined bugs is 9 lines of code.
 The small patch size is a result of the above fixing strategies.
 Many change condition patches are small. 
-Most in-place call change, memorization, and batch patches do not require implementing new function calls.
+Most in-place call change, memoization, and batch patches do not require implementing new function calls.
 

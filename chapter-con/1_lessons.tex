@@ -1,0 +1,57 @@
+\section{Lessons Learned}
+\label{sec:7_lessons}
+
+In this section, we present a list of general lessons we learned while working on this dissertation.
+
+%\begin{itemize}
+
+%\item 
+{\bf Identifying performance failure is hard.}
+Performance bugs do not have fail-stop symptoms. 
+Both developers and end users face challenges in identifying performance failure runs. 
+Performance bugs tend to hide longer in software than functional bugs (Section~\ref{sec:3_other}).
+Some performance bugs, which can be triggered by almost all inputs, can still escape from in-house performance testing (Section~\ref{sec:3_exp}). 
+Fearing that described symptoms are not convincing enough, 
+end users sometimes use more than one 
+comparison-based methods when they file performance-bug reports (Section~\ref{sec:5_study}). 
+Techniques targeting automatically identifying performance failure runs, 
+like automated oracles for performance bugs and performance assertion, are solely needed. 
+
+%\item 
+{\bf Similar mistakes can be made everywhere. }
+Implementation mistakes are usually caused by developers' misunderstanding of programming languages, API, workload, documents and so on. 
+Before correcting the misunderstanding, 
+developers definitely would make similar mistakes in other places.
+Misunderstanding could also be shared among different developers, and same mistakes could also be made by more than one developers.
+When fixing one bug, it is necessary to systematically check software to find similar bugs and fix them altogether. 
+
+%\item 
+{\bf Non-buggy codes can become buggy.}
+Some performance bugs in our benchmark set are not born buggy. 
+They become performance bugs, due to workload shift, code changes in other part of software, or hardware changes. 
+Periodical workload study, performance change impact analysis, 
+and systematically profiling when porting software to new hardware are needed during software development and maintenance.
+
+%\item 
+{\bf Static analysis is not accurate enough.}
+Our experience shows that static analysis is not good enough when analyzing performance bugs, 
+because some codes are inefficient only under certain workload. 
+In Chapter~\ref{chap:detec}, accurately checking some efficiency rules relies on runtime or workload information. 
+Our detection techniques are only based on static checking, and this is one reason why we have false positives. 
+In Chapter~\ref{chap:ldoctor}, static analysis can only identify static resultless types and conduct slicing. 
+We need dynamic information about portions of resultless iterations and values of source instructions, 
+so we build LDoctor based on static-dynamic hybrid approaches. 
+
+
+%\item {\bf Sampling is suitable to combat performance bugs. }
+%Sampling can help lower runtime overhead while recording dynamic information. 
+%Because of performance bugs' repetitive patterns, 
+%sampling does not hurt latency as much as functional bugs. 
+%In Chapter~\ref{chap:sd} and Chapter~\ref{chap:ldoctor}, 
+%we show that how sampling help statistical debugging and LDoctor. 
+%We believe that sampling will help other in-house performance bug detection and diagnosis techniques, 
+%and make them applicable in production runs. 
+
+
+
+%\end{itemize}

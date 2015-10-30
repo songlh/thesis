@@ -1,4 +1,4 @@
-\section{\Tool design}
+\section{\Tool Design}
 \label{sec:6_design}
 \Tool is composed of a series of analysis routines, each designed to 
 identify whether a given loop belongs to one specific type of root causes,
@@ -25,7 +25,7 @@ them a natural fit for random sampling. Therefore, we will design different
 sampling schemes for different analysis routines.
 \end{itemize}
 
-\subsection{Resultless Checker}
+\subsection{Resultless checker}
 \label{sec:6_workless}
 
 Our resultless checker includes two parts. First, we use static analysis
@@ -43,7 +43,7 @@ inefficient.
 %\label{fig:block_type}
 %\end{figure}
 
-\subsubsection{Static Analysis}
+\subsubsection{Static analysis}
 \label{sec:6_s_workless}
 
 We consider side-effect instructions as those instructions that write to
@@ -76,7 +76,7 @@ root-cause type as 1*, if more informative root-cause type is identified
 for this loop (e.g., cross-iteration or cross-loop redundancy).
 
 %TODO Shan will rewrite the next two paragraphs
-\subsubsection{Dynamic Monitoring}
+\subsubsection{Dynamic monitoring}
 \label{sec:6_d_workless}
 
 Except for 0*, none of the other three type of loops are inefficient for sure.

@@ -1,0 +1,76 @@
+\section{Summary}
+\label{sec:7_summary}
+This dissertation can be divided into three parts: 
+performance bug understanding, performance bug detection, and performance failure diagnosis. 
+We now summary each part in turn. 
+
+\subsection{Performance bug understanding}
+
+Like functional bugs, research on performance bugs should also be guided by empirical studies. 
+Poor understanding of performance bugs is part of causes of today's performance-bug problem. 
+In order to improve the understanding of real-world performance bugs, 
+we conduct the first empirical study on 110 real-world performance bugs 
+randomly sampled from 5 open-source software suites (Apache, Chrome, GCC, Mozilla and MySQL).  
+
+Following the lifetime of performance bugs, our study is mainly performed in 4 dimensions. 
+We study the root causes of performance bugs, how they are introduced, how to expose them and how to fix them. 
+The main findings of our study include: 
+(1) performance bugs have dominating root causes and fix strategies, 
+which are highly correlated with each other; 
+(2) workload mismatch and misunderstanding of API's performance features 
+are two major reasons why performance bugs are introduced; 
+(3) around half of studied performance bugs need inputs with both special features 
+and large scales to manifest. 
+
+
+Our empirical study can guide future research on performance bugs, 
+and it has already motivated our own bug detection and diagnosis projects.
+
+\subsection{Performance bug detection}
+
+Inspired by our empirical study, 
+we hypothesize that efficiency rules widely exist in software, 
+rule-violations can be statically checked, and violations also widely exist. 
+To test our hypothesis, we manually inspect final patches of fixed performance bugs from
+Apache, Mozilla and MySQL in our studied performance-bug set. 
+We extract efficiency rules from 25 bug patches, and implement static checkers for these rules. 
+
+In total, our static checkers find 332 previously unknown Potential Performance Problems (PPPs) 
+from latest versions of Apache, Mozilla and MySQL. 
+Among them, 101 are inherit from original buggy versions where final patches are applied. 
+Tools are needed to help developers automatically and systematically find all similar bugs.
+12 PPPs are introduced later. Tools are needed to help developers avoid making the same mistakes repeatedly. 
+219 PPPs are found by cross-application checking. 
+There are generic rules among different software.  
+Our experimental results verify all our hypothesis. 
+Rule-based performance-bug detection is a promising direction. 
+
+\subsection{Performance failure diagnosis}
+
+Due to the preliminary tool support, many performance bugs escape from in-house performance testing and manifest in front of end users. 
+After users report performance bugs, developers need to diagnose them and fix them.
+Diagnosing user-reported performance failure is another key aspect of fighting performance bugs. 
+
+We investigate the feasibility and design space to apply statistical debugging to performance failure diagnosis.
+After studying 65 user-reported performance bugs in our bug set, 
+we find that majority of performance bugs are observed through comparison, 
+and many user-file performance-bug reports contain not only bad inputs, but also similar and good inputs.
+Statistical debugging is a natural fix for user-reported performance bugs. 
+We evaluate three types of widely used predicates and two representative statistical models. 
+Our evaluation results show that branch predicate plus two statistical models can effectively diagnose user-reported performance failure. 
+Basic model can help diagnose performance failure caused by wrong branch decision, and $\Delta $LDA model can identify inefficient loops.  
+We apply sampling to performance failure diagnosis. Our experimental results show that
+special nature of loop-related performance bugs allows sampling to lower runtime overhead without sacrificing diagnosis latency, 
+and this is very different from functional failure diagnosis.
+
+We build LDoctor to further provide fine-grained diagnosis information for inefficient loops through two steps. 
+We first figure out a root-cause taxonomy for common inefficient loops through a comprehensive study on 45 inefficient loops. 
+Our taxonomy contains two major categories: resultless and redundancy, and several subcategories. 
+Guided by our taxonomy, we then design a series of analysis for inefficient loops. 
+Our analysis 
+focuses its checking on suspicious loops pointed out by statistical debugging, 
+hybridize static and dynamic analysis to balance accuracy and performance, 
+and relies on sampling and other designed optimization to further lower runtime overhead. 
+We evaluate LDoctor by using 18 real-world inefficient loops. 
+Evaluation results show that LDoctor can cover most root-cause subcategories, 
+report few false positives, and bring a low runtime overhead. 

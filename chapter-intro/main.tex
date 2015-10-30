@@ -126,7 +126,7 @@ combating performance bugs,
 it is time to pay more attention to them, 
 when we enter a new resource-constrained computing world.
 
-\section{Thesis philosophy}
+\section{Thesis Philosophy}
 
 The topic of this thesis is to provide better tool support to combat performance bugs. 
 The philosophy of this thesis is to investigate existing approaches originally designed for 
@@ -172,7 +172,7 @@ Techniques in this thesis                &    Functional Bug    &   Performance 
 {\bf LDoctor}                            &      \ding{55}                & \checkmark\\
 \bottomrule
 \end{tabular}
-\caption{Techniques in this thesis}
+\caption{Techniques in this thesis.}
 \label{tab:1_technique}
 \end{table}
 
@@ -223,7 +223,7 @@ as shown by the third row in Table~\ref{tab:1_technique}.
 \begin{figure}[t!]
 \begin{center}
 \includegraphics[width=4.5in]{figures/overview}
-\caption{Interactions among the four components in this dissertation.}
+\caption{Interactions among the four components in this dissertation}
 \label{fig:overview}
 \end{center}
 \end{figure}
@@ -258,7 +258,7 @@ and all these aspects will benefit from a better understanding of performance bu
 
 This dissertation conducts a comprehensive characteristics study on 
 a large number of real-world performance bugs collected from five widely used large open-source applications: 
-Apache, Chrome, GCC, Mozilla and MySQL. 
+Apache, Chrome, GCC, Mozilla and MySQL~\citep{PerfBug}. 
 This study reveals many interesting findings about performance bugs' root-cause patterns, 
 how performance bugs are introduced, performance bugs' manifestation conditions, and fix strategies. 
 It directly motivates performance-bug detection work and performance-bug diagnosis work in this thesis. 
@@ -270,7 +270,7 @@ Guided by our characteristics study, we hypothesize that
 (2) we can extract rules from performance-bug patches; 
 and (3) we can use the extracted rules to discover previously unknown performance bugs. 
 To test these hypotheses, we collect rules from 25 Apache, Mozilla, and MySQL bug patches 
-and build static checkers to find violations to these rules.
+and build static checkers to look for violations to these rules~\citep{PerfBug}.
 
 Our checkers find 332 previously unknown Potential Performance Problems (PPPs) 
 in the latest Apache, Mozilla, and MySQL. 
@@ -290,7 +290,7 @@ Rule-based performance-bug detection is a promising direction.
 \subsection{Statistical debugging for real-world performance bugs}
 Statistical debugging is one of the most effective failure diagnosis techniques proposed for functional bugs. 
 We explore whether it is possible to apply statistical debugging to performance bugs, 
-and how to apply statistical debugging to performance bugs. 
+and how to apply statistical debugging to performance bugs~\citep{SongOOPSLA2014}. 
 
 We first conduct an empirical study to understand how performance problems are observed and reported by real-world users. 
 Our study shows that statistical debugging is a natural fit for diagnosing performance bugs, 
